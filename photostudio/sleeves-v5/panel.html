@@ -1,0 +1,27 @@
+<div id="panel-sleeves" class="tab-panel" role="tabpanel" aria-labelledby="tab-sleeves" hidden>
+  <div class="panel-title"><h3>Mangas: detalles y logos</h3></div>
+  <div class="sleeve-switch" role="group" aria-label="Manga al vestir"><button data-sleeve-side="left" aria-pressed="true">Izquierda</button><button data-sleeve-side="right" aria-pressed="false">Derecha</button></div>
+  <div class="sleeve-actions"><button id="sleeveUpload" class="primary">Cargar logo aquí</button><button id="sleeveText">Agregar texto aquí</button></div>
+  <input id="sleeveLogoFile" type="file" accept=".png,.svg,.jpg,.jpeg" class="hidden-input" tabindex="-1" aria-label="Archivo para la manga seleccionada">
+  <div class="field"><label for="sleeveMethod">Técnica del nuevo logo</label><select id="sleeveMethod"><option value="print">Serigrafía</option><option value="embroidery">Bordado</option><option value="sublimation">Sublimado</option></select></div>
+  <p class="help">Izquierda y derecha de quien lleva puesta la prenda. Al verla de frente, aparecen invertidas en pantalla.</p>
+  <div class="field"><label for="sleeveView">Cara de la manga</label><select id="sleeveView"><option value="front">Visible desde el frente</option><option value="back">Visible desde la espalda</option></select></div>
+  <figure class="sleeve-proof"><canvas id="sleeveCanvas" width="560" height="440" aria-label="Acercamiento de la manga seleccionada"></canvas><figcaption id="sleeveCaption">Manga izquierda · frente</figcaption></figure>
+  <div class="sleeve-actions"><button id="sleeveZoom">Ampliar manga</button><button id="sleevePng">PNG de manga</button></div>
+  <div class="sleeve-block"><h4>Color y detalles</h4>
+    <label class="checkline"><input id="sleevePanel" data-sleeve-field="panel" type="checkbox">Color propio de esta manga</label>
+    <div class="field"><label for="sleeveColor">Color de manga</label><input id="sleeveColor" data-sleeve-field="color" type="color" value="#f4f3ef"></div>
+    <div class="field"><label for="sleeveDetail">Borde / franjas</label><select id="sleeveDetail" data-sleeve-field="detail"><option value="none">Sin detalle adicional</option><option value="edge">Borde en contraste</option><option value="single">Una franja</option><option value="double">Dos franjas</option></select></div>
+    <div class="row"><div class="field"><label for="sleeveBandColor">Color del detalle</label><input id="sleeveBandColor" data-sleeve-field="bandColor" type="color" value="#18283c"></div><div class="field"><label for="sleeveBandWidth">Grosor visual (%)</label><input id="sleeveBandWidth" data-sleeve-field="bandWidth" type="number" min="3" max="20" step="1" value="8"></div></div>
+    <p class="help">El color y las franjas se ven por ambos lados. La forma y las costuras conservan la base; confirmar el detalle con muestra.</p>
+    <div class="field"><label for="sleeveBandCm">Ancho real del detalle (cm) · opcional</label><input id="sleeveBandCm" data-sleeve-field="bandCm" type="number" min="0.1" max="30" step="0.1" placeholder="Por definir"></div>
+    <div class="field"><label for="sleeveNotes">Detalle solicitado / confección</label><textarea id="sleeveNotes" data-sleeve-field="notes" maxlength="1200" placeholder="EJEMPLO: tipo de rib, cinta, costura o referencia de tela; confirmar con el taller"></textarea></div>
+    <button id="sleeveCopyDetails">Copiar estos detalles a la otra manga</button>
+  </div>
+  <div class="sleeve-block"><h4>Logo en esta manga</h4>
+    <div class="field"><label for="sleeveExisting">Reutilizar una aplicación del pedido</label><select id="sleeveExisting"><option value="">Selecciona una aplicación</option></select></div>
+    <button id="sleeveReuse">Copiar aplicación a esta manga</button>
+    <p class="help">PNG / SVG / JPG. Después puedes limpiar el logo, ajustar tamaño, giro y medidas en Logos. Frente y espalda se registran por separado.</p>
+    <div id="sleeveArtList" aria-label="Aplicaciones de la manga seleccionada"></div>
+  </div>
+</div>

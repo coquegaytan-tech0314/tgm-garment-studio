@@ -1,0 +1,20 @@
+<section class="photo-pane" aria-label="Estudio de acabado de prenda">
+  <div class="photo-toolbar">
+    <div class="segmented" aria-label="Vista de la prenda">
+      <button data-photo-view="front" aria-pressed="true">Frente</button>
+      <button data-photo-view="back" aria-pressed="false">Espalda</button>
+      <button data-photo-view="both" aria-pressed="false">Comparar</button>
+    </div>
+    <div class="photo-tools"><button id="photoEdit">Colocar diseño</button><button id="photoDetail">Ver detalle</button></div>
+  </div>
+  <div class="photo-stage" id="photoStage" data-view="front" data-background="studio">
+    <div class="photo-stage-title"><span>ACABADO DE PRENDA</span><b id="photoBaseName">Playera · jersey</b></div>
+    <div class="photo-pair" id="photoPair">
+      <figure class="photo-figure" data-side="front"><canvas id="photoFront" width="1000" height="1150" tabindex="0" aria-label="Frente de la prenda; en Diseños, arrastra la aplicación o usa las flechas para moverla."></canvas><figcaption>FRENTE</figcaption></figure>
+      <figure class="photo-figure" data-side="back"><canvas id="photoBack" width="1000" height="1150" tabindex="0" aria-label="Espalda de la prenda; en Diseños, arrastra la aplicación o usa las flechas para moverla."></canvas><figcaption>ESPALDA</figcaption></figure>
+    </div>
+    <span class="photo-origin" id="photoOrigin">Base generada · apariencia aproximada</span>
+  </div>
+  <div class="photo-bottom"><span id="photoStatus" role="status">Preparando referencia…</span><button id="photoOpenSettings">Ajustar acabado</button></div>
+  <div class="photo-mismatch" id="photoMismatch" hidden><p id="photoMismatchText"></p><button id="photoUseBase">Usar confección de esta base</button></div>
+</section>

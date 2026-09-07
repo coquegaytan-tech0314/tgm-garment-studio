@@ -1,0 +1,9 @@
+{
+  "name": "tgm-pedidos-local",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "python3 photostudio/build.py",
+    "dev": "node preview-server.mjs"
+  }
+}

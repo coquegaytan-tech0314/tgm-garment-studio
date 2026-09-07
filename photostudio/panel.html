@@ -1,0 +1,21 @@
+<div id="panel-photo" class="tab-panel" role="tabpanel" aria-labelledby="tab-photo" hidden>
+  <h3>Acabado y presentación</h3>
+  <div class="field"><label for="photoSource">Origen de la imagen</label><select id="photoSource"><option value="generated">Base generada editable</option><option value="final">Render final cargado</option></select></div>
+  <div id="photoGeneratedControls">
+    <div class="field"><label for="photoBackdrop">Fondo</label><select id="photoBackdrop" data-photo="background"><option value="studio">Estudio claro</option><option value="white">Blanco</option><option value="dark">Estudio oscuro</option><option value="transparent">Transparente (PNG)</option></select></div>
+    <div class="field"><label class="range-label" for="photoExposure">Exposición <output id="photoExposureValue">0</output></label><input type="range" id="photoExposure" data-photo="exposure" min="-20" max="20" step="1"></div>
+    <div class="field"><label class="range-label" for="photoRelief">Relieve de la tela <output id="photoReliefValue">100 %</output></label><input type="range" id="photoRelief" data-photo="relief" min="50" max="130" step="1"></div>
+    <div class="field"><label class="range-label" for="photoThread">Detalle del tejido <output id="photoThreadValue">35 %</output></label><input type="range" id="photoThread" data-photo="thread" min="0" max="100" step="1"></div>
+    <label class="checkline"><input type="checkbox" id="photoFabricPrint" data-photo="fabricPrint">Adaptar la aplicación a los pliegues</label>
+    <p class="note">La textura y el relieve son aproximaciones visuales. El gramaje y la elasticidad se registran en el pedido; no calculan la caída de la tela.</p>
+  </div>
+  <div id="photoFinalControls" hidden>
+    <p class="help">Carga imágenes terminadas que ya incluyan el color y los diseños del pedido. Se conservan tal como las cargas.</p>
+    <div class="field"><input id="photoFinalFront" class="hidden-input" type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg"><label class="upload-label" for="photoFinalFront">Cargar render de frente</label><p class="help" id="photoFinalFrontInfo">PNG o JPG · hasta 10 MB</p></div>
+    <div class="field"><input id="photoFinalBack" class="hidden-input" type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg"><label class="upload-label" for="photoFinalBack">Cargar render de espalda</label><p class="help" id="photoFinalBackInfo">PNG o JPG · hasta 10 MB</p></div>
+    <p class="note">Si cambias la prenda, el color, la confección o los diseños, tendrás que cargar el render actualizado antes de exportar. Las cantidades y notas pueden editarse sin sustituir las imágenes.</p>
+  </div>
+  <div class="divider"></div><h3>Revisar de cerca</h3>
+  <div class="detail-presets"><button data-detail="neck">Cuello y costuras</button><button data-detail="fabric">Tela y aplicación</button><button data-detail="hem">Puño y dobladillo</button></div>
+  <p class="note">Las bases generadas representan una sola confección por tipo de prenda. Puedes revisar otras opciones en 2D o cargar un render que corresponda a la confección elegida.</p>
+</div>

@@ -1,0 +1,49 @@
+<div id="panel-art" class="tab-panel" role="tabpanel" aria-labelledby="tab-art" hidden>
+  <div class="section-title"><h3 style="margin:0">Logos y técnicas</h3><span class="small-label" id="artCount">0 / 12</span></div>
+  <div id="artList" class="art-list"></div>
+  <div class="logo-add"><button id="addLogo" class="primary">Cargar logo del cliente</button><button id="addArt">Agregar texto</button></div>
+  <input id="newLogoUpload" class="hidden-input" type="file" accept=".png,.svg,.jpg,.jpeg,image/png,image/svg+xml,image/jpeg">
+  <p class="help">Cada aplicación conserva su archivo, técnica y ubicación dentro del pedido.</p>
+  <div id="artEditor" hidden>
+    <div class="divider"></div>
+    <div class="field"><label for="logoName">Nombre de la aplicación</label><input id="logoName" data-logo="name" maxlength="100" placeholder="Ej. logo principal del cliente"></div>
+    <div class="row"><div class="field"><label for="artView">Vista</label><select id="artView"><option value="front">Frente</option><option value="back">Espalda</option></select></div><div class="field"><label for="artMethod">Técnica</label><select id="artMethod"><option value="print">Serigrafía</option><option value="sublimation">Sublimado</option><option value="embroidery">Bordado</option></select></div></div>
+    <div id="techniqueAdvice" class="technique-advice" role="status"></div>
+    <label>Zona de aplicación</label><div id="zoneGrid" class="zone-grid"></div>
+    <p class="help">Arrastra el logo sobre la prenda. La ubicación visual es aproximada; registra las medidas reales para la muestra.</p>
+    <div class="field"><label for="artKind">Contenido</label><select id="artKind"><option value="text">Texto sólido</option><option value="image">Logo PNG / SVG / JPG</option></select></div>
+    <div id="artTextFields"><div class="field"><label for="artText">Texto del diseño</label><input id="artText" maxlength="80" placeholder="Escribe el texto"></div><div class="row"><div class="field"><label for="artFont">Letra</label><select id="artFont"><option value="sans">Sans</option><option value="serif">Serif</option><option value="mono">Monoespaciada</option></select></div><div class="field"><label for="artColor">Color del texto</label><input type="color" id="artColor" aria-label="Color del texto"></div></div></div>
+    <div id="artImageFields" hidden>
+      <input id="artUpload" class="hidden-input" type="file" accept=".png,.svg,.jpg,.jpeg,image/png,image/svg+xml,image/jpeg">
+      <label class="upload-label" for="artUpload">Reemplazar logo</label><p id="artFileName" class="help"></p>
+      <div class="logo-proof"><figure><div class="checker"><img id="logoOriginalPreview" alt="Logo original recibido"></div><figcaption>Original recibido</figcaption></figure><figure><div class="checker"><img id="logoPreparedPreview" alt="Logo aplicado a la prenda"></div><figcaption>Versión aplicada</figcaption></figure></div>
+      <p id="logoQuality" class="help" role="status"></p>
+      <details class="logo-prep"><summary>Preparar y limpiar logo</summary>
+        <label class="checkline"><input type="checkbox" id="logoRemoveBg" data-prep="removeBg">Quitar fondo claro conectado al borde</label>
+        <label class="checkline"><input type="checkbox" id="logoInnerWhite" data-prep="innerWhite">Quitar también blancos interiores</label>
+        <div class="field"><label for="logoTolerance">Tolerancia del fondo <output id="logoToleranceValue">24</output></label><input id="logoTolerance" data-prep="tolerance" type="range" min="0" max="100" value="24"></div>
+        <label class="checkline"><input type="checkbox" id="logoTrim" data-prep="trim" checked>Recortar márgenes transparentes</label>
+        <label class="checkline"><input type="checkbox" id="logoMono" data-prep="mono">Convertir a un solo color</label>
+        <div class="field"><label for="logoMonoColor">Color único</label><input type="color" id="logoMonoColor" data-prep="monoColor" value="#18283c"></div>
+        <div class="logo-actions"><button id="prepareLogo" class="primary">Aplicar preparación</button><button id="resetLogo">Usar original</button></div>
+        <p class="help">La preparación siempre parte del original. Revisa letras y huecos antes de usarla. No añade detalle ni convierte el logo en archivo de bordado.</p>
+      </details>
+      <div class="logo-actions"><button id="downloadLogo">PNG preparado</button><button id="downloadOriginal">Archivo original</button></div>
+    </div>
+    <div class="field"><label class="range-label" for="artScale">Ancho visual <output id="artScaleValue"></output></label><input type="range" id="artScale" min="4" max="80" step="1"></div>
+    <div class="row"><div class="field"><label for="artX">Posición X (%)</label><input id="artX" type="number" min="0" max="100" step="1"></div><div class="field"><label for="artY">Posición Y (%)</label><input id="artY" type="number" min="0" max="100" step="1"></div></div>
+    <div class="field"><label class="range-label" for="artRotation">Rotación <output id="artRotationValue"></output></label><input id="artRotation" type="range" min="-180" max="180" step="1"></div>
+    <div class="row"><div class="field"><label for="logoWidthCm">Ancho solicitado (cm)</label><input id="logoWidthCm" data-logo="widthCm" type="number" min="0.1" max="150" step="0.1" placeholder="Por definir"></div><div class="field"><label for="logoHeightCm">Alto solicitado (cm)</label><input id="logoHeightCm" data-logo="heightCm" type="number" min="0.1" max="150" step="0.1" placeholder="Por definir"></div></div>
+    <p class="help">Las medidas en cm quedan en la ficha; no calibran automáticamente la foto.</p>
+    <div class="field"><label for="artDimensions">Ubicación medida / indicaciones</label><input id="artDimensions" maxlength="100" placeholder="Ej. centrado; 8 cm bajo la costura del cuello"></div>
+    <div class="field"><label for="logoColorRefs">Referencias de tintas o hilos</label><textarea id="logoColorRefs" data-logo="colorRefs" maxlength="500" placeholder="Códigos y colores solicitados; por confirmar"></textarea></div>
+    <details class="logo-prep" open><summary>Detalles para cotización y muestra</summary><p class="help">Campos opcionales · EJEMPLO. Completar con datos confirmados por el taller.</p>
+      <div class="field"><label for="logoColorCount">Cantidad de tintas / hilos</label><input id="logoColorCount" data-logo="colorCount" type="number" min="1" max="50" step="1" placeholder="Sin estimar"></div>
+      <div data-tech-fields="print"><div class="field"><label for="logoInkType">Tipo de tinta / acabado</label><input id="logoInkType" data-logo="inkType" maxlength="180" placeholder="Por definir con el taller"></div><div class="field"><label for="logoUnderbase">Base de tinta blanca</label><select id="logoUnderbase" data-logo="underbase"><option value="pending">Por definir</option><option value="yes">Solicitada</option><option value="no">Sin base blanca</option></select></div></div>
+      <div data-tech-fields="embroidery" hidden><div class="field"><label for="logoThread">Hilo y estabilizador</label><input id="logoThread" data-logo="thread" maxlength="180" placeholder="Por definir"></div><div class="field"><label for="logoDigitizing">Estado del ponchado</label><select id="logoDigitizing" data-logo="digitizing"><option value="pending">Pendiente de ponchar</option><option value="requested">Solicitado al taller</option><option value="received">Archivo recibido fuera de la app</option><option value="sampled">Probado en muestra física</option></select></div><div class="field"><label for="logoMachineRef">Referencia del archivo de máquina</label><input id="logoMachineRef" data-logo="machineRef" maxlength="180" placeholder="Nombre o referencia del archivo de ponchado"></div><div class="field"><label for="logoStitches">Puntadas informadas por el taller</label><input id="logoStitches" data-logo="stitches" type="number" min="1" max="10000000" step="1" placeholder="Sin calcular"></div></div>
+      <div data-tech-fields="sublimation" hidden><div class="field"><label for="logoTransfer">Papel / tinta / prueba de transferencia</label><textarea id="logoTransfer" data-logo="transfer" maxlength="500" placeholder="Registrar la referencia aprobada y resultado de prueba"></textarea></div></div>
+      <div class="field"><label for="logoNotes">Notas de la aplicación</label><textarea id="logoNotes" data-logo="notes" maxlength="1200" placeholder="Detalles a revisar en la muestra"></textarea></div>
+    </details>
+    <div class="logo-actions"><button id="duplicateLogo">Duplicar aplicación</button><button id="removeArt" class="danger">Eliminar diseño</button></div>
+  </div>
+</div>

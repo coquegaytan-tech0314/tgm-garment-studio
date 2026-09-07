@@ -1,0 +1,6 @@
+<dialog id="photoDetailDialog" class="photo-detail-dialog" aria-labelledby="photoDetailTitle">
+  <div class="detail-header"><div><h2 id="photoDetailTitle">Detalle de acabado</h2><p class="help">Arrastra para recorrer · rueda o pellizco para acercar</p></div><button data-close aria-label="Cerrar detalle">Cerrar</button></div>
+  <div class="detail-bar"><select id="detailView" aria-label="Lado de la prenda"><option value="front">Frente</option><option value="back">Espalda</option></select><button id="detailMinus" aria-label="Alejar">−</button><output id="detailZoom">100 %</output><button id="detailPlus" aria-label="Acercar">+</button><button id="detailFit">Encuadrar</button></div>
+  <canvas id="detailCanvas" width="1200" height="1100" tabindex="0" aria-label="Detalle ampliado de la prenda; flechas para recorrer y más o menos para acercar."></canvas>
+  <p class="detail-note" id="detailNote">Referencia visual; el acercamiento no aumenta la resolución original.</p>
+</dialog>
