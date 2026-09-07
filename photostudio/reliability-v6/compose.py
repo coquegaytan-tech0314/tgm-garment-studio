@@ -1,0 +1,42 @@
+def extend(html, root):
+    source = root / 'reliability-v6'
+    def once(before, after):
+        nonlocal html
+        if html.count(before) != 1:
+            raise RuntimeError('Expected one v6 integration anchor: ' + before[:100])
+        html = html.replace(before, after, 1)
+    html = html.replace('ESTUDIO · v5', 'ESTUDIO · v6').replace('Funciona sin conexión · v5.0', 'Funciona sin conexión · v6.0')
+    # Keep the existing storage namespace; JSON schema adds optional v6 fields.
+    once("VERSION=5,KEY=", "VERSION=6,KEY=")
+    once('![1,2,3,4,5].includes(raw.version)', '![1,2,3,4,5,6].includes(raw.version)')
+    html = html.replace('(versiones 1 a 5).', '(versiones 1 a 6).')
+    once("if(key==='x'||key==='y')a.zone=inferZone(a);", "/* Keep the operator-selected zone when adjusting coordinates. */")
+    once("state.updatedAt=new Date().toISOString();updateSummary()", "state.updatedAt=new Date(Math.max(Date.now(),(Date.parse(state.updatedAt)||0)+1)).toISOString();updateSummary()")
+    once("if(await saveOrder(true))resetOrder()", "const previous=state,revision=state.updatedAt;if(await saveOrder(true)){if(state!==previous||state.updatedAt!==revision)throw Error('El pedido cambió durante el guardado. Guarda de nuevo antes de abrir uno nuevo.');resetOrder()}")
+    once("out.pro=validatePro(raw.pro);out.photo=", "if(typeof raw.updatedAt==='string'&&Number.isFinite(Date.parse(raw.updatedAt)))out.updatedAt=new Date(raw.updatedAt).toISOString();out.pro=validatePro(raw.pro);out.photo=")
+    once("rows.map(([l,t])=>({label:l,lines:wrapText(x,t,width-220)}))", "summaryRowLayout(x,rows,width,candidateFont)")
+    once("Math.max(1,r.lines.length)*candidateFont", "Math.max(1,r.lines.length,r.labelLines.length)*candidateFont")
+    once("x.fillText(row.label,margin,y);", "row.labelLines.forEach((text,j)=>x.fillText(text,margin,y+j*font*1.25));")
+    once("Math.max(1,row.lines.length)*font", "Math.max(1,row.lines.length,row.labelLines.length)*font")
+    once("removeBg:false,innerWhite:false,cropX:0", "removeBg:false,bgTone:'light',innerWhite:false,cropX:0")
+    once("out.prep={removeBg:boolean(p.removeBg,'fondo'),", "out.prep={bgTone:oneOf(p.bgTone??'light',['light','dark'],'tono del fondo'),removeBg:boolean(p.removeBg,'fondo'),")
+    once("min>=threshold&&max-min<=options.tolerance*.8+10", "(options.bgTone==='dark'?max<=options.tolerance:min>=threshold&&max-min<=options.tolerance*.8+10)")
+    once("min>=255-options.tolerance&&max-min<=options.tolerance*.8+10", "(options.bgTone==='dark'?max<=options.tolerance:min>=255-options.tolerance&&max-min<=options.tolerance*.8+10)")
+    html = html.replace('Quitar fondo claro conectado al borde', 'Quitar fondo conectado al borde').replace('Quitar también blancos interiores', 'Quitar también el mismo fondo en huecos interiores')
+    once('<label class="checkline"><input type="checkbox" id="logoRemoveBg"', '<div class="field"><label for="logoBgTone">Fondo a retirar</label><select id="logoBgTone" data-prep="bgTone"><option value="light">Claro / blanco</option><option value="dark">Oscuro / negro</option></select></div><label class="checkline"><input type="checkbox" id="logoRemoveBg"')
+    once("l.prep.removeBg?'Fondo claro retirado'", "l.prep.removeBg?(l.prep.bgTone==='dark'?'Fondo oscuro retirado':'Fondo claro retirado')")
+    once("input[from+3]*sample.a*(a.method==='sublimation'?.95:1)", "input[from+3]*sample.a*(a.method==='sublimation'&&!panelSublimation(a)?.95:1)")
+    once("ctx.globalCompositeOperation=a.method==='sublimation'?'multiply':'source-over'", "ctx.globalCompositeOperation=a.method==='sublimation'&&!panelSublimation(a)?'multiply':'source-over'")
+    once('<div class="field"><label for="logoTransfer">', '<div class="field"><label for="logoSublimationBase">Sustrato / ruta de sublimado</label><select id="logoSublimationBase" data-logo="sublimationBase"><option value="garment">Sobre el color de tela elegido</option><option value="whitePanels">Panel blanco: fondo y gráficos impresos juntos</option></select><p class="help">Panel blanco es una propuesta de desarrollo: el color del cuerpo representa el fondo impreso. Confirmar tela, negro, dorado y uniones en muestra; no simula tinta blanca ni metálica.</p></div><div class="field"><label for="logoTransfer">')
+    once('<p class="note">Textura y caída aproximadas.', (source/'polo.html').read_text()+'<p class="note">Textura y caída aproximadas.')
+    once('ctx.drawImage(image,rect.x,rect.y,rect.w,rect.h);await photoDrawApplications', 'ctx.drawImage(image,rect.x,rect.y,rect.w,rect.h);drawPoloAccents(ctx,rect,view);await photoDrawApplications')
+    once('return {l:src.lum[i],a:src.pixels.data[i*4+3]/255}', 'return {l:applicationLuminance(src)[i],a:src.pixels.data[i*4+3]/255}')
+    once('original.src=proofSource(a);prepared.src=a.image;', 'if(original.getAttribute("src")!==proofSource(a))original.src=proofSource(a);if(prepared.getAttribute("src")!==a.image)prepared.src=a.image;')
+    once('initUI();let hadDraft=false;try{const draft=await storedDraft()', 'initUI();let hadDraft=false,recoveryFailed=false;try{const draft=await storedDraft()')
+    once("catch(e){toast('No se pudo recuperar el borrador. Puedes abrir un JSON guardado.')}", "catch(e){recoveryFailed=true;toast('No se pudo recuperar el borrador. Se conserva en almacenamiento; abre un respaldo JSON antes de editar.')}")
+    once("else saveDraft()}\n/* Local artwork", "else if(!recoveryFailed)saveDraft();else{$('#saveStatus').textContent='Borrador sin recuperar: abre un respaldo JSON';$('#saveStatus').dataset.error='true'}}\n/* Local artwork")
+    once('init().catch(e=>toast', (source/'reliability.js').read_text()+'\ninit().catch(e=>toast')
+    once('</style>', '\n#bootStatus{padding:12px;background:#eef0f9;color:#253148}#poloExtras{margin-top:16px}.internal-notice{font-size:12px;color:#657089}.photo-figure canvas{touch-action:pan-y}.photo-figure canvas.editable{touch-action:none}\n</style>')
+    once('<main', '<div id="bootStatus" role="status">Abriendo el almacenamiento de pedidos…</div><main')
+    once('<footer class="local-footer">', '<div id="exportFallback" class="note" role="status" hidden>Archivo listo. Si la descarga no inició, toca este enlace: <a id="lastExportLink">Descargar archivo</a></div><footer class="local-footer">')
+    return html

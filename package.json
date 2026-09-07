@@ -4,6 +4,11 @@
   "type": "module",
   "scripts": {
     "build": "python3 photostudio/build.py",
-    "dev": "node preview-server.mjs"
+    "dev": "node preview-server.mjs",
+    "test": "node tests/audit.cjs && node tests/edge-cases.cjs"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "0.1.100",
+    "xml-js": "1.6.11"
   }
 }

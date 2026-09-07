@@ -1,4 +1,48 @@
-# Validation — TGM v5, 2026-09-06
+# Validation — TGM v6, 2026-09-07
+
+## Current result and scope
+
+24 regression groups pass against the built standalone app: 14 in `tests/audit.cjs` and 10 in `tests/edge-cases.cjs`. Run `python3 photostudio/build.py`, then `npm test` after installing the development dependencies. The harness executes the delivered JavaScript in a Node VM with a minimal DOM and native Canvas 2D. A separate interactive Chrome session exercised the visible application. These checks establish the covered behavior; they do not guarantee an absence of bugs or certify unattended operation on every device.
+
+The code update is prepared on a separate review branch. This audit does not deploy Firebase, merge main, add authentication or publish customer material.
+
+| Area | Evidence |
+| --- | --- |
+| Controls | Every static button has a click handler. Exercised all eight tabs, keyboard tab navigation, garment/default changes, colors, contrasts, fabric and construction fields, quantities, QC and internal reference fields. Handler presence alone is not claimed as end-to-end validation of every button. |
+| Artwork | Actual PNG, JPG and SVG ingestion; original-file retention; reversible light/dark background removal, crop, restoration and prepared/original download payloads; malformed and active SVG rejection. |
+| Sleeves | Add, reuse, duplicate and delete applications; coordinates preserve their zone. Requested dimensions clear on reuse. Pixel checks verify the wearer's left/right sleeve for all three garments and both views. |
+| Rendering | All six garment views and Serigrafía/Bordado/Sublimado paths; full-piece coverage; 2000 × 2300 garment and 1600 × 1300 sleeve output. White-panel rendering differs from dark-garment multiplication. Rapid changes coalesce with one active render. Image caches stay bounded. |
+| Finished renders | Image ingestion, signature checks and rejection of exports after a visual change makes an imported render stale. Unsupported WebGL keeps the photo workspace usable. |
+| Data validation | v1–v5 migration into v6; invalid schema/fields, dates, quantities, ranges, duplicate applications, unsafe images, and the 12-application/eight-reference limits. |
+| Persistence | Mixed older localStorage order lists merge; quota failures stop replacement; edits stop stale asynchronous replacement; autosaved drafts are archived, including care-only and construction-only drafts. Failed IndexedDB opens retry and version changes close old connections. |
+| Revision safety | Same-millisecond edits receive distinct revisions. Save-and-new waits for successful storage and preserves the current record on failure. |
+| Exports | PNG, sleeve PNG, full JSON, client PDF, internal ficha, caption fallback and print preparation handlers. A native download link remains visible after generation. Long PDF labels fit inside their label column. |
+| Boundaries | Workshop sublimation composition guard; exact attached PDF retention; internal notes and source filenames excluded from client specification text/caption. Uploaded image content itself is not redacted. |
+
+## Current interactive Chrome checks
+
+Loaded the existing synthetic v5 draft in v6, edited a black polo, collar/placket accents and sleeve text, selected Bordado and a requested dimension, entered a sample quantity and internal reference request, saved through Guardar pedido, and restored the record through the visible interface. Opened all eight tabs and the four-page synthetic reference preview. Checked front/back comparison, detail zoom, fit, side changes and dialog controls. Selecting Boceto 3D when WebGL was unavailable left Acabado usable after the fix.
+
+The JSON button produced a visible native download link. Automatic PNG download completion events were not captured, including one longer retry; actual browser-saved bytes remain unverified. Native Canvas and PDF output generation was verified separately. No application-origin console errors or warnings were observed in the inspected session.
+
+Browser file-chooser testing was not repeated after an earlier approval denial. No alternate browser upload path was used. Actual image/attachment ingestion was tested with the app's local functions. Physical iOS/Android file picking, touch dragging, local storage and download completion remain unverified. Responsive CSS and non-editing canvas scroll behavior were reviewed; the session did not emulate physical devices.
+
+## Customer sample validation
+
+Prepared the requested client sample outside the repository. Its v6 JSON passes the application's validator, retains seven artwork applications and seven reference attachments, and preserves all nine supplied original files byte-for-byte (SHA-256 comparison). Quantities, exact gsm, measured dimensions, owner, due date, production times and QC approval remain unset when unknown. The product options are PIQUE ATLANTE and POLO FOMER; actual composition and material properties are pending the factory's product sheets.
+
+The editable render is a development reference, not a calibrated fit or production art. The client PDF lists the composition requested in the ficha, not a verified property of either proposed product. Generated the internal reference and one-page client PDFs using the app, rendered the actual PDFs with Poppler, and reviewed every page. Customer JSON, inputs, previews and PDFs are excluded from this repository.
+
+## Current operating limits
+
+- This is local browser storage, without staff authentication, shared orders, a server backup or cross-device synchronization. Hosting access control and downloaded JSON backups are separate requirements for internal operation.
+- Runtime code and images are embedded; the standalone app needs no CDN or network. Accessing a hosted address offline before it has loaded is not guaranteed. Changing file path, origin or browser may require importing a JSON backup.
+- Cache limits and a serialized preview queue reduce repeated work; large orders still depend on device memory and browser quota. An interrupted tab or full disk can still require recovery from a backup.
+- Photo masks, textile texture, bands, seams, thread relief, material appearance and artwork displacement are approximate. Fixed garment bases cannot validate measurements, semi-fitted pattern grading, exact physical color or cloth behavior.
+- No embroidery digitizing, DST/EMB generation, production ink separations, cutting patterns, calibrated sublimation layouts, process settings or manufacturing guarantees are generated.
+- PDFs are raster pages, without searchable text. Non-image attachments are listed in the internal PDF; exact originals remain in the full JSON.
+
+## Earlier validation record — v5, 2026-09-06
 
 ## v5 sleeve changes
 
