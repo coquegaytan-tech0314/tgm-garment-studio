@@ -1,8 +1,8 @@
-1. Abre TGM_Pedidos.html; pulsa Nuevo y registra cliente interno, número de pedido y fecha.
+1. Abre dist/index.html; pulsa Nuevo y registra cliente interno, número de pedido y fecha.
 2. Elige Playera, Hoodie o Polo; configura cuerpo, contrastes, composición, tela, gramaje y confección.
 3. En Mangas elige Izquierda o Derecha al vestir; añade color, borde o franjas y notas del detalle solicitado.
 4. Pulsa Cargar logo aquí o Agregar texto aquí; elige frente/espalda y técnica, o reutiliza una aplicación del pedido.
-5. En Logos prepara el original con recorte, limpieza o color único; ajusta posición, escala, giro y medidas solicitadas.
+5. En Logos prepara el original con recorte, limpieza de fondo claro/oscuro o color único; ajusta posición, escala, giro y medidas solicitadas.
 6. Registra Bordado, Serigrafía o Sublimado; para sublimado por piezas recorta la lámina y registra 100% poliéster según la regla del taller.
 7. Completa tallas S–XXL, cuidados, empaque, QC y datos de taller disponibles; deja en blanco lo que falte.
 8. En Ficha registra solicitud, medidas y desarrollo de muestra; adjunta PDF, imágenes o archivos de bordado como referencia.

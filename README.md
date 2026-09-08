@@ -1,4 +1,4 @@
-# TGM — Garment Order Studio v5
+# TGM — Garment Order Studio v6
 
 An offline internal order and finished-look preview app for Tejidos Gaytán de Moroleón. The app, reference sheets, exports, and staff guide are in Spanish. No accounts, backend, storefront, network connection, or installation is needed.
 
@@ -8,7 +8,7 @@ An offline internal order and finished-look preview app for Tejidos Gaytán de M
 
 This repository is intended to be **private**. It contains app code, generated garment bases, documentation and generic preview images. Saved client pedidos and uploaded artwork stay in the browser or in separately downloaded JSON backups; they are not part of this repository.
 
-Download the repository ZIP, extract it, and open **dist/index.html** in a desktop browser. This is the same standalone v5 app delivered as TGM_Pedidos.html. No install or build is required to run the committed app. Mobile layouts and touch controls are included, but physical iPhone/Android uploads, storage and exports still need device testing.
+Download the repository ZIP, extract it, and open **dist/index.html** in a desktop browser. This is the standalone app. No install or build is required to run the committed app. Mobile layouts and touch controls are included, but physical iPhone/Android uploads, storage and exports still need device testing.
 
 To rebuild after editing source, use Python 3 (standard library only):
 
@@ -18,15 +18,27 @@ python3 photostudio/build.py
 
 With Node.js installed, the equivalent is `npm run build`. The optional local preview command is `npm run dev`; it serves the app on port 4173 and binds to this computer by default. It does not publish the site.
 
-Edit the files in `photostudio/` and regenerate `dist/index.html`; keep both source and generated HTML in the same commit. `photostudio/order-v4/` contains the logo, technique and ficha extension; `photostudio/sleeves-v5/` contains the dedicated sleeve workflow. `photostudio/v2-reference.html` is the retained baseline used by the build. The root `studio3d.js` is an earlier sketch reference, not a separate runtime dependency.
+Edit the files in `photostudio/` and regenerate `dist/index.html`; keep both source and generated HTML in the same commit. `photostudio/order-v4/` contains the logo, technique and ficha extension; `photostudio/sleeves-v5/` contains the dedicated sleeve workflow; `photostudio/reliability-v6/` contains the reliability and reference changes. `photostudio/v2-reference.html` is the retained baseline used by the build. The root `studio3d.js` is an earlier sketch reference, not a separate runtime dependency.
 
 The repository provides version history and code collaboration. It does not create a hosted app, share browser storage, invite coworkers or enable GitHub Pages. Hosting and shared order storage are separate steps. No open-source license has been added.
 
-## Standalone delivery
+## Reliability update — v6
 
-Download **TGM_Pedidos.html** and open the actual file in your browser. All code and garment images are embedded. Keep a JSON backup before moving to a newer app file: browsers may isolate storage by local file, browser, and device. Use **Abrir → Importar archivo JSON** to load earlier orders.
+This update preserves the v5 storage namespace and accepts existing JSON orders. Opening another order or starting a new one waits for the current record to save and stops if storage fails or the operator edits while saving. Autosaved details are archived before replacing a draft. Orders from accessible older storage namespaces are merged, rejected IndexedDB connections can retry, and damaged recovery data is not immediately overwritten with a blank draft.
 
-The ZIP includes the standalone app, source, 10-line staff guide, actual browser screenshots, and a generic sample pedido with internal/client PDFs. Examples are labeled EJEMPLO and contain no factory production quantities or supplied client documents. New pedidos start without example artwork.
+Preview changes share one render queue; image caches are bounded. Numeric logo positioning keeps the selected sleeve zone. Unsupported WebGL returns to the photo workspace. Every export also leaves a native download link for browsers that suppress automatic downloads. Client PDF labels wrap inside their column, and the internal ficha uses a contrasting proof background for pale artwork.
+
+Polo preview options now include fine collar piping and a colored inner placket. These are approximate overlays on the existing base. Sublimation can record a proposed **white-panel route**, where the selected body color represents the printed background; this is distinct from printing over pre-dyed dark fabric. Confirm material, process and a physical sample. The preview does not simulate opaque white or metallic ink.
+
+The automated audit has 24 passing test groups. Tests run the actual built JavaScript, event handlers and native Canvas 2D. They do not certify every browser or physical phone. See [VALIDATION.md](VALIDATION.md) for coverage and limits.
+
+## Local use and internal hosting
+
+All runtime code and garment images are embedded in **dist/index.html**. Keep a downloaded JSON backup before moving to a newer app file or hosting address: browsers isolate storage by origin, local file, browser and device. Use **Abrir → Importar archivo JSON** to load earlier orders.
+
+A hosted copy still stores orders locally on each operator's browser. This app contains no sign-in or access-control layer; an “internal” label does not restrict visitors. Configure staff access at your chosen host before treating the URL as private. Keep customer orders, logos and PDFs out of this source repository and the hosting upload. Hosting does not synchronize pedidos between coworkers.
+
+Customer samples are delivered separately as JSON and reference files. Import them through Abrir; the app starts without customer data. Full JSON and internal fichas contain client information, while client summaries omit the dedicated internal fields.
 
 ## Sleeves — new in v5
 
@@ -44,7 +56,7 @@ Sleeve configuration, original artwork and per-view placement are retained in th
 
 Open **Logos → Cargar logo del cliente** for PNG, SVG or JPG, up to 5 MB. Up to 12 applications each retain their original file, prepared image, technique and placement. Solid text is also supported.
 
-**Preparar logo** offers percentage-based cropping, removal of light backgrounds connected to the image border, optional removal of interior whites, transparent-margin trimming, and one-color conversion. Preparation always starts from the preserved original and is reversible. Compare original/applied thumbnails or download either. This is image cleanup; it does not trace vectors or invent missing detail.
+**Preparar logo** offers percentage-based cropping, removal of light or dark backgrounds connected to the image border, optional removal of matching interior backgrounds, transparent-margin trimming, and one-color conversion. Preparation always starts from the preserved original and is reversible. Compare original/applied thumbnails or download either. This is image cleanup; it does not trace vectors or invent missing detail.
 
 Localized applications can be dragged or positioned with numeric controls on the front/back, chest, sleeves or hem. Arrow keys move the selected design; Shift moves it farther. Width/height in centimeters and measured placement instructions are stored specifications; the generic photo is not calibrated in centimeters. Effective image resolution is advisory.
 
@@ -68,7 +80,7 @@ Attach up to eight original references, each up to 5 MB: PDF, PNG/JPG, DST or EM
 
 **Revisar ficha completa** opens the paginated report. **PDF de ficha interna** exports the **FICHA DE REFERENCIA PARA COTIZACIÓN Y DESARROLLO DE MUESTRA** with mockups, original/applied artwork and entered specifications. It grows as needed so details are not cut off to fit one page. Pages are images; PDF text is not searchable.
 
-**Guardar pedido** saves the full record; the draft also saves automatically. IndexedDB is primary storage, with localStorage fallback. Saving waits for storage completion and reports failures. **JSON** backs up all ficha data, original/prepared artwork, references and completed renders. Version 5 imports versions 1–5 and reads accessible older storage without overwriting it. Large records depend on available browser quota; keep downloaded backups.
+**Guardar pedido** saves the full record; the draft also saves automatically. IndexedDB is primary storage, with localStorage fallback. Saving waits for storage completion and reports failures. **JSON** backs up all ficha data, original/prepared artwork, references and completed renders. Version 6 imports versions 1–6 and reads accessible older storage without overwriting it. Large records depend on available browser quota; keep downloaded backups.
 
 ## Realistic reference and client exports
 
@@ -96,8 +108,10 @@ The client export remains **PDF · 1 página**, plus **PNG frente**, **PNG espal
 
 ## Source and validation
 
-Vanilla HTML/CSS/JavaScript, Canvas 2D and an optional WebGL sketch. No CDN, Firebase, backend or dashboard integration. Schema: tgm-pedido, version 5. Fallback prefix: tgm-estudio-v5. IndexedDB database: tgm-pedidos-local.
+Vanilla HTML/CSS/JavaScript, Canvas 2D and an optional WebGL sketch. No CDN, Firebase, backend or dashboard integration. Schema: tgm-pedido, version 6. Fallback prefix: tgm-estudio-v5. IndexedDB database: tgm-pedidos-local.
 
-In this repository, run `python3 photostudio/build.py` to produce dist/index.html. In the earlier standalone delivery ZIP, the same source directory is named `source`, so its command is `python3 source/build.py`. Source includes the retained v2 baseline, photo compositor, generated assets/prompt record, order-v4 modules and the sleeves-v5 extension. Optionally run `npm run dev` afterward for the dependency-free Node preview server. Opening the committed dist/index.html or the standalone TGM_Pedidos.html requires none of those steps.
+In this repository, run `python3 photostudio/build.py` to produce dist/index.html. In the earlier standalone delivery ZIP, the same source directory is named `source`, so its command is `python3 source/build.py`. Source includes the retained v2 baseline, photo compositor, generated assets/prompt record, order-v4 modules, sleeves-v5 and reliability-v6 extensions. Optionally run `npm run dev` afterward for the dependency-free Node preview server. Opening the committed dist/index.html or the standalone TGM_Pedidos.html requires none of those steps.
 
 See VALIDATION.md for completed checks and remaining browser-upload, download and physical-device limits.
+
+For the regression harness, install the development dependencies with `npm install`, then run `npm test`. The delivered HTML does not need these packages. Tests use `@napi-rs/canvas` for actual image compositing and `xml-js` for the minimal DOM harness. They do not upload data, publish a site, or access client orders.
