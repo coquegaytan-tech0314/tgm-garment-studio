@@ -182,7 +182,9 @@ getImage=async function(src){
 };
 const loadOrderBeforeCloud=loadOrder;
 loadOrder=async function(raw){
+  const previous=state,revision=state.updatedAt;
   const hydrated=await hydrateCloudPedido(raw);
+  if(state!==previous||state.updatedAt!==revision)throw Error('El pedido cambió durante la lectura. Vuelve a abrir el archivo.');
   return loadOrderBeforeCloud(hydrated);
 };
 const initUIBeforeCloud=initUI;
