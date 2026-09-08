@@ -11,7 +11,7 @@ function cloudErrorMessage(error){
   const text=String(error?.message||error||'');
   if(/TODO_|apiKey|configuración|config/i.test(text))return 'Nube: falta apiKey o storageBucket en firebase-config.';
   if(/Failed to fetch|NetworkError|ERR_INTERNET|offline|Load failed/i.test(text))return 'Nube: sin conexión.';
-  if(/unauthorized|permission|storage\/unauthorized/i.test(text))return 'Nube: sin permiso de Storage.';
+  if(/unauthorized|permission|storage\/unauthorized/i.test(text))return 'Nube: Storage rechazó el acceso (reglas actuales).';
   if(/CORS|blocked/i.test(text))return 'Nube: el navegador bloqueó Storage.';
   return text.slice(0,180)||'Nube: no se pudo completar.';
 }
@@ -145,9 +145,10 @@ async function openCloudLibrary(){
     renderCloudList(root,await listCloudPedidos());
     setCloudStatus('Nube: lista de pedidos actualizada.','ok');
   }catch(error){
-    root.textContent=cloudErrorMessage(error);
-    setCloudStatus(cloudErrorMessage(error),'error');
-    throw error;
+    const message=cloudErrorMessage(error);
+    root.textContent=message;
+    setCloudStatus(message,'error');
+    throw Error(message);
   }
 }
 function bindCloud(){

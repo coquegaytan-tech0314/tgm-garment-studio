@@ -29,10 +29,13 @@ def extend(html, root):
         '<button id="cloudOpen">Abrir desde la nube</button></div></section>'
     )
     once(
+        '<p class="subtle">Configura la prenda y revisa su acabado antes de compartirla.</p></div><div class="actions">',
+        '<p class="subtle">Configura la prenda y revisa su acabado antes de compartirla.</p>'
+        '<p class="subtle save-message" id="cloudStatus" role="status">Nube: en espera</p></div><div class="actions">'
+    )
+    once(
         '<span class="save-message" id="saveStatus" role="status">Borrador local</span><span>Funciona sin conexión · v6.0</span></footer>',
-        '<span class="cloud-footer"><span class="save-message" id="saveStatus" role="status">Borrador local</span>'
-        '<span class="save-message" id="cloudStatus" role="status">Nube: en espera</span></span>'
-        '<span>Borrador local · nube opcional · v6.0</span></footer>'
+        '<span class="save-message" id="saveStatus" role="status">Borrador local</span><span>Borrador local · nube opcional · v6.0</span></footer>'
     )
     once(
         '<p class="help">Pedidos guardados en este navegador</p>',

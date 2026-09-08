@@ -60,7 +60,7 @@
 <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
 </defs></svg>
 <header class="topbar"><div class="brand"><div class="monogram">TGM</div><div><strong>TEJIDOS GAYTÁN DE MOROLEÓN</strong><span>Estudio de prendas <b class="pro-version">ESTUDIO · v6</b></span></div></div><span class="internal">Uso interno</span></header>
-<section class="workspace-head"><div><h1 id="workspaceTitle">Nuevo pedido</h1><p class="subtle">Configura la prenda y revisa su acabado antes de compartirla.</p></div><div class="actions"><button id="newOrder"><svg class="icon"><use href="#i-plus"/></svg>Nuevo</button><button id="openOrders"><svg class="icon"><use href="#i-folder"/></svg>Abrir</button><button id="downloadJson"><svg class="icon"><use href="#i-download"/></svg>JSON</button><button id="saveOrder" class="primary"><svg class="icon"><use href="#i-save"/></svg>Guardar pedido</button><button id="cloudUpload">Subir a la nube</button><button id="cloudOpen">Abrir desde la nube</button></div></section>
+<section class="workspace-head"><div><h1 id="workspaceTitle">Nuevo pedido</h1><p class="subtle">Configura la prenda y revisa su acabado antes de compartirla.</p><p class="subtle save-message" id="cloudStatus" role="status">Nube: en espera</p></div><div class="actions"><button id="newOrder"><svg class="icon"><use href="#i-plus"/></svg>Nuevo</button><button id="openOrders"><svg class="icon"><use href="#i-folder"/></svg>Abrir</button><button id="downloadJson"><svg class="icon"><use href="#i-download"/></svg>JSON</button><button id="saveOrder" class="primary"><svg class="icon"><use href="#i-save"/></svg>Guardar pedido</button><button id="cloudUpload">Subir a la nube</button><button id="cloudOpen">Abrir desde la nube</button></div></section>
 <div id="bootStatus" role="status">Abriendo el almacenamiento de pedidos…</div><main class="layout"><section class="editor" aria-label="Configuración del pedido">
 <div class="order-fields"><div class="section-title"><h2>01 <span style="font-weight:500;color:var(--muted)">/ Pedido</span></h2><span class="small-label">Datos internos</span></div><div class="field"><label for="client">Cliente</label><input id="client" data-bind="client" maxlength="90" placeholder="Nombre del cliente" autocomplete="off"></div><div class="row"><div class="field"><label for="orderNumber">N.º de pedido</label><input id="orderNumber" data-bind="number" maxlength="40" placeholder="Sin asignar" autocomplete="off"></div><div class="field"><label for="orderDate">Fecha</label><input id="orderDate" data-bind="date" type="date"></div></div></div>
 <nav class="tabs" role="tablist" aria-label="Etapas del pedido"><button role="tab" id="tab-garment" data-tab="garment" aria-controls="panel-garment" aria-selected="true">Prenda</button><button role="tab" id="tab-sleeves" data-tab="sleeves" aria-controls="panel-sleeves" aria-selected="false" tabindex="-1">Mangas</button><button role="tab" id="tab-art" data-tab="art" aria-controls="panel-art" aria-selected="false" tabindex="-1">Logos</button><button role="tab" id="tab-sizes" data-tab="sizes" aria-controls="panel-sizes" aria-selected="false" tabindex="-1">Tallas</button><button role="tab" id="tab-workshop" data-tab="workshop" aria-controls="panel-workshop" aria-selected="false" tabindex="-1">Taller</button><button role="tab" id="tab-studio" data-tab="studio" aria-controls="panel-studio" aria-selected="false" tabindex="-1">Boceto 3D</button><button role="tab" id="tab-photo" data-tab="photo" aria-controls="panel-photo" aria-selected="false" tabindex="-1">Acabado</button><button role="tab" id="tab-ficha" data-tab="ficha" aria-controls="panel-ficha" aria-selected="false" tabindex="-1">Ficha de referencia</button></nav>
@@ -259,7 +259,7 @@
 <div class="model-toolbar"><div class="camera-buttons" aria-label="Vistas de cámara"><button data-camera="front">Frente</button><button data-camera="back">Espalda</button><button data-camera="left">Izquierda</button><button data-camera="right">Derecha</button><button data-camera="perspective">Perspectiva</button></div><div class="viewport-actions"><button id="spin3d" aria-pressed="false">Girar 360°</button><button id="fit3d" aria-label="Centrar y encuadrar la prenda">Centrar</button></div></div>
 <div class="stage3d" id="studioStage" data-background="light"><div class="ground-shadow"></div><div class="stage-label"><b>TGM</b> / Estudio de materiales</div><canvas id="webglCanvas" width="1000" height="1000" tabindex="0" aria-label="Prenda 3D. Arrastra para girar. Rueda o pellizco para zoom. Flechas para girar y tecla Inicio para centrar."></canvas><div class="axis-key">3D · referencia visual</div><span id="cameraLabel" class="camera-label">Giro 24°</span></div>
 <div class="studio-hint"><span>Arrastra para girar · rueda / pellizco para zoom</span><button id="edit2d">Colocar diseños en 2D</button></div></section><section class="flat-pane" aria-label="Distribución gráfica de frente y espalda"><div class="preview-bar"><div><h2>Distribución 2D</h2><p class="subtle" id="previewName">Playera · sin cantidad</p></div><div style="display:flex;gap:8px;align-items:center"><div class="segmented" aria-label="Estilo de la vista 2D"><button data-render="realistic" aria-pressed="true">Sombreado</button><button data-render="flat" aria-pressed="false">Plano</button></div><button id="zoomPreview" aria-label="Ampliar vista"><svg class="icon"><use href="#i-zoom"/></svg></button></div></div><div class="studio"><figure class="garment-view"><div class="canvas-wrap"><canvas id="frontCanvas" width="800" height="920" role="img" aria-label="Vista frontal de la prenda"></canvas></div><figcaption><span class="view-dash"></span>Frente<span class="view-dash"></span></figcaption></figure><figure class="garment-view"><div class="canvas-wrap"><canvas id="backCanvas" width="800" height="920" role="img" aria-label="Vista posterior de la prenda"></canvas></div><figcaption><span class="view-dash"></span>Espalda<span class="view-dash"></span></figcaption></figure></div><p class="flat-note">Distribución gráfica de referencia. No es un patrón de corte.</p></section></div><div class="preview-bottom"><span><strong id="summaryColor">#255AD9</strong> · <span id="summaryFabric">Tela por definir</span></span><span class="badge">Referencia visual</span></div></div>
-<section class="export-card" aria-label="Archivos para el cliente"><div class="export-top"><div><h2>Listo para compartir</h2><p class="subtle">Exporta la vista de acabado, sin datos internos.</p></div><button id="printOrder" style="color:white;background:transparent;border-color:#5b6c81">Imprimir</button></div><div class="export-buttons"><button id="exportAngle"><svg class="icon"><use href="#i-image"/></svg>PNG vista 3D</button><button id="exportFront"><svg class="icon"><use href="#i-image"/></svg>PNG frente</button><button id="exportBack"><svg class="icon"><use href="#i-image"/></svg>PNG espalda</button><button id="exportPdf" class="pdf-button"><svg class="icon"><use href="#i-download"/></svg>PDF · 1 página</button></div><div class="caption-row"><p id="captionPreview">así se vería terminada tu playera. quedo pendiente de tus comentarios.</p><button id="copyCaption"><svg class="icon"><use href="#i-copy"/></svg>Copiar mensaje</button></div></section><div id="exportFallback" class="note" role="status" hidden>Archivo listo. Si la descarga no inició, toca este enlace: <a id="lastExportLink">Descargar archivo</a></div><footer class="local-footer"><span class="cloud-footer"><span class="save-message" id="saveStatus" role="status">Borrador local</span><span class="save-message" id="cloudStatus" role="status">Nube: en espera</span></span><span>Borrador local · nube opcional · v6.0</span></footer></section></main>
+<section class="export-card" aria-label="Archivos para el cliente"><div class="export-top"><div><h2>Listo para compartir</h2><p class="subtle">Exporta la vista de acabado, sin datos internos.</p></div><button id="printOrder" style="color:white;background:transparent;border-color:#5b6c81">Imprimir</button></div><div class="export-buttons"><button id="exportAngle"><svg class="icon"><use href="#i-image"/></svg>PNG vista 3D</button><button id="exportFront"><svg class="icon"><use href="#i-image"/></svg>PNG frente</button><button id="exportBack"><svg class="icon"><use href="#i-image"/></svg>PNG espalda</button><button id="exportPdf" class="pdf-button"><svg class="icon"><use href="#i-download"/></svg>PDF · 1 página</button></div><div class="caption-row"><p id="captionPreview">así se vería terminada tu playera. quedo pendiente de tus comentarios.</p><button id="copyCaption"><svg class="icon"><use href="#i-copy"/></svg>Copiar mensaje</button></div></section><div id="exportFallback" class="note" role="status" hidden>Archivo listo. Si la descarga no inició, toca este enlace: <a id="lastExportLink">Descargar archivo</a></div><footer class="local-footer"><span class="save-message" id="saveStatus" role="status">Borrador local</span><span>Borrador local · nube opcional · v6.0</span></footer></section></main>
 <dialog id="ordersDialog" aria-labelledby="ordersTitle"><div class="dialog-body"><h2 id="ordersTitle">Abrir pedido</h2><input id="importJson" class="hidden-input" type="file" accept=".json,application/json"><label class="upload-label" for="importJson"><svg class="icon"><use href="#i-folder"/></svg>Importar archivo JSON</label><p class="help">Pedidos guardados en este navegador. Para compartirlos, usa Subir a la nube.</p><div id="savedOrders" class="saved-orders"></div></div><div class="dialog-actions"><button data-close>Cerrar</button></div></dialog>
 <dialog id="cloudDialog" aria-labelledby="cloudTitle"><div class="dialog-body"><h2 id="cloudTitle">Abrir desde la nube</h2><p class="help">Pedidos compartidos en Firebase Storage. El borrador de este navegador no se borra.</p><div id="cloudOrders" class="saved-orders"></div></div><div class="dialog-actions"><button data-close>Cerrar</button></div></dialog>
 <dialog id="newDialog" aria-labelledby="newTitle"><div class="dialog-body"><h2 id="newTitle">Comenzar un pedido nuevo</h2><p>Guarda el pedido actual para conservarlo en este navegador o descarga su JSON.</p></div><div class="dialog-actions"><button data-close>Cancelar</button><button id="newWithoutSaving">Nuevo sin guardar</button><button class="primary" id="saveAndNew">Guardar y crear</button></div></dialog>
@@ -920,37 +920,31 @@ init=async function(){
 };
 
 /* Client firebaseConfig for project tgm-garment-studio.
+   Web app “TGM Garment Studio” created by Account Manager.
    apiKey is expected in browser apps (restricted by HTTP referrer + Storage rules).
-   Web app “TGM Garment Studio” provided by Account Manager.
-
-   Required fields:
-   - apiKey
-   - projectId          = tgm-garment-studio
-   - storageBucket      = tgm-garment-studio.firebasestorage.app
-   - appId
+   This PR does not change Storage rules.
 */
-const TGM_FIREBASE_PROJECT_ID = 'tgm-garment-studio';
-const TGM_FIREBASE_STORAGE_BUCKET = 'tgm-garment-studio.firebasestorage.app';
-const TGM_FIREBASE_CONFIG = {
-  apiKey: 'AIzaSyD-qGSXaVEMQERz07Eabu9M-T2_7a5Q7Gc',
-  authDomain: 'tgm-garment-studio.firebaseapp.com',
-  projectId: TGM_FIREBASE_PROJECT_ID,
-  storageBucket: TGM_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: '821421188029',
-  appId: '1:821421188029:web:ffe938352ab2eef8dce8'
+const firebaseConfig = {
+  apiKey: "AIzaSyD-qGSXaVEMQERz07Eabu9M-T2_7a5Q7Gc",
+  authDomain: "tgm-garment-studio.firebaseapp.com",
+  projectId: "tgm-garment-studio",
+  storageBucket: "tgm-garment-studio.firebasestorage.app",
+  messagingSenderId: "821421188029",
+  appId: "1:821421188029:web:ffe938352ab2eef8dce8"
 };
+const TGM_FIREBASE_PROJECT_ID = firebaseConfig.projectId;
+const TGM_FIREBASE_STORAGE_BUCKET = firebaseConfig.storageBucket;
+const TGM_FIREBASE_CONFIG = firebaseConfig;
 const TGM_FIREBASE_SDK = {
   app: 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js',
   storage: 'https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js'
 };
 function tgmFirebaseConfigUsable(config){
   const cfg = config || TGM_FIREBASE_CONFIG;
-  return Boolean(cfg.apiKey && !String(cfg.apiKey).startsWith('TODO_') && cfg.projectId === TGM_FIREBASE_PROJECT_ID && cfg.storageBucket === TGM_FIREBASE_STORAGE_BUCKET);
+  return Boolean(cfg.apiKey && cfg.appId && cfg.projectId === TGM_FIREBASE_PROJECT_ID && cfg.storageBucket === TGM_FIREBASE_STORAGE_BUCKET);
 }
 function tgmFirebaseInitConfig(config){
-  const cfg = {...(config || TGM_FIREBASE_CONFIG)};
-  for(const key of Object.keys(cfg))if(String(cfg[key]).startsWith('TODO_') || cfg[key]==='')delete cfg[key];
-  return cfg;
+  return {...(config || TGM_FIREBASE_CONFIG)};
 }
 
 const TGM_CLOUD_BUCKET = 'tgm-garment-studio.firebasestorage.app';
@@ -1009,7 +1003,7 @@ function cloudErrorMessage(error){
   const text=String(error?.message||error||'');
   if(/TODO_|apiKey|configuración|config/i.test(text))return 'Nube: falta apiKey o storageBucket en firebase-config.';
   if(/Failed to fetch|NetworkError|ERR_INTERNET|offline|Load failed/i.test(text))return 'Nube: sin conexión.';
-  if(/unauthorized|permission|storage\/unauthorized/i.test(text))return 'Nube: sin permiso de Storage.';
+  if(/unauthorized|permission|storage\/unauthorized/i.test(text))return 'Nube: Storage rechazó el acceso (reglas actuales).';
   if(/CORS|blocked/i.test(text))return 'Nube: el navegador bloqueó Storage.';
   return text.slice(0,180)||'Nube: no se pudo completar.';
 }
@@ -1143,9 +1137,10 @@ async function openCloudLibrary(){
     renderCloudList(root,await listCloudPedidos());
     setCloudStatus('Nube: lista de pedidos actualizada.','ok');
   }catch(error){
-    root.textContent=cloudErrorMessage(error);
-    setCloudStatus(cloudErrorMessage(error),'error');
-    throw error;
+    const message=cloudErrorMessage(error);
+    root.textContent=message;
+    setCloudStatus(message,'error');
+    throw Error(message);
   }
 }
 function bindCloud(){
