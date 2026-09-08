@@ -8,3 +8,4 @@
 8. En Ficha registra solicitud, medidas y desarrollo de muestra; adjunta PDF, imágenes o archivos de bordado como referencia.
 9. Revisa Frente, Espalda y Ampliar manga; exporta PNG de prenda/manga, PDF de una página y copia el mensaje para el cliente.
 10. Descarga el PDF de ficha interna, pulsa Guardar pedido y respalda todo en JSON; recupéralo desde Abrir.
+11. Para compartir el pedido con otro navegador, pulsa Subir a la nube; en la otra máquina usa Abrir desde la nube. El guardado local no se sustituye.

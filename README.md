@@ -20,7 +20,7 @@ With Node.js installed, the equivalent is `npm run build`. The optional local pr
 
 Edit the files in `photostudio/` and regenerate `dist/index.html`; keep both source and generated HTML in the same commit. `photostudio/order-v4/` contains the logo, technique and ficha extension; `photostudio/sleeves-v5/` contains the dedicated sleeve workflow; `photostudio/reliability-v6/` contains the reliability and reference changes. `photostudio/v2-reference.html` is the retained baseline used by the build. The root `studio3d.js` is an earlier sketch reference, not a separate runtime dependency.
 
-The repository provides version history and code collaboration. It does not create a hosted app, share browser storage, invite coworkers or enable GitHub Pages. Hosting and shared order storage are separate steps. No open-source license has been added.
+The repository provides version history and code collaboration. Public GitHub Pages and Firebase Hosting are already in use; shared pedidos use **Subir a la nube** / **Abrir desde la nube** against Firebase Storage. No open-source license has been added.
 
 ## Reliability update — v6
 
@@ -36,7 +36,7 @@ The automated audit has 24 passing test groups. Tests run the actual built JavaS
 
 All runtime code and garment images are embedded in **dist/index.html**. Keep a downloaded JSON backup before moving to a newer app file or hosting address: browsers isolate storage by origin, local file, browser and device. Use **Abrir → Importar archivo JSON** to load earlier orders.
 
-A hosted copy still stores orders locally on each operator's browser. This app contains no sign-in or access-control layer; an “internal” label does not restrict visitors. Configure staff access at your chosen host before treating the URL as private. Keep customer orders, logos and PDFs out of this source repository and the hosting upload. Hosting does not synchronize pedidos between coworkers.
+A hosted copy still stores orders locally on each operator's browser. **Subir a la nube** / **Abrir desde la nube** optionally share a pedido and its artwork through Firebase Storage; the local draft library stays the offline fallback. This app contains no sign-in or access-control layer; an “internal” label does not restrict visitors. Configure staff access at your chosen host before treating the URL as private. Keep customer orders, logos and PDFs out of this source repository and the hosting upload.
 
 Customer samples are delivered separately as JSON and reference files. Import them through Abrir; the app starts without customer data. Full JSON and internal fichas contain client information, while client summaries omit the dedicated internal fields.
 
@@ -108,7 +108,9 @@ The client export remains **PDF · 1 página**, plus **PNG frente**, **PNG espal
 
 ## Source and validation
 
-Vanilla HTML/CSS/JavaScript, Canvas 2D and an optional WebGL sketch. No CDN, Firebase, backend or dashboard integration. Schema: tgm-pedido, version 6. Fallback prefix: tgm-estudio-v5. IndexedDB database: tgm-pedidos-local.
+Vanilla HTML/CSS/JavaScript, Canvas 2D and an optional WebGL sketch. Schema: tgm-pedido, version 6. Fallback prefix: tgm-estudio-v5. IndexedDB database: tgm-pedidos-local.
+
+Optional shared storage uses the Firebase JS SDK (modular v10, CDN) and Firebase Storage only. Local IndexedDB/localStorage remains the offline draft library. Cloud paths: `pedidos/{orderId}/pedido.json` and `pedidos/{orderId}/art/{artworkId}-{safeFileName}`. Client config lives in `photostudio/cloud/firebase-config.js` for project `tgm-garment-studio` and bucket `tgm-garment-studio.firebasestorage.app`. No Tintorería/dyeing APIs, warehouse SKUs or Storage rules are changed here. Firebase Hosting public folder is `dist` (see `firebase.json`).
 
 In this repository, run `python3 photostudio/build.py` to produce dist/index.html. In the earlier standalone delivery ZIP, the same source directory is named `source`, so its command is `python3 source/build.py`. Source includes the retained v2 baseline, photo compositor, generated assets/prompt record, order-v4 modules, sleeves-v5 and reliability-v6 extensions. Optionally run `npm run dev` afterward for the dependency-free Node preview server. Opening the committed dist/index.html or the standalone TGM_Pedidos.html requires none of those steps.
 
