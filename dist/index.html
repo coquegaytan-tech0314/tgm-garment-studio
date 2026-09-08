@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Configurador interno de prendas y pedidos de Tejidos Gaytán de Moroleón. Funciona sin conexión.">
 <meta name="theme-color" content="#142337">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://www.gstatic.com; style-src 'unsafe-inline'; img-src data: blob: https://firebasestorage.googleapis.com https://*.firebasestorage.app https://storage.googleapis.com; connect-src 'self' https://www.gstatic.com https://firebasestorage.googleapis.com https://*.firebasestorage.app https://storage.googleapis.com https://firebase.googleapis.com https://firebaseinstallations.googleapis.com https://www.googleapis.com; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>TGM · Estudio de acabado de prendas</title>
 <style>
 :root{color-scheme:light;--ink:#18283c;--muted:#607085;--line:#dae0e7;--surface:#fff;--paper:#f2f4f7;--blue:#255ad9;--pale:#eaf0ff;--success:#21614d;--radius:12px;font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink)}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:wait;opacity:.55}button,input,select,textarea{outline-offset:3px}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid #92b4ff}button{border:1px solid var(--line);background:white;border-radius:8px;color:var(--ink);padding:10px 14px;min-height:42px;font-weight:600;font-size:.875rem;display:inline-flex;align-items:center;justify-content:center;gap:8px}button:hover{background:#f3f6fc;border-color:#b5c2d3}.primary{background:var(--blue);color:#fff;border-color:var(--blue)}.primary:hover{background:#1848b7;color:#fff}.quiet{background:transparent}.danger{color:#a13232}.icon{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}.topbar{background:var(--ink);color:#fff;padding:18px 28px;display:flex;justify-content:space-between;align-items:center;gap:16px}.brand{display:flex;align-items:center;gap:12px}.monogram{border:1px solid #6c7a8b;font-weight:750;font-size:1rem;letter-spacing:-.03em;border-radius:6px;padding:10px 8px}.brand strong{display:block;font-size:1rem;letter-spacing:.01em}.brand span{color:#b9c7d8;font-size:.8125rem}.internal{font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;border:1px solid #516071;border-radius:5px;padding:5px 9px}.workspace-head{padding:20px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;background:white;border-bottom:1px solid var(--line)}h1{font-size:1.45rem;letter-spacing:-.035em;line-height:1.2;margin:0 0 6px}h2{font-size:1.125rem;margin:0;letter-spacing:-.02em}h3{font-size:.95rem;margin:0 0 12px}.subtle{font-size:.8125rem;color:var(--muted);margin:0}.actions{display:flex;gap:8px;flex-wrap:wrap}.layout{max-width:1800px;margin:0 auto;display:grid;grid-template-columns:370px minmax(0,1fr);gap:22px;padding:22px 28px 28px}.editor{background:white;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;align-self:start}.order-fields{padding:20px;border-bottom:1px solid var(--line)}.section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.small-label{font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}label,.label{display:block;font-size:.875rem;font-weight:550;margin-bottom:6px}input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),select,textarea{width:100%;border:1px solid #ccd5e0;border-radius:7px;background:#fff;color:var(--ink);padding:9px 10px;min-height:42px;font-size:.875rem}input::placeholder,textarea::placeholder{color:#7c8796;font-weight:400}textarea{resize:vertical;min-height:72px}input[type=color]{width:42px;height:42px;background:white;border:1px solid var(--line);border-radius:7px;padding:4px;cursor:pointer}input[type=range]{width:100%;accent-color:var(--blue);min-height:24px;margin:0}input[type=checkbox]{accent-color:var(--blue);width:18px;height:18px;flex-shrink:0}.field{margin-bottom:14px}.field:last-child{margin-bottom:0}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.tabs{display:flex;border-bottom:1px solid var(--line);padding:0 10px;background:#fcfdff}.tabs button{flex:1;border:0;border-radius:0;background:transparent;font-size:.875rem;padding:15px 5px;color:var(--muted);border-bottom:3px solid transparent}.tabs button[aria-selected=true]{color:var(--blue);border-bottom-color:var(--blue)}.tab-panel{padding:20px}.tab-panel[hidden]{display:none}.garment-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}.garment-picker button{display:flex;flex-direction:column;gap:8px;padding:13px 4px;min-height:80px}.garment-picker button[aria-pressed=true]{border:1.5px solid var(--blue);background:var(--pale);color:var(--blue)}.garment-picker .icon{height:27px;width:27px}.divider{height:1px;background:var(--line);margin:20px 0}.color-control{display:flex;gap:8px;align-items:center}.color-control input[type=text]{font-family:ui-monospace,monospace;min-width:0;letter-spacing:.04em}.swatches{display:flex;gap:9px;margin:12px 0 20px}.swatch{padding:0;min-height:26px;width:26px;height:26px;min-width:26px;border-radius:50%;border:1px solid #aab4c0;background:var(--swatch)}.swatch:hover{background:var(--swatch);outline:2px solid #9aacca;outline-offset:2px}.checkline{display:flex;gap:8px;align-items:center;font-size:.875rem;font-weight:400;margin:10px 0}.note{background:#f1f5fb;border-radius:8px;padding:12px;color:#526379;font-size:.8125rem;line-height:1.5;margin:14px 0 0}.preview-column{min-width:0;align-self:start;position:sticky;top:18px}.preview{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:white}.preview-bar{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:17px 20px;border-bottom:1px solid var(--line)}.segmented{display:inline-flex;border:1px solid var(--line);border-radius:8px;padding:3px;background:var(--paper)}.segmented button{min-height:32px;padding:5px 12px;border:0;background:transparent;font-size:.8125rem}.segmented button[aria-pressed=true]{background:var(--ink);color:white;box-shadow:0 1px 4px #0001}.studio{display:grid;grid-template-columns:1fr 1fr;position:relative;background:radial-gradient(ellipse at 50% 30%,#fff,#edf0f4);padding:16px 12px 5px;gap:4px}.garment-view{margin:0;position:relative;min-width:0}.canvas-wrap{position:relative}.garment-view canvas{display:block;width:100%;height:auto;aspect-ratio:800/920;touch-action:pan-y;border-radius:6px}.garment-view canvas.editable{touch-action:none;cursor:grab}.garment-view canvas.dragging{cursor:grabbing}figcaption{display:flex;justify-content:center;align-items:center;gap:10px;color:#526379;font-size:.75rem;text-transform:uppercase;letter-spacing:.12em;padding:0 0 22px}.view-dash{width:20px;height:1px;background:#9aa6b5}.preview-bottom{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 20px;border-top:1px solid var(--line);font-size:.8125rem;color:var(--muted)}.preview-bottom strong{color:var(--ink)}.badge{background:var(--pale);color:#28529f;font-size:.75rem;padding:4px 8px;border-radius:5px}.export-card{margin-top:16px;background:var(--ink);color:white;border-radius:var(--radius);padding:20px}.export-top{display:flex;gap:16px;justify-content:space-between;align-items:center;margin-bottom:14px}.export-card .subtle{color:#b5c2d3;margin-top:4px}.export-buttons{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.export-buttons button{background:#263950;border-color:#4f627a;color:white}.export-buttons button:hover{background:#344e6c}.export-buttons .pdf-button{background:white;border-color:white;color:var(--ink)}.caption-row{border-top:1px solid #43546a;display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:16px;padding-top:14px}.caption-row p{margin:0;color:#c7d2e0;font-size:.8125rem;max-width:600px}.caption-row button{background:transparent;border-color:#5b6c81;color:white;white-space:nowrap}.local-footer{display:flex;justify-content:space-between;gap:10px;padding:14px 2px;font-size:.75rem;color:var(--muted)}.zone-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.zone-grid button{font-weight:500}.zone-grid button[aria-pressed=true]{color:var(--blue);border-color:var(--blue);background:var(--pale)}.full{width:100%}.art-list{display:flex;flex-direction:column;gap:7px;margin:0 0 16px}.art-item{display:flex;align-items:center;justify-content:space-between;text-align:left;width:100%;font-weight:500;gap:6px;padding:10px;min-width:0}.art-item span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.art-item[aria-pressed=true]{background:var(--pale);border-color:var(--blue)}.art-item small{font-size:.75rem;white-space:nowrap;color:var(--muted)}.upload-label{display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;width:100%;padding:13px 8px;border:1px dashed #9babbe;border-radius:8px;background:#f8faff;font-weight:500;font-size:.875rem;min-height:48px}.upload-label:hover{background:var(--pale)}.help{font-size:.8125rem;color:var(--muted);margin:7px 0 12px}.range-label{display:flex;justify-content:space-between;gap:6px}.range-label output{font-weight:400;color:var(--muted)}.qty-table{width:100%;border-collapse:collapse;font-size:.875rem}.qty-table th{text-align:left;color:var(--muted);font-weight:500}.qty-table td,.qty-table th{padding:9px 0;border-bottom:1px solid var(--line)}.qty-table td:last-child{width:120px}.qty-table tfoot th{color:var(--ink);font-size:1rem;font-weight:700;padding-top:16px;border:0}.qty-table input{text-align:right}.empty{padding:24px 16px;border:1px dashed var(--line);text-align:center;color:var(--muted);border-radius:8px;font-size:.875rem;margin-bottom:14px}.example{display:inline-block;font-size:.75rem;letter-spacing:.04em;background:#edf0f4;color:#536379;padding:2px 6px;border-radius:4px;margin-left:3px}.save-message{display:flex;align-items:center;gap:5px}#saveStatus[data-error=true]{color:#ac3030}.sr-only{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}.hidden-input{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden}.hidden-input:focus-visible+label{outline:3px solid #92b4ff}.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:white;box-shadow:0 6px 30px #14233740;border-radius:10px;padding:13px 20px;font-size:.875rem;z-index:20;max-width:min(90vw,650px);pointer-events:none}.toast:empty{display:none}dialog{border:1px solid var(--line);border-radius:14px;padding:0;max-width:min(92vw,580px);width:580px;color:var(--ink);box-shadow:0 24px 80px #0003}dialog::backdrop{background:#14233777}dialog .dialog-body{padding:24px}dialog h2{margin:0 0 16px}dialog .dialog-actions{padding:16px 24px;background:var(--paper);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}dialog button[data-close]{margin-left:auto}.saved-orders{display:grid;gap:8px;max-height:42vh;overflow:auto;margin-top:16px}.saved-row{border:1px solid var(--line);border-radius:8px;padding:10px;display:flex;align-items:center;gap:10px;justify-content:space-between}.saved-row strong{display:block;font-size:.875rem}.saved-row small{color:var(--muted);font-size:.75rem}.saved-row div{min-width:0;overflow-wrap:anywhere}.caption-text{min-height:130px!important}.zoomed .studio{grid-template-columns:1fr 1fr}.zoomed{max-width:1400px;width:96vw}.zoomed .dialog-body{padding:8px}.zoomed .studio canvas{max-height:78vh;width:100%;object-fit:contain}.zoomed figcaption{padding-bottom:8px}[hidden]{display:none!important}.print-sheet{display:none}
@@ -35,6 +35,14 @@
 .tabs{grid-template-columns:repeat(4,minmax(0,1fr))!important}.tabs button[data-tab=ficha]{grid-column:auto;font-weight:600}.tabs button{white-space:normal;min-height:48px;line-height:1.3;padding:10px 5px}.sleeve-switch{display:flex;gap:8px}.sleeve-switch button{flex:1;min-height:44px}.sleeve-switch button[aria-pressed=true]{background:#5156d7;border-color:#5156d7;color:white}.sleeve-proof{margin:12px 0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#f0f2f7}.sleeve-proof canvas{width:100%;height:auto;display:block}.sleeve-proof figcaption{padding:9px 10px;font-size:.875rem;font-weight:600;color:var(--ink);background:#fff}.sleeve-actions{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}.sleeve-actions button{flex:1;min-height:44px}.sleeve-block{border-top:1px solid var(--line);padding-top:16px;margin-top:20px}.sleeve-block h4{font-size:1rem;margin:0 0 14px}.sleeve-block>button{width:100%;min-height:44px}.sleeve-art{display:block;text-align:left;width:100%;padding:12px;margin-top:9px;white-space:normal}.sleeve-art span{display:block;font-size:.875rem;overflow-wrap:anywhere}.sleeve-art small{display:block;color:var(--muted);margin-top:5px;line-height:1.4}.sleeve-shortcut{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 14px;padding:10px;background:#eff1fe;border:1px solid #dde1fb;border-radius:9px}.sleeve-shortcut p{font-size:.875rem;margin:0;line-height:1.4}.sleeve-shortcut button{flex-shrink:0}.sleeve-location{margin:0 0 10px;color:#424caa;font-size:.875rem;font-weight:650}.photo-toolbar{flex-wrap:wrap}.photo-tools{flex-wrap:wrap}.photo-tools button{min-height:42px}#sleeveLogoFile{display:none!important}#sleeveCanvas{touch-action:pan-y}@media(max-width:480px){.tabs{grid-template-columns:repeat(3,minmax(0,1fr))!important}.sleeve-shortcut{align-items:flex-start;flex-direction:column}}
 
 #bootStatus{padding:12px;background:#eef0f9;color:#253148}#poloExtras{margin-top:16px}.internal-notice{font-size:12px;color:#657089}.photo-figure canvas{touch-action:pan-y}.photo-figure canvas.editable{touch-action:none}
+.workspace-head .actions #cloudUpload,.workspace-head .actions #cloudOpen{white-space:nowrap}
+#cloudStatus[data-error=true]{color:#ac3030}
+#cloudStatus[data-ok=true]{color:var(--success)}
+.local-footer{flex-wrap:wrap}
+.cloud-footer{display:flex;flex-direction:column;gap:2px;min-width:0}
+@media(max-width:760px){
+  .workspace-head .actions #cloudUpload,.workspace-head .actions #cloudOpen{flex:1}
+}
 </style>
 </head>
 <body>
@@ -52,7 +60,7 @@
 <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
 </defs></svg>
 <header class="topbar"><div class="brand"><div class="monogram">TGM</div><div><strong>TEJIDOS GAYTÁN DE MOROLEÓN</strong><span>Estudio de prendas <b class="pro-version">ESTUDIO · v6</b></span></div></div><span class="internal">Uso interno</span></header>
-<section class="workspace-head"><div><h1 id="workspaceTitle">Nuevo pedido</h1><p class="subtle">Configura la prenda y revisa su acabado antes de compartirla.</p></div><div class="actions"><button id="newOrder"><svg class="icon"><use href="#i-plus"/></svg>Nuevo</button><button id="openOrders"><svg class="icon"><use href="#i-folder"/></svg>Abrir</button><button id="downloadJson"><svg class="icon"><use href="#i-download"/></svg>JSON</button><button id="saveOrder" class="primary"><svg class="icon"><use href="#i-save"/></svg>Guardar pedido</button></div></section>
+<section class="workspace-head"><div><h1 id="workspaceTitle">Nuevo pedido</h1><p class="subtle">Configura la prenda y revisa su acabado antes de compartirla.</p></div><div class="actions"><button id="newOrder"><svg class="icon"><use href="#i-plus"/></svg>Nuevo</button><button id="openOrders"><svg class="icon"><use href="#i-folder"/></svg>Abrir</button><button id="downloadJson"><svg class="icon"><use href="#i-download"/></svg>JSON</button><button id="saveOrder" class="primary"><svg class="icon"><use href="#i-save"/></svg>Guardar pedido</button><button id="cloudUpload">Subir a la nube</button><button id="cloudOpen">Abrir desde la nube</button></div></section>
 <div id="bootStatus" role="status">Abriendo el almacenamiento de pedidos…</div><main class="layout"><section class="editor" aria-label="Configuración del pedido">
 <div class="order-fields"><div class="section-title"><h2>01 <span style="font-weight:500;color:var(--muted)">/ Pedido</span></h2><span class="small-label">Datos internos</span></div><div class="field"><label for="client">Cliente</label><input id="client" data-bind="client" maxlength="90" placeholder="Nombre del cliente" autocomplete="off"></div><div class="row"><div class="field"><label for="orderNumber">N.º de pedido</label><input id="orderNumber" data-bind="number" maxlength="40" placeholder="Sin asignar" autocomplete="off"></div><div class="field"><label for="orderDate">Fecha</label><input id="orderDate" data-bind="date" type="date"></div></div></div>
 <nav class="tabs" role="tablist" aria-label="Etapas del pedido"><button role="tab" id="tab-garment" data-tab="garment" aria-controls="panel-garment" aria-selected="true">Prenda</button><button role="tab" id="tab-sleeves" data-tab="sleeves" aria-controls="panel-sleeves" aria-selected="false" tabindex="-1">Mangas</button><button role="tab" id="tab-art" data-tab="art" aria-controls="panel-art" aria-selected="false" tabindex="-1">Logos</button><button role="tab" id="tab-sizes" data-tab="sizes" aria-controls="panel-sizes" aria-selected="false" tabindex="-1">Tallas</button><button role="tab" id="tab-workshop" data-tab="workshop" aria-controls="panel-workshop" aria-selected="false" tabindex="-1">Taller</button><button role="tab" id="tab-studio" data-tab="studio" aria-controls="panel-studio" aria-selected="false" tabindex="-1">Boceto 3D</button><button role="tab" id="tab-photo" data-tab="photo" aria-controls="panel-photo" aria-selected="false" tabindex="-1">Acabado</button><button role="tab" id="tab-ficha" data-tab="ficha" aria-controls="panel-ficha" aria-selected="false" tabindex="-1">Ficha de referencia</button></nav>
@@ -251,8 +259,9 @@
 <div class="model-toolbar"><div class="camera-buttons" aria-label="Vistas de cámara"><button data-camera="front">Frente</button><button data-camera="back">Espalda</button><button data-camera="left">Izquierda</button><button data-camera="right">Derecha</button><button data-camera="perspective">Perspectiva</button></div><div class="viewport-actions"><button id="spin3d" aria-pressed="false">Girar 360°</button><button id="fit3d" aria-label="Centrar y encuadrar la prenda">Centrar</button></div></div>
 <div class="stage3d" id="studioStage" data-background="light"><div class="ground-shadow"></div><div class="stage-label"><b>TGM</b> / Estudio de materiales</div><canvas id="webglCanvas" width="1000" height="1000" tabindex="0" aria-label="Prenda 3D. Arrastra para girar. Rueda o pellizco para zoom. Flechas para girar y tecla Inicio para centrar."></canvas><div class="axis-key">3D · referencia visual</div><span id="cameraLabel" class="camera-label">Giro 24°</span></div>
 <div class="studio-hint"><span>Arrastra para girar · rueda / pellizco para zoom</span><button id="edit2d">Colocar diseños en 2D</button></div></section><section class="flat-pane" aria-label="Distribución gráfica de frente y espalda"><div class="preview-bar"><div><h2>Distribución 2D</h2><p class="subtle" id="previewName">Playera · sin cantidad</p></div><div style="display:flex;gap:8px;align-items:center"><div class="segmented" aria-label="Estilo de la vista 2D"><button data-render="realistic" aria-pressed="true">Sombreado</button><button data-render="flat" aria-pressed="false">Plano</button></div><button id="zoomPreview" aria-label="Ampliar vista"><svg class="icon"><use href="#i-zoom"/></svg></button></div></div><div class="studio"><figure class="garment-view"><div class="canvas-wrap"><canvas id="frontCanvas" width="800" height="920" role="img" aria-label="Vista frontal de la prenda"></canvas></div><figcaption><span class="view-dash"></span>Frente<span class="view-dash"></span></figcaption></figure><figure class="garment-view"><div class="canvas-wrap"><canvas id="backCanvas" width="800" height="920" role="img" aria-label="Vista posterior de la prenda"></canvas></div><figcaption><span class="view-dash"></span>Espalda<span class="view-dash"></span></figcaption></figure></div><p class="flat-note">Distribución gráfica de referencia. No es un patrón de corte.</p></section></div><div class="preview-bottom"><span><strong id="summaryColor">#255AD9</strong> · <span id="summaryFabric">Tela por definir</span></span><span class="badge">Referencia visual</span></div></div>
-<section class="export-card" aria-label="Archivos para el cliente"><div class="export-top"><div><h2>Listo para compartir</h2><p class="subtle">Exporta la vista de acabado, sin datos internos.</p></div><button id="printOrder" style="color:white;background:transparent;border-color:#5b6c81">Imprimir</button></div><div class="export-buttons"><button id="exportAngle"><svg class="icon"><use href="#i-image"/></svg>PNG vista 3D</button><button id="exportFront"><svg class="icon"><use href="#i-image"/></svg>PNG frente</button><button id="exportBack"><svg class="icon"><use href="#i-image"/></svg>PNG espalda</button><button id="exportPdf" class="pdf-button"><svg class="icon"><use href="#i-download"/></svg>PDF · 1 página</button></div><div class="caption-row"><p id="captionPreview">así se vería terminada tu playera. quedo pendiente de tus comentarios.</p><button id="copyCaption"><svg class="icon"><use href="#i-copy"/></svg>Copiar mensaje</button></div></section><div id="exportFallback" class="note" role="status" hidden>Archivo listo. Si la descarga no inició, toca este enlace: <a id="lastExportLink">Descargar archivo</a></div><footer class="local-footer"><span class="save-message" id="saveStatus" role="status">Borrador local</span><span>Funciona sin conexión · v6.0</span></footer></section></main>
-<dialog id="ordersDialog" aria-labelledby="ordersTitle"><div class="dialog-body"><h2 id="ordersTitle">Abrir pedido</h2><input id="importJson" class="hidden-input" type="file" accept=".json,application/json"><label class="upload-label" for="importJson"><svg class="icon"><use href="#i-folder"/></svg>Importar archivo JSON</label><p class="help">Pedidos guardados en este navegador</p><div id="savedOrders" class="saved-orders"></div></div><div class="dialog-actions"><button data-close>Cerrar</button></div></dialog>
+<section class="export-card" aria-label="Archivos para el cliente"><div class="export-top"><div><h2>Listo para compartir</h2><p class="subtle">Exporta la vista de acabado, sin datos internos.</p></div><button id="printOrder" style="color:white;background:transparent;border-color:#5b6c81">Imprimir</button></div><div class="export-buttons"><button id="exportAngle"><svg class="icon"><use href="#i-image"/></svg>PNG vista 3D</button><button id="exportFront"><svg class="icon"><use href="#i-image"/></svg>PNG frente</button><button id="exportBack"><svg class="icon"><use href="#i-image"/></svg>PNG espalda</button><button id="exportPdf" class="pdf-button"><svg class="icon"><use href="#i-download"/></svg>PDF · 1 página</button></div><div class="caption-row"><p id="captionPreview">así se vería terminada tu playera. quedo pendiente de tus comentarios.</p><button id="copyCaption"><svg class="icon"><use href="#i-copy"/></svg>Copiar mensaje</button></div></section><div id="exportFallback" class="note" role="status" hidden>Archivo listo. Si la descarga no inició, toca este enlace: <a id="lastExportLink">Descargar archivo</a></div><footer class="local-footer"><span class="cloud-footer"><span class="save-message" id="saveStatus" role="status">Borrador local</span><span class="save-message" id="cloudStatus" role="status">Nube: en espera</span></span><span>Borrador local · nube opcional · v6.0</span></footer></section></main>
+<dialog id="ordersDialog" aria-labelledby="ordersTitle"><div class="dialog-body"><h2 id="ordersTitle">Abrir pedido</h2><input id="importJson" class="hidden-input" type="file" accept=".json,application/json"><label class="upload-label" for="importJson"><svg class="icon"><use href="#i-folder"/></svg>Importar archivo JSON</label><p class="help">Pedidos guardados en este navegador. Para compartirlos, usa Subir a la nube.</p><div id="savedOrders" class="saved-orders"></div></div><div class="dialog-actions"><button data-close>Cerrar</button></div></dialog>
+<dialog id="cloudDialog" aria-labelledby="cloudTitle"><div class="dialog-body"><h2 id="cloudTitle">Abrir desde la nube</h2><p class="help">Pedidos compartidos en Firebase Storage. El borrador de este navegador no se borra.</p><div id="cloudOrders" class="saved-orders"></div></div><div class="dialog-actions"><button data-close>Cerrar</button></div></dialog>
 <dialog id="newDialog" aria-labelledby="newTitle"><div class="dialog-body"><h2 id="newTitle">Comenzar un pedido nuevo</h2><p>Guarda el pedido actual para conservarlo en este navegador o descarga su JSON.</p></div><div class="dialog-actions"><button data-close>Cancelar</button><button id="newWithoutSaving">Nuevo sin guardar</button><button class="primary" id="saveAndNew">Guardar y crear</button></div></dialog>
 <dialog id="captionDialog" aria-labelledby="captionTitle"><div class="dialog-body"><h2 id="captionTitle">Mensaje para el cliente</h2><p class="help">Selecciona y copia el mensaje para compartirlo junto al render.</p><label class="sr-only" for="captionFallback">Mensaje</label><textarea id="captionFallback" class="caption-text" readonly></textarea></div><div class="dialog-actions"><button data-close>Cerrar</button><button id="selectCaption" class="primary">Seleccionar mensaje</button></div></dialog>
 <dialog id="photoDetailDialog" class="photo-detail-dialog" aria-labelledby="photoDetailTitle">
@@ -315,7 +324,7 @@ async function exportPhoto(view){assertPhotoReady([view]);const c=document.creat
 function photoPointer(canvas,e){const r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H}}
 function setupPhotoDrag(canvas,view){let drag=null,activePointer=null;canvas.addEventListener('pointerdown',async e=>{if(currentTab!=='art'||ensurePhoto().source!=='generated')return;activePointer=e.pointerId;const point=photoPointer(canvas,e);canvas.focus();canvas.setPointerCapture(e.pointerId);for(const a of state.artworks.filter(a=>a.view===view).reverse()){if(fullSublimation(a))continue;const pose=photoPose(a),g=await artGeometry(pose);if(activePointer!==e.pointerId)return;const r=-a.rotation*Math.PI/180,dx=point.x-pose.x,dy=point.y-pose.y;if(Math.abs(dx*Math.cos(r)-dy*Math.sin(r))<=g.width/2+12&&Math.abs(dx*Math.sin(r)+dy*Math.cos(r))<=g.height/2+12){selectedArt=a.id;drag={id:a.id,dx,dy};canvas.classList.add('dragging');updateArtList();syncArt();schedulePhoto();break}}});canvas.addEventListener('pointermove',e=>{if(!drag||activePointer!==e.pointerId)return;const a=state.artworks.find(v=>v.id===drag.id);if(!a)return;const point=photoPointer(canvas,e);photoPutPosition(a,point.x-drag.dx,point.y-drag.dy);syncArt();changed()});const end=()=>{activePointer=null;drag=null;canvas.classList.remove('dragging')};for(const event of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(event,end);canvas.addEventListener('keydown',e=>{const a=selected();if(currentTab!=='art'||!a||fullSublimation(a)||a.view!==view||ensurePhoto().source!=='generated')return;const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(!d)return;e.preventDefault();const amount=e.shiftKey?10:2;a.x=clamp(a.x+d[0]*amount,0,W);a.y=clamp(a.y+d[1]*amount,0,H);syncArt();changed()})}
 async function readFinalRender(file){if(file.size>10*1024*1024)throw Error('El render excede 10 MB.');const bytes=new Uint8Array(await file.arrayBuffer());const png=bytes.length>24&&bytes[0]===137&&bytes[1]===80&&bytes[2]===78&&bytes[3]===71,jpeg=bytes.length>4&&bytes[0]===255&&bytes[1]===216&&bytes[2]===255;if(!png&&!jpeg)throw Error('Carga un PNG o JPG válido.');const src=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(Error('No se pudo leer el render.'));r.readAsDataURL(file)}),img=await getImage(src);if(img.naturalWidth*img.naturalHeight>25000000||img.naturalWidth<200||img.naturalHeight<200)throw Error('Usa un render de al menos 200 × 200 px y máximo 25 megapíxeles.');const c=document.createElement('canvas'),ratio=Math.min(1,3000/Math.max(img.naturalWidth,img.naturalHeight));c.width=Math.round(img.naturalWidth*ratio);c.height=Math.round(img.naturalHeight*ratio);c.getContext('2d').drawImage(img,0,0,c.width,c.height);const image=c.toDataURL('image/png');if(image.length>14000000)throw Error('La imagen convertida es demasiado pesada; exporta un PNG más pequeño.');return {image,width:c.width,height:c.height}}
-async function validatePhoto(raw){if(raw===undefined)return {...PHOTO_DEFAULTS,final:{front:null,back:null}};if(!raw||typeof raw!=='object')throw Error('Ajustes de acabado inválidos.');const out={};for(const [key,values]of Object.entries({source:['generated','final'],side:['front','back','both'],background:['studio','white','dark','transparent']}))out[key]=oneOf(raw[key],values,key);for(const [key,min,max]of [['exposure',-20,20],['relief',50,130],['thread',0,100]])out[key]=numeric(raw[key],min,max,key);out.fabricPrint=boolean(raw.fabricPrint,'adaptación a pliegues');out.final={front:null,back:null};for(const view of ['front','back']){const item=raw.final?.[view];if(item==null)continue;if(typeof item!=='object')throw Error('Render inválido.');const image=safeString(item.image,14000000,'render');if(!/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(image))throw Error('Formato de render inválido.');const header=atob(image.split(',')[1].slice(0,44)),width=((header.charCodeAt(16)<<24)>>>0)+(header.charCodeAt(17)<<16)+(header.charCodeAt(18)<<8)+header.charCodeAt(19),height=((header.charCodeAt(20)<<24)>>>0)+(header.charCodeAt(21)<<16)+(header.charCodeAt(22)<<8)+header.charCodeAt(23);if(header.slice(1,4)!=='PNG'||width<200||height<200||width>3000||height>3000)throw Error('Dimensiones de render inválidas.');const img=await getImage(image);if(img.naturalWidth!==width||img.naturalHeight!==height)throw Error('Render dañado.');const signature=safeString(item.signature,16,'versión del render');if(!/^[a-f0-9]{16}$/.test(signature))throw Error('Versión de render inválida.');out.final[view]={image,width,height,signature}}return out}
+async function validatePhoto(raw){if(raw===undefined)return {...PHOTO_DEFAULTS,final:{front:null,back:null}};if(!raw||typeof raw!=='object')throw Error('Ajustes de acabado inválidos.');const out={};for(const [key,values]of Object.entries({source:['generated','final'],side:['front','back','both'],background:['studio','white','dark','transparent']}))out[key]=oneOf(raw[key],values,key);for(const [key,min,max]of [['exposure',-20,20],['relief',50,130],['thread',0,100]])out[key]=numeric(raw[key],min,max,key);out.fabricPrint=boolean(raw.fabricPrint,'adaptación a pliegues');out.final={front:null,back:null};for(const view of ['front','back']){const item=raw.final?.[view];if(item==null)continue;if(typeof item!=='object')throw Error('Render inválido.');const image=safeString(item.image,14000000,'render');if(typeof isCloudArtRef==='function'&&isCloudArtRef(image)){const img=await getImage(image);out.final[view]={image,width:img.naturalWidth,height:img.naturalHeight,signature:safeString(item.signature,16,'versión del render')};continue;}if(!/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(image))throw Error('Formato de render inválido.');const header=atob(image.split(',')[1].slice(0,44)),width=((header.charCodeAt(16)<<24)>>>0)+(header.charCodeAt(17)<<16)+(header.charCodeAt(18)<<8)+header.charCodeAt(19),height=((header.charCodeAt(20)<<24)>>>0)+(header.charCodeAt(21)<<16)+(header.charCodeAt(22)<<8)+header.charCodeAt(23);if(header.slice(1,4)!=='PNG'||width<200||height<200||width>3000||height>3000)throw Error('Dimensiones de render inválidas.');const img=await getImage(image);if(img.naturalWidth!==width||img.naturalHeight!==height)throw Error('Render dañado.');const signature=safeString(item.signature,16,'versión del render');if(!/^[a-f0-9]{16}$/.test(signature))throw Error('Versión de render inválida.');out.final[view]={image,width,height,signature}}return out}
 async function refreshPhotoDetail(){const ticket=photoDetail.ticket=(photoDetail.ticket||0)+1,view=photoDetail.view,c=document.createElement('canvas');c.width=2000;c.height=2300;await renderPhoto(c,view);if(ticket!==photoDetail.ticket||view!==photoDetail.view)return;photoDetail.canvas=c;paintPhotoDetail()}
 function paintPhotoDetail(){const c=$('#detailCanvas'),r=c.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);if(r.width>0&&r.height>0){const w=Math.round(r.width*dpr),h=Math.round(r.height*dpr);if(c.width!==w)c.width=w;if(c.height!==h)c.height=h}const x=c.getContext('2d');x.setTransform(1,0,0,1,0,0);x.fillStyle='#edf0f4';x.fillRect(0,0,c.width,c.height);if(!photoDetail.canvas)return;const base=Math.min(c.width/W,c.height/H),s=base*photoDetail.zoom;x.drawImage(photoDetail.canvas,c.width/2-photoDetail.x*s,c.height/2-photoDetail.y*s,W*s,H*s);$('#detailZoom').textContent=Math.round(photoDetail.zoom*100)+' %'}
 async function openPhotoDetail(preset){photoDetail.view=ensurePhoto().side==='back'?'back':'front';photoDetail.zoom=preset?2.5:1;photoDetail.x=400;photoDetail.y=preset==='neck'?230:preset==='fabric'?430:preset==='hem'?735:460;$('#detailView').value=photoDetail.view;$('#photoDetailDialog').showModal();await refreshPhotoDetail()}
@@ -486,7 +495,7 @@ function checkPng(data){if(!/^data:image\/png;base64,/.test(data))throw Error('L
 async function sanitizeImageFile(file){if(file.size>5*1024*1024)throw Error('La imagen excede 5 MB.');if(!/\.(png|svg)$/i.test(file.name))throw Error('Carga un archivo PNG o SVG.');const data=await new Promise((r,j)=>{const f=new FileReader();f.onload=()=>r(f.result);f.onerror=j;f.readAsDataURL(file)});return rasterize(data,/\.svg$/i.test(file.name)?'svg':'png')}
 function safeSvgCss(value){if(/@import|@font-face|javascript:|expression\s*\(/i.test(value))return false;const urls=Array.from(value.matchAll(/url\s*\(([^)]*)\)/gi));return urls.every(m=>/^['"]?#[\w.-]+['"]?$/.test(m[1].trim()))}
 async function rasterize(data,type){let src=data;if(type==='svg'){const b64=data.split(',')[1];let text;try{text=new TextDecoder().decode(Uint8Array.from(atob(b64),c=>c.charCodeAt(0)))}catch{throw Error('SVG inválido.')}const doc=new DOMParser().parseFromString(text,'image/svg+xml');if(doc.querySelector('parsererror')||doc.documentElement.localName!=='svg')throw Error('SVG inválido.');const allowed=new Set(['svg','g','path','rect','circle','ellipse','line','polyline','polygon','defs','linearGradient','radialGradient','stop','clipPath','mask','pattern','symbol','use','text','tspan','title','desc','style']);for(const el of Array.from(doc.querySelectorAll('*'))){if(!allowed.has(el.localName))throw Error('SVG con contenido no admitido. Exporta una versión de trazados o PNG.');if(el.localName==='style'&&!safeSvgCss(el.textContent))throw Error('El SVG contiene estilos con recursos externos.');for(const a of Array.from(el.attributes)){const name=a.name.toLowerCase(),value=a.value.trim();if(name.startsWith('on')||/javascript:|@import|expression\s*\(/i.test(value)||((name==='href'||name==='xlink:href')&&!value.startsWith('#'))||!safeSvgCss(value))throw Error('El SVG debe ser autónomo, sin scripts ni recursos externos.')}}const root=doc.documentElement;root.setAttribute('xmlns','http://www.w3.org/2000/svg');if(!root.getAttribute('width')||!root.getAttribute('height')){const vb=(root.getAttribute('viewBox')||'0 0 1000 1000').split(/[ ,]+/).map(Number);if(vb.length!==4||!Number.isFinite(vb[2])||!Number.isFinite(vb[3])||vb[2]<=0||vb[3]<=0)throw Error('Tamaño SVG inválido.');root.setAttribute('width',String(vb[2]));root.setAttribute('height',String(vb[3]))}src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(new XMLSerializer().serializeToString(doc))))}else if(!/^data:image\/png;base64,/.test(data))throw Error('La imagen debe ser PNG.');if(type==='png')checkPng(src);const img=await getImage(src);if(!img.naturalWidth||!img.naturalHeight||img.naturalWidth*img.naturalHeight>50000000)throw Error('Imagen demasiado grande o inválida.');const scale=Math.min(1,1800/Math.max(img.naturalWidth,img.naturalHeight));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.naturalWidth*scale));c.height=Math.max(1,Math.round(img.naturalHeight*scale));c.getContext('2d').drawImage(img,0,0,c.width,c.height);const png=c.toDataURL('image/png');if(png.length>3500000)throw Error('Imagen pesada después de procesarla. Usa un PNG más pequeño.');return png}
-async function validateOrder(raw){if(!raw||typeof raw!=='object'||raw.schema!==SCHEMA||![1,2,3,4,5,6].includes(raw.version))throw Error('El archivo no es un pedido compatible de TGM (versiones 1 a 6).');const out=blank();out.id=safeString(raw.id,100,'id');for(const [k,len]of Object.entries({client:90,number:40,date:10,fabric:70,stretch:120,care:200,packaging:160,notes:3000}))out[k]=safeString(raw[k],len,k);if(out.date&&(!/^\d{4}-\d{2}-\d{2}$/.test(out.date)||Number.isNaN(Date.parse(out.date))||new Date(out.date).toISOString().slice(0,10)!==out.date))throw Error('Fecha inválida.');out.garment=oneOf(raw.garment,Object.keys(GARMENTS),'prenda');for(const k of['bodyColor','contrastColor']){if(!validHex(raw[k]))throw Error('Color inválido.');out[k]=raw[k]}for(const k of['neck','cuff','hem'])out.contrast[k]=boolean(raw.contrast?.[k],'contraste');out.texture=oneOf(raw.texture,['jersey','pique','fleece','smooth'],'textura');out.neck=oneOf(raw.neck,GARMENTS[out.garment].necks.map(n=>n[0]),'cuello');out.cuff=oneOf(raw.cuff,['simple','rib'],'puño');out.hem=oneOf(raw.hem,['double','rib'],'dobladillo');out.renderMode=oneOf(raw.renderMode,['realistic','flat'],'render');for(const k of['drawstring','pocket'])out.hood[k]=boolean(raw.hood?.[k],'capucha');for(const [k,max]of[['gsm',2000],['minutes',100000]])out[k]=raw[k]===''?'':numeric(raw[k],0,max,k);for(const s of SIZES){out.sizes[s]=numeric(raw.sizes?.[s],0,999999,'talla '+s);if(!Number.isInteger(out.sizes[s]))throw Error('Las cantidades deben ser enteras.')}if(!Array.isArray(raw.qc)||raw.qc.length!==QC.length)throw Error('QC inválido.');out.qc=raw.qc.map(v=>boolean(v,'QC'));if(!Array.isArray(raw.artworks)||raw.artworks.length>12)throw Error('Demasiados diseños.');const ids=new Set();out.artworks=[];for(const a of raw.artworks){const art={};art.id=safeString(a.id,100,'diseño');if(ids.has(art.id))throw Error('Diseños duplicados.');ids.add(art.id);art.view=oneOf(a.view,['front','back'],'vista');art.zone=oneOf(a.zone,Object.keys(ZONES),'zona');art.kind=oneOf(a.kind,['text','image'],'contenido');art.method=oneOf(a.method,['print','sublimation','embroidery'],'técnica');art.font=oneOf(a.font,['sans','serif','mono'],'letra');art.text=safeString(a.text,80,'texto');art.fileName=safeString(a.fileName,150,'nombre de imagen');art.dimensions=safeString(a.dimensions,100,'medidas');if(!validHex(a.color))throw Error('Color de diseño inválido.');art.color=a.color;art.x=numeric(a.x,0,W,'posición');art.y=numeric(a.y,0,H,'posición');art.width=numeric(a.width,32,640,'ancho');art.rotation=numeric(a.rotation,-180,180,'giro');art.image=safeString(a.image,3500000,'imagen');if(art.image){if(!/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(art.image))throw Error('Imagen de pedido inválida.');checkPng(art.image);await getImage(art.image)}out.artworks.push(art)}if(typeof raw.updatedAt==='string'&&Number.isFinite(Date.parse(raw.updatedAt)))out.updatedAt=new Date(raw.updatedAt).toISOString();out.pro=validatePro(raw.pro);out.photo=await validatePhoto(raw.photo);if(raw.version<3)out.pro.workspace='photo';return out}
+async function validateOrder(raw){if(!raw||typeof raw!=='object'||raw.schema!==SCHEMA||![1,2,3,4,5,6].includes(raw.version))throw Error('El archivo no es un pedido compatible de TGM (versiones 1 a 6).');const out=blank();out.id=safeString(raw.id,100,'id');for(const [k,len]of Object.entries({client:90,number:40,date:10,fabric:70,stretch:120,care:200,packaging:160,notes:3000}))out[k]=safeString(raw[k],len,k);if(out.date&&(!/^\d{4}-\d{2}-\d{2}$/.test(out.date)||Number.isNaN(Date.parse(out.date))||new Date(out.date).toISOString().slice(0,10)!==out.date))throw Error('Fecha inválida.');out.garment=oneOf(raw.garment,Object.keys(GARMENTS),'prenda');for(const k of['bodyColor','contrastColor']){if(!validHex(raw[k]))throw Error('Color inválido.');out[k]=raw[k]}for(const k of['neck','cuff','hem'])out.contrast[k]=boolean(raw.contrast?.[k],'contraste');out.texture=oneOf(raw.texture,['jersey','pique','fleece','smooth'],'textura');out.neck=oneOf(raw.neck,GARMENTS[out.garment].necks.map(n=>n[0]),'cuello');out.cuff=oneOf(raw.cuff,['simple','rib'],'puño');out.hem=oneOf(raw.hem,['double','rib'],'dobladillo');out.renderMode=oneOf(raw.renderMode,['realistic','flat'],'render');for(const k of['drawstring','pocket'])out.hood[k]=boolean(raw.hood?.[k],'capucha');for(const [k,max]of[['gsm',2000],['minutes',100000]])out[k]=raw[k]===''?'':numeric(raw[k],0,max,k);for(const s of SIZES){out.sizes[s]=numeric(raw.sizes?.[s],0,999999,'talla '+s);if(!Number.isInteger(out.sizes[s]))throw Error('Las cantidades deben ser enteras.')}if(!Array.isArray(raw.qc)||raw.qc.length!==QC.length)throw Error('QC inválido.');out.qc=raw.qc.map(v=>boolean(v,'QC'));if(!Array.isArray(raw.artworks)||raw.artworks.length>12)throw Error('Demasiados diseños.');const ids=new Set();out.artworks=[];for(const a of raw.artworks){const art={};art.id=safeString(a.id,100,'diseño');if(ids.has(art.id))throw Error('Diseños duplicados.');ids.add(art.id);art.view=oneOf(a.view,['front','back'],'vista');art.zone=oneOf(a.zone,Object.keys(ZONES),'zona');art.kind=oneOf(a.kind,['text','image'],'contenido');art.method=oneOf(a.method,['print','sublimation','embroidery'],'técnica');art.font=oneOf(a.font,['sans','serif','mono'],'letra');art.text=safeString(a.text,80,'texto');art.fileName=safeString(a.fileName,150,'nombre de imagen');art.dimensions=safeString(a.dimensions,100,'medidas');if(!validHex(a.color))throw Error('Color de diseño inválido.');art.color=a.color;art.x=numeric(a.x,0,W,'posición');art.y=numeric(a.y,0,H,'posición');art.width=numeric(a.width,32,640,'ancho');art.rotation=numeric(a.rotation,-180,180,'giro');art.image=safeString(a.image,3500000,'imagen');if(art.image){if(typeof isCloudArtRef==='function'&&isCloudArtRef(art.image))await getImage(art.image);else{if(!/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(art.image))throw Error('Imagen de pedido inválida.');checkPng(art.image);await getImage(art.image)}}out.artworks.push(art)}if(typeof raw.updatedAt==='string'&&Number.isFinite(Date.parse(raw.updatedAt)))out.updatedAt=new Date(raw.updatedAt).toISOString();out.pro=validatePro(raw.pro);out.photo=await validatePhoto(raw.photo);if(raw.version<3)out.pro.workspace='photo';return out}
 async function loadOrder(raw){const next=await validateOrder(raw);clearTimeout(saveTimer);if(dirty&&!saveOrder(true))throw Error('Descarga el pedido actual como JSON antes de abrir otro.');state=next;selectedArt=state.artworks[0]?.id||null;dirty=false;imageCache.clear();populate();saveDraft();$('#ordersDialog').close();toast('Pedido cargado.');}
 function openOrders(){const root=$('#savedOrders');root.replaceChildren();try{const list=readLibrary();if(!list.length){const p=document.createElement('p');p.className='empty';p.textContent='Todavía no hay pedidos guardados.';root.append(p)}for(const order of list){const div=document.createElement('div');div.className='saved-row';const info=document.createElement('div'),t=document.createElement('strong'),meta=document.createElement('small');t.textContent=(order.number?'#'+order.number:'Sin folio')+' · '+(order.client||'Sin cliente');meta.textContent=(GARMENTS[order.garment]?.label||'Prenda')+' · '+(order.date||'Sin fecha');info.append(t,meta);const b=document.createElement('button');b.textContent='Abrir';b.addEventListener('click',()=>busy(b,()=>loadOrder(order)));div.append(info,b);root.append(div)}}catch(e){root.textContent='No se pueden leer los pedidos locales. Puedes importar un JSON.'}$('#ordersDialog').showModal()}
 function resetOrder(){clearTimeout(saveTimer);state=blank();selectedArt=null;imageCache.clear();dirty=false;populate();tab('garment');saveDraft();$('#newDialog').close();toast('Nuevo pedido listo.');$('#client').focus()}
@@ -513,7 +522,7 @@ function ensureLogo(a){if(!a.logo)a.logo=logoDefaults();return a.logo}
 function optionalNumber(value,min,max,label,integer=false){if(value===''||value==null)return '';const n=numeric(value,min,max,label);if(integer&&!Number.isInteger(n))throw Error(label+': usa un número entero.');return n}
 function validOptionalDate(value,label){if(value&&(!/^\d{4}-\d{2}-\d{2}$/.test(value)||Number.isNaN(Date.parse(value))||new Date(value).toISOString().slice(0,10)!==value))throw Error(label+' inválida.');return value}
 function validateReference(raw){const out=referenceDefaults();if(raw==null)return out;if(typeof raw!=='object'||Array.isArray(raw))throw Error('Ficha inválida.');for(const [key,max]of Object.entries(REF_TEXT))out[key]=safeString(raw[key]??'',max,key);validOptionalDate(out.due,'Fecha de muestra');out.status=oneOf(raw.status??'draft',Object.keys(REF_STATUS),'estado de ficha');out.composition=oneOf(raw.composition??'unknown',Object.keys(COMPOSITIONS),'composición');out.polyesterPercent=optionalNumber(raw.polyesterPercent,0,100,'porcentaje de poliéster');out.sampleSize=oneOf(raw.sampleSize??'',['',...SIZES],'talla de muestra');out.sampleQty=optionalNumber(raw.sampleQty,1,9999,'cantidad de muestras',true);for(const key of Object.keys(MEASUREMENTS))for(const size of SIZES)out.measurements[key][size]=optionalNumber(raw.measurements?.[key]?.[size],0.1,300,'medida '+size);return out}
-async function validateLogo(raw,a){const out=logoDefaults();if(raw==null){out.name=a.fileName||'';return out}if(typeof raw!=='object'||Array.isArray(raw))throw Error('Datos del logo inválidos.');for(const [key,max]of Object.entries(LOGO_TEXT))out[key]=safeString(raw[key]??'',max,key);for(const key of ['widthCm','heightCm'])out[key]=optionalNumber(raw[key],0.1,150,key);out.colorCount=optionalNumber(raw.colorCount,1,50,'cantidad de colores',true);out.stitches=optionalNumber(raw.stitches,1,10000000,'puntadas',true);out.underbase=oneOf(raw.underbase??'pending',['pending','yes','no'],'base blanca');out.digitizing=oneOf(raw.digitizing??'pending',['pending','requested','received','sampled'],'ponchado');out.prepared=boolean(raw.prepared??false,'logo preparado');const p=raw.prep??PREP_DEFAULT;out.prep={bgTone:oneOf(p.bgTone??'light',['light','dark'],'tono del fondo'),removeBg:boolean(p.removeBg,'fondo'),innerWhite:boolean(p.innerWhite??false,'blancos interiores'),cropX:numeric(p.cropX??0,0,99,'recorte X'),cropY:numeric(p.cropY??0,0,99,'recorte Y'),cropW:numeric(p.cropW??100,1,100,'recorte ancho'),cropH:numeric(p.cropH??100,1,100,'recorte alto'),tolerance:numeric(p.tolerance,0,100,'tolerancia'),trim:boolean(p.trim,'recorte'),mono:boolean(p.mono,'color único'),monoColor:safeString(p.monoColor,7,'color único')};if(!validHex(out.prep.monoColor))throw Error('Color único inválido.');if(raw.original!=null){const o=raw.original;if(typeof o!=='object')throw Error('Original inválido.');const data=safeString(o.data,7100000,'archivo original'),name=safeString(o.name,150,'archivo original'),type=oneOf(o.type,['png','svg','jpeg'],'tipo de original');await normalizeLogo(data,type);out.original={data,name,type};}return out}
+async function validateLogo(raw,a){const out=logoDefaults();if(raw==null){out.name=a.fileName||'';return out}if(typeof raw!=='object'||Array.isArray(raw))throw Error('Datos del logo inválidos.');for(const [key,max]of Object.entries(LOGO_TEXT))out[key]=safeString(raw[key]??'',max,key);for(const key of ['widthCm','heightCm'])out[key]=optionalNumber(raw[key],0.1,150,key);out.colorCount=optionalNumber(raw.colorCount,1,50,'cantidad de colores',true);out.stitches=optionalNumber(raw.stitches,1,10000000,'puntadas',true);out.underbase=oneOf(raw.underbase??'pending',['pending','yes','no'],'base blanca');out.digitizing=oneOf(raw.digitizing??'pending',['pending','requested','received','sampled'],'ponchado');out.prepared=boolean(raw.prepared??false,'logo preparado');const p=raw.prep??PREP_DEFAULT;out.prep={bgTone:oneOf(p.bgTone??'light',['light','dark'],'tono del fondo'),removeBg:boolean(p.removeBg,'fondo'),innerWhite:boolean(p.innerWhite??false,'blancos interiores'),cropX:numeric(p.cropX??0,0,99,'recorte X'),cropY:numeric(p.cropY??0,0,99,'recorte Y'),cropW:numeric(p.cropW??100,1,100,'recorte ancho'),cropH:numeric(p.cropH??100,1,100,'recorte alto'),tolerance:numeric(p.tolerance,0,100,'tolerancia'),trim:boolean(p.trim,'recorte'),mono:boolean(p.mono,'color único'),monoColor:safeString(p.monoColor,7,'color único')};if(!validHex(out.prep.monoColor))throw Error('Color único inválido.');if(raw.original!=null){const o=raw.original;if(typeof o!=='object')throw Error('Original inválido.');const data=safeString(o.data,7100000,'archivo original'),name=safeString(o.name,150,'archivo original'),type=oneOf(o.type,['png','svg','jpeg'],'tipo de original');if(!(typeof isCloudArtRef==='function'&&isCloudArtRef(data)))await normalizeLogo(data,type);out.original={data,name,type};}return out}
 
 const blankV3=blank;
 blank=function(){return {...blankV3(),reference:referenceDefaults()}};
@@ -592,7 +601,7 @@ function applicationMask(a,rect,wx,wy,src){if(!fullSublimation(a))return 1;const
 const signatureBasic=visualSignature;
 visualSignature=function(){const base=signatureBasic(),parts=state.artworks.filter(fullSublimation).map(a=>[a.id,ensureLogo(a).coverage]);if(!parts.length)return base;let a=2166136261,b=5381;const value=base+JSON.stringify(parts);for(let i=0;i<value.length;i++){a=Math.imul(a^value.charCodeAt(i),16777619);b=Math.imul(b,33)^value.charCodeAt(i)}return(a>>>0).toString(16).padStart(8,'0')+(b>>>0).toString(16).padStart(8,'0')};
 async function readReferenceFile(file,kind,note){if(file.size>5*1024*1024)throw Error('La referencia excede 5 MB.');const extension=file.name.split('.').pop().toLowerCase(),mime={pdf:'application/pdf',png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',dst:'application/octet-stream',emb:'application/octet-stream'}[extension];if(!mime)throw Error('Adjunta PDF, PNG, JPG, DST o EMB.');const data=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve('data:'+mime+';base64,'+String(r.result).split(',')[1]);r.onerror=()=>reject(Error('No se pudo leer la referencia.'));r.readAsDataURL(file)});return validateAttachment({id:uid(),name:file.name.slice(0,150),extension,data,kind,note})}
-async function validateAttachment(raw){if(!raw||typeof raw!=='object')throw Error('Referencia inválida.');const out={id:safeString(raw.id,100,'id de referencia'),name:safeString(raw.name,150,'nombre de referencia'),extension:oneOf(raw.extension,['pdf','png','jpg','jpeg','dst','emb'],'archivo de referencia'),kind:oneOf(raw.kind,Object.keys(ATTACHMENT_KINDS),'tipo de referencia'),note:safeString(raw.note??'',400,'nota de referencia'),data:safeString(raw.data,7100000,'referencia')};const mime={pdf:'application/pdf',png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',dst:'application/octet-stream',emb:'application/octet-stream'}[out.extension];if(!out.data.startsWith('data:'+mime+';base64,')||!/^[A-Za-z0-9+/=]+$/.test(out.data.split(',')[1]))throw Error('Referencia dañada.');if(out.extension==='pdf'&&atob(out.data.split(',')[1].slice(0,12)).slice(0,5)!=='%PDF-')throw Error('PDF inválido.');if(['png','jpg','jpeg'].includes(out.extension))await normalizeLogo(out.data,out.extension==='png'?'png':'jpeg');return out}
+async function validateAttachment(raw){if(!raw||typeof raw!=='object')throw Error('Referencia inválida.');const out={id:safeString(raw.id,100,'id de referencia'),name:safeString(raw.name,150,'nombre de referencia'),extension:oneOf(raw.extension,['pdf','png','jpg','jpeg','dst','emb'],'archivo de referencia'),kind:oneOf(raw.kind,Object.keys(ATTACHMENT_KINDS),'tipo de referencia'),note:safeString(raw.note??'',400,'nota de referencia'),data:safeString(raw.data,7100000,'referencia')};const mime={pdf:'application/pdf',png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',dst:'application/octet-stream',emb:'application/octet-stream'}[out.extension];if(!(typeof isCloudArtRef==='function'&&isCloudArtRef(out.data))&&(!out.data.startsWith('data:'+mime+';base64,')||!/^[A-Za-z0-9+/=]+$/.test(out.data.split(',')[1])))throw Error('Referencia dañada.');if(out.extension==='pdf'&&!(typeof isCloudArtRef==='function'&&isCloudArtRef(out.data))&&atob(out.data.split(',')[1].slice(0,12)).slice(0,5)!=='%PDF-')throw Error('PDF inválido.');if(['png','jpg','jpeg'].includes(out.extension)&&!(typeof isCloudArtRef==='function'&&isCloudArtRef(out.data)))await normalizeLogo(out.data,out.extension==='png'?'png':'jpeg');return out}
 const validateOrderBasic=validateOrder;
 validateOrder=async function(raw){const out=await validateOrderBasic(raw),files=raw.reference?.attachments??[];if(!Array.isArray(files)||files.length>8)throw Error('Máximo 8 referencias por pedido.');const ids=new Set();out.reference.attachments=[];for(const file of files){const item=await validateAttachment(file);if(ids.has(item.id))throw Error('Referencias duplicadas.');ids.add(item.id);out.reference.attachments.push(item)}return out};
 function syncReferenceFiles(){const root=$('#referenceFiles');root.replaceChildren();const files=ensureReference().attachments??[];$('#referenceFile').disabled=files.length>=8;if(!files.length){const p=document.createElement('p');p.className='help';p.textContent='Sin referencias adjuntas.';root.append(p)}for(const file of files){const card=document.createElement('div');card.className='reference-file';const title=document.createElement('strong'),meta=document.createElement('p'),actions=document.createElement('div'),get=document.createElement('button'),remove=document.createElement('button');title.textContent=file.name;meta.textContent=ATTACHMENT_KINDS[file.kind]+(file.note?' · '+file.note:'');actions.className='logo-actions';get.textContent='Descargar original';get.addEventListener('click',()=>download(dataBlob(file.data),file.name));remove.textContent='Quitar de este pedido';remove.className='danger';remove.addEventListener('click',()=>{ensureReference().attachments=files.filter(v=>v.id!==file.id);changed();syncReferenceFiles()});card.append(title,meta);if(['png','jpg','jpeg'].includes(file.extension)){const img=document.createElement('img');img.src=file.data;img.alt='Referencia: '+file.name;card.append(img)}actions.append(get,remove);card.append(actions);root.append(card)}}
@@ -909,6 +918,273 @@ init=async function(){
     $('#bootStatus').hidden=true;
   }
 };
+
+/* Client firebaseConfig for project tgm-garment-studio.
+   apiKey is expected in browser apps (restricted by HTTP referrer + Storage rules).
+   Web app “TGM Garment Studio” provided by Account Manager.
+
+   Required fields:
+   - apiKey
+   - projectId          = tgm-garment-studio
+   - storageBucket      = tgm-garment-studio.firebasestorage.app
+   - appId
+*/
+const TGM_FIREBASE_PROJECT_ID = 'tgm-garment-studio';
+const TGM_FIREBASE_STORAGE_BUCKET = 'tgm-garment-studio.firebasestorage.app';
+const TGM_FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyD-qGSXaVEMQERz07Eabu9M-T2_7a5Q7Gc',
+  authDomain: 'tgm-garment-studio.firebaseapp.com',
+  projectId: TGM_FIREBASE_PROJECT_ID,
+  storageBucket: TGM_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: '821421188029',
+  appId: '1:821421188029:web:ffe938352ab2eef8dce8'
+};
+const TGM_FIREBASE_SDK = {
+  app: 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js',
+  storage: 'https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js'
+};
+function tgmFirebaseConfigUsable(config){
+  const cfg = config || TGM_FIREBASE_CONFIG;
+  return Boolean(cfg.apiKey && !String(cfg.apiKey).startsWith('TODO_') && cfg.projectId === TGM_FIREBASE_PROJECT_ID && cfg.storageBucket === TGM_FIREBASE_STORAGE_BUCKET);
+}
+function tgmFirebaseInitConfig(config){
+  const cfg = {...(config || TGM_FIREBASE_CONFIG)};
+  for(const key of Object.keys(cfg))if(String(cfg[key]).startsWith('TODO_') || cfg[key]==='')delete cfg[key];
+  return cfg;
+}
+
+const TGM_CLOUD_BUCKET = 'tgm-garment-studio.firebasestorage.app';
+function isCloudArtRef(value){
+  if(typeof value!=='string' || !value)return false;
+  if(value.startsWith('data:'))return false;
+  if(value.startsWith('gs://'+TGM_CLOUD_BUCKET+'/'))return true;
+  if(!value.startsWith('https://'))return false;
+  return /https:\/\/firebasestorage\.googleapis\.com\/v0\/b\/tgm-garment-studio\.(firebasestorage\.app|appspot\.com)\//.test(value)
+    || /https:\/\/storage\.googleapis\.com\/tgm-garment-studio\.(firebasestorage\.app|appspot\.com)\//.test(value)
+    || /^https:\/\/tgm-garment-studio\.firebasestorage\.app\//.test(value);
+}
+function safeOrderId(id){
+  const value=String(id||'').trim();
+  if(!/^[a-zA-Z0-9._-]{6,80}$/.test(value))throw Error('Identificador de pedido inválido para la nube.');
+  return value;
+}
+function safeCloudFileName(name){
+  const base=String(name||'arte').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9._-]+/g,'-').replace(/^[-.]+|[-.]+$/g,'').slice(0,80);
+  return base||'arte.png';
+}
+function pedidoJsonPath(orderId){return 'pedidos/'+safeOrderId(orderId)+'/pedido.json'}
+function pedidoArtPath(orderId,artworkId,fileName){
+  const artId=String(artworkId||'arte').replace(/[^a-zA-Z0-9._-]+/g,'-').slice(0,80)||'arte';
+  return 'pedidos/'+safeOrderId(orderId)+'/art/'+artId+'-'+safeCloudFileName(fileName);
+}
+function cloudArtSlots(order){
+  const slots=[];
+  for(const art of order.artworks||[]){
+    if(art.image)slots.push({object:art,key:'image',artworkId:art.id,fileName:art.fileName||art.logo?.name||'aplicacion.png'});
+    if(art.logo?.original?.data)slots.push({object:art.logo.original,key:'data',artworkId:art.id,fileName:'original-'+(art.logo.original.name||'original.png')});
+  }
+  for(const view of ['front','back']){
+    const item=order.photo?.final?.[view];
+    if(item?.image)slots.push({object:item,key:'image',artworkId:'final-'+view,fileName:'final-'+view+'.png'});
+  }
+  for(const file of order.reference?.attachments||[]){
+    if(['png','jpg','jpeg'].includes(file.extension)&&file.data)slots.push({object:file,key:'data',artworkId:file.id||'ref',fileName:file.name||('referencia.'+file.extension)});
+  }
+  return slots;
+}
+if(typeof globalThis!=='undefined'){
+  Object.assign(globalThis,{isCloudArtRef,safeOrderId,safeCloudFileName,pedidoJsonPath,pedidoArtPath,cloudArtSlots,TGM_CLOUD_BUCKET});
+}
+
+/* Firebase Storage sync for shared pedidos. Local IndexedDB/localStorage stays the offline draft. */
+const TGM_CLOUD={sdk:null,loading:null};
+function setCloudStatus(message,kind){
+  const el=$('#cloudStatus');
+  if(!el)return;
+  el.textContent=message;
+  el.dataset.error=kind==='error'?'true':'false';
+  el.dataset.ok=kind==='ok'?'true':'false';
+}
+function cloudErrorMessage(error){
+  const text=String(error?.message||error||'');
+  if(/TODO_|apiKey|configuración|config/i.test(text))return 'Nube: falta apiKey o storageBucket en firebase-config.';
+  if(/Failed to fetch|NetworkError|ERR_INTERNET|offline|Load failed/i.test(text))return 'Nube: sin conexión.';
+  if(/unauthorized|permission|storage\/unauthorized/i.test(text))return 'Nube: sin permiso de Storage.';
+  if(/CORS|blocked/i.test(text))return 'Nube: el navegador bloqueó Storage.';
+  return text.slice(0,180)||'Nube: no se pudo completar.';
+}
+async function ensureFirebaseStorage(){
+  if(TGM_CLOUD.sdk)return TGM_CLOUD.sdk;
+  if(TGM_CLOUD.loading)return TGM_CLOUD.loading;
+  TGM_CLOUD.loading=(async()=>{
+    if(typeof tgmFirebaseConfigUsable!=='function'||!tgmFirebaseConfigUsable())throw Error('Falta apiKey o storageBucket de Firebase.');
+    const appMod=await import(TGM_FIREBASE_SDK.app);
+    const storageMod=await import(TGM_FIREBASE_SDK.storage);
+    const config=tgmFirebaseInitConfig();
+    const app=appMod.getApps().length?appMod.getApps()[0]:appMod.initializeApp(config);
+    const storage=storageMod.getStorage(app);
+    TGM_CLOUD.sdk={
+      app,storage,
+      ref:storageMod.ref,
+      uploadBytes:storageMod.uploadBytes,
+      getDownloadURL:storageMod.getDownloadURL,
+      listAll:storageMod.listAll,
+      getBytes:storageMod.getBytes
+    };
+    return TGM_CLOUD.sdk;
+  })().catch(error=>{TGM_CLOUD.loading=null;throw error});
+  return TGM_CLOUD.loading;
+}
+function storageRefFor(sdk,value){
+  if(typeof value==='string'&&(value.startsWith('gs://')||value.startsWith('https://')))return sdk.ref(sdk.storage,value);
+  return sdk.ref(sdk.storage,value);
+}
+async function blobToDataUrl(blob){
+  return await new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result);
+    reader.onerror=()=>reject(Error('No se pudo leer el archivo de la nube.'));
+    reader.readAsDataURL(blob);
+  });
+}
+async function readCloudBytes(sdk,pathOrUrl){
+  const bytes=await sdk.getBytes(storageRefFor(sdk,pathOrUrl));
+  return bytes instanceof Uint8Array?bytes:new Uint8Array(bytes);
+}
+async function hydrateCloudPedido(raw){
+  if(!raw||typeof raw!=='object')return raw;
+  const slots=cloudArtSlots(raw).filter(slot=>isCloudArtRef(slot.object[slot.key]));
+  if(!slots.length)return raw;
+  const sdk=await ensureFirebaseStorage();
+  const order=clone(raw);
+  const hydrated=cloudArtSlots(order);
+  for(const slot of hydrated){
+    const current=slot.object[slot.key];
+    if(!isCloudArtRef(current))continue;
+    const bytes=await readCloudBytes(sdk,current);
+    const mime=current.includes('.svg')?'image/svg+xml':current.includes('.jpg')||current.includes('.jpeg')?'image/jpeg':'image/png';
+    slot.object[slot.key]=await blobToDataUrl(new Blob([bytes],{type:mime}));
+  }
+  return order;
+}
+async function uploadArtSlot(sdk,orderId,slot){
+  const current=slot.object[slot.key];
+  if(!current)return;
+  if(isCloudArtRef(current))return;
+  if(typeof current!=='string'||!current.startsWith('data:'))return;
+  const path=pedidoArtPath(orderId,slot.artworkId,slot.fileName);
+  const blob=dataBlob(current);
+  const uploaded=await sdk.uploadBytes(storageRefFor(sdk,path),blob,{contentType:blob.type||'application/octet-stream',cacheControl:'public,max-age=3600'});
+  slot.object[slot.key]=await sdk.getDownloadURL(uploaded.ref);
+}
+async function uploadCurrentPedido(){
+  const sdk=await ensureFirebaseStorage();
+  const snapshot=clone(state);
+  const orderId=safeOrderId(snapshot.id);
+  const slots=cloudArtSlots(snapshot);
+  let uploaded=0;
+  for(const slot of slots){
+    const before=slot.object[slot.key];
+    await uploadArtSlot(sdk,orderId,slot);
+    if(slot.object[slot.key]!==before)uploaded++;
+  }
+  const payload=JSON.stringify(snapshot);
+  const jsonBlob=new Blob([payload],{type:'application/json'});
+  await sdk.uploadBytes(storageRefFor(sdk,pedidoJsonPath(orderId)),jsonBlob,{contentType:'application/json',cacheControl:'no-store'});
+  return {orderId,uploaded,arts:slots.length};
+}
+async function listCloudPedidos(){
+  const sdk=await ensureFirebaseStorage();
+  const listed=await sdk.listAll(storageRefFor(sdk,'pedidos'));
+  const orders=[];
+  for(const prefix of listed.prefixes){
+    try{
+      const bytes=await readCloudBytes(sdk,pedidoJsonPath(prefix.name));
+      const parsed=JSON.parse(new TextDecoder().decode(bytes));
+      if(parsed&&typeof parsed==='object')orders.push(parsed);
+    }catch{}
+  }
+  return orders.sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||''));
+}
+async function openCloudPedido(raw){
+  await loadOrder(raw);
+  $('#cloudDialog')?.close();
+}
+function renderCloudList(root,list){
+  root.replaceChildren();
+  if(!list.length){
+    const empty=document.createElement('p');
+    empty.className='empty';
+    empty.textContent='Todavía no hay pedidos en la nube.';
+    root.append(empty);
+    return;
+  }
+  for(const order of list){
+    const row=document.createElement('div');
+    row.className='saved-row';
+    const info=document.createElement('div'),title=document.createElement('strong'),meta=document.createElement('small'),button=document.createElement('button');
+    title.textContent=(order.number?'#'+order.number:'Sin folio')+' · '+(order.client||'Sin cliente');
+    meta.textContent=(GARMENTS[order.garment]?.label||'Prenda')+' · '+(order.date||'Sin fecha')+' · '+(order.artworks?.length||0)+' aplicaciones · nube';
+    button.textContent='Abrir';
+    button.addEventListener('click',()=>busy(button,()=>openCloudPedido(order)));
+    info.append(title,meta);
+    row.append(info,button);
+    root.append(row);
+  }
+}
+async function openCloudLibrary(){
+  const root=$('#cloudOrders');
+  root.replaceChildren();
+  const loading=document.createElement('p');
+  loading.textContent='Leyendo pedidos de la nube…';
+  root.append(loading);
+  $('#cloudDialog').showModal();
+  try{
+    renderCloudList(root,await listCloudPedidos());
+    setCloudStatus('Nube: lista de pedidos actualizada.','ok');
+  }catch(error){
+    root.textContent=cloudErrorMessage(error);
+    setCloudStatus(cloudErrorMessage(error),'error');
+    throw error;
+  }
+}
+function bindCloud(){
+  $('#cloudUpload').addEventListener('click',e=>busy(e.currentTarget,async()=>{
+    setCloudStatus('Subiendo pedido a la nube…');
+    try{
+      const result=await uploadCurrentPedido();
+      const message=result.uploaded?'Pedido en la nube · '+result.uploaded+' archivo(s) de arte.':'Pedido en la nube · el arte ya estaba subido.';
+      setCloudStatus(message,'ok');
+      toast('Pedido subido. Ábrelo en otro navegador con Abrir desde la nube.');
+    }catch(error){
+      const message=cloudErrorMessage(error);
+      setCloudStatus(message,'error');
+      throw Error(message);
+    }
+  }));
+  $('#cloudOpen').addEventListener('click',e=>busy(e.currentTarget,openCloudLibrary));
+  setCloudStatus(tgmFirebaseConfigUsable()?'Nube lista · el borrador local se conserva.':'Nube: falta apiKey o storageBucket en firebase-config.');
+}
+const getImageBeforeCloud=getImage;
+const cloudImageCache=new Map();
+getImage=async function(src){
+  if(isCloudArtRef(src)){
+    if(!cloudImageCache.has(src))cloudImageCache.set(src,(async()=>{
+      const sdk=await ensureFirebaseStorage();
+      const bytes=await readCloudBytes(sdk,src);
+      return URL.createObjectURL(new Blob([bytes],{type:'image/png'}));
+    })());
+    src=await cloudImageCache.get(src);
+  }
+  return getImageBeforeCloud(src);
+};
+const loadOrderBeforeCloud=loadOrder;
+loadOrder=async function(raw){
+  const hydrated=await hydrateCloudPedido(raw);
+  return loadOrderBeforeCloud(hydrated);
+};
+const initUIBeforeCloud=initUI;
+initUI=function(){initUIBeforeCloud();bindCloud()};
 
 init().catch(e=>toast('No se pudo iniciar el estudio: '+e.message));
 </script>

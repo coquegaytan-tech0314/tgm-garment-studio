@@ -1,0 +1,8 @@
+.workspace-head .actions #cloudUpload,.workspace-head .actions #cloudOpen{white-space:nowrap}
+#cloudStatus[data-error=true]{color:#ac3030}
+#cloudStatus[data-ok=true]{color:var(--success)}
+.local-footer{flex-wrap:wrap}
+.cloud-footer{display:flex;flex-direction:column;gap:2px;min-width:0}
+@media(max-width:760px){
+  .workspace-head .actions #cloudUpload,.workspace-head .actions #cloudOpen{flex:1}
+}

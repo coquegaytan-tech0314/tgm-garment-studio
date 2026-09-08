@@ -1,0 +1,11 @@
+{
+  "hosting": {
+    "site": "tgm-garment-studio",
+    "public": "dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}
