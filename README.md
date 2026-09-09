@@ -1,12 +1,12 @@
-# TGM — Garment Order Studio v6
+# TGM — Garment Order Studio v7
 
-An offline internal order and finished-look preview app for Tejidos Gaytán de Moroleón. The app, reference sheets, exports, and staff guide are in Spanish. No accounts, backend, storefront, network connection, or installation is needed.
+An offline internal order and finished-look preview app for Tejidos Gaytán de Moroleón. The app, reference sheets, exports, and staff guide are in Spanish. Local configuration and exports need no account, installation or connection. Optional Firebase Storage sharing uses the network.
 
 ![Running v5 sleeve editor with generic example artwork](previews/TGM_v5_Mangas_Preview.jpg)
 
 ## Repository quick start
 
-This repository is intended to be **private**. It contains app code, generated garment bases, documentation and generic preview images. Saved client pedidos and uploaded artwork stay in the browser or in separately downloaded JSON backups; they are not part of this repository.
+This repository contains app code, generated garment bases, documentation and generic preview images. Customer pedidos, prices, costs, artwork and PDFs belong in operator storage, authorized shared storage or downloaded backups, never in this code repository.
 
 Download the repository ZIP, extract it, and open **dist/index.html** in a desktop browser. This is the standalone app. No install or build is required to run the committed app. Mobile layouts and touch controls are included, but physical iPhone/Android uploads, storage and exports still need device testing.
 
@@ -21,6 +21,18 @@ With Node.js installed, the equivalent is `npm run build`. The optional local pr
 Edit the files in `photostudio/` and regenerate `dist/index.html`; keep both source and generated HTML in the same commit. `photostudio/order-v4/` contains the logo, technique and ficha extension; `photostudio/sleeves-v5/` contains the dedicated sleeve workflow; `photostudio/reliability-v6/` contains the reliability and reference changes. `photostudio/v2-reference.html` is the retained baseline used by the build. The root `studio3d.js` is an earlier sketch reference, not a separate runtime dependency.
 
 The repository provides version history and code collaboration. Public GitHub Pages and Firebase Hosting are already in use; shared pedidos use **Subir a la nube** / **Abrir desde la nube** against Firebase Storage. No open-source license has been added.
+
+## Selling price and internal costs — v7
+
+Open **Tallas y precio** and enter **Precio por prenda terminada**. Price is optional; blank means unknown, while 0 is an explicit zero price. Select MXN or USD and enter the agreed scope/conditions. The order amount uses the S–XXL quantity total. Values are saved as integer cents; the app never chooses a factory price or adds taxes, fees, discounts or exchange conversions. Each entered unit amount accepts 0–999999.99 with up to two decimals; comma or point may be used as the decimal separator, without thousands separators.
+
+**Incluir precio y condiciones en el PDF del cliente y al imprimir** is off for new orders. When selected, those commercial fields appear in the one-page client PDF and print summary. The internal reference ficha always includes the selling-price fields. PNGs and WhatsApp captions remain free of pricing.
+
+Expand **Costos de fabricación · uso interno** to enter per-piece fabric, trims, cutting/sewing, decoration, packaging and other costs in the same currency. Blank categories remain pending; use an explicit 0 for an inapplicable cost. Partial sums are labeled as partial. Once all six categories are entered, the app displays the difference between selling price and captured cost. Costs never set or change the selling price. The calculation includes only the categories entered by staff.
+
+Manufacturing costs and their separate notes are saved in the pedido, JSON and optional cloud copy. They never appear in the ficha técnica, client PDF, print summary, PNGs or WhatsApp caption. A full JSON backup contains internal information. This is an output separation, not a staff-permission system.
+
+Schema v7 accepts v1–v6 orders and gives them blank price/cost fields. Earlier apps cannot open a v7 JSON; update the app before sharing a priced pedido. The local storage namespace is unchanged.
 
 ## Reliability update — v6
 
@@ -80,11 +92,11 @@ Attach up to eight original references, each up to 5 MB: PDF, PNG/JPG, DST or EM
 
 **Revisar ficha completa** opens the paginated report. **PDF de ficha interna** exports the **FICHA DE REFERENCIA PARA COTIZACIÓN Y DESARROLLO DE MUESTRA** with mockups, original/applied artwork and entered specifications. It grows as needed so details are not cut off to fit one page. Pages are images; PDF text is not searchable.
 
-**Guardar pedido** saves the full record; the draft also saves automatically. IndexedDB is primary storage, with localStorage fallback. Saving waits for storage completion and reports failures. **JSON** backs up all ficha data, original/prepared artwork, references and completed renders. Version 6 imports versions 1–6 and reads accessible older storage without overwriting it. Large records depend on available browser quota; keep downloaded backups.
+**Guardar pedido** saves the full record; the draft also saves automatically. IndexedDB is primary storage, with localStorage fallback. Saving waits for storage completion and reports failures. **JSON** backs up all ficha data, original/prepared artwork, references and completed renders. Version 7 imports versions 1–7 and reads accessible older storage without overwriting it. Large records depend on available browser quota; keep downloaded backups.
 
 ## Realistic reference and client exports
 
-**Acabado** is the default Canvas 2D preview: front, back, comparison and 1–4× detail inspection. Playera, hoodie and polo have fixed AI-generated bases with folds, seams and textile grain. Recoloring and application effects retain the shading. The app makes no AI or network calls.
+**Acabado** is the default Canvas 2D preview: front, back, comparison and 1–4× detail inspection. Playera, hoodie and polo have fixed AI-generated bases with folds, seams and textile grain. Recoloring and application effects retain the shading. The preview makes no AI or network calls; optional order sharing uses Firebase Storage.
 
 Source sheets are 1536 × 1024; an individual garment occupies roughly 700–850 pixels across/tall. PNG exports are 2000 × 2300 and resampled. Zoom adds no source detail. Texture, contrast masks, artwork displacement, thread relief and piece coverage are explicitly approximate.
 
@@ -108,11 +120,11 @@ The client export remains **PDF · 1 página**, plus **PNG frente**, **PNG espal
 
 ## Source and validation
 
-Vanilla HTML/CSS/JavaScript, Canvas 2D and an optional WebGL sketch. Schema: tgm-pedido, version 6. Fallback prefix: tgm-estudio-v5. IndexedDB database: tgm-pedidos-local.
+Vanilla HTML/CSS/JavaScript, Canvas 2D and an optional WebGL sketch. Schema: tgm-pedido, version 7. Fallback prefix: tgm-estudio-v5. IndexedDB database: tgm-pedidos-local.
 
 Optional shared storage uses the Firebase JS SDK (modular v10, CDN) and Firebase Storage only. Local IndexedDB/localStorage remains the offline draft library. Cloud paths: `pedidos/{orderId}/pedido.json` and `pedidos/{orderId}/art/{artworkId}-{safeFileName}`. Client config lives in `photostudio/cloud/firebase-config.js` for project `tgm-garment-studio` and bucket `tgm-garment-studio.firebasestorage.app`. No Tintorería/dyeing APIs, warehouse SKUs or Storage rules are changed here. Firebase Hosting public folder is `dist` (see `firebase.json`).
 
-In this repository, run `python3 photostudio/build.py` to produce dist/index.html. In the earlier standalone delivery ZIP, the same source directory is named `source`, so its command is `python3 source/build.py`. Source includes the retained v2 baseline, photo compositor, generated assets/prompt record, order-v4 modules, sleeves-v5 and reliability-v6 extensions. Optionally run `npm run dev` afterward for the dependency-free Node preview server. Opening the committed dist/index.html or the standalone TGM_Pedidos.html requires none of those steps.
+In this repository, run `python3 photostudio/build.py` to produce dist/index.html. In the earlier standalone delivery ZIP, the same source directory is named `source`, so its command is `python3 source/build.py`. Source includes the retained v2 baseline, photo compositor, generated assets/prompt record, order-v4 modules, sleeves-v5 reliability-v6, cloud and pricing-v7 extensions. Optionally run `npm run dev` afterward for the dependency-free Node preview server. Opening the committed dist/index.html or the standalone TGM_Pedidos.html requires none of those steps.
 
 See VALIDATION.md for completed checks and remaining browser-upload, download and physical-device limits.
 

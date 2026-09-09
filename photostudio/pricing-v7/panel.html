@@ -1,0 +1,30 @@
+<section class="pricing-card" aria-labelledby="pricingTitle">
+  <h3 id="pricingTitle">Precio de prenda terminada</h3>
+  <p class="help">Captura el precio de venta por pieza. Déjalo vacío si aún está por definir.</p>
+  <div class="row">
+    <div class="field"><label for="garmentUnitPrice">Precio por prenda terminada</label><input id="garmentUnitPrice" type="text" inputmode="decimal" autocomplete="off" maxlength="12" placeholder="Por definir" aria-describedby="priceInputHint priceInputError"></div>
+    <div class="field"><label for="priceCurrency">Moneda</label><select id="priceCurrency"><option value="MXN">MXN · peso mexicano</option><option value="USD">USD · dólar estadounidense</option></select></div>
+  </div>
+  <p class="help" id="priceInputHint">Hasta dos decimales, sin separadores de miles. Cambiar la moneda no convierte el precio.</p>
+  <p class="help price-error" id="priceInputError" role="status"></p>
+  <div class="price-total"><span>Importe de prendas</span><strong id="garmentPriceTotal" aria-live="polite">Precio por definir</strong><small id="priceCalculation"></small></div>
+  <div class="field"><label for="priceConditions">Alcance del precio / condiciones</label><textarea id="priceConditions" rows="3" maxlength="1000" placeholder="Indica si incluye aplicaciones, empaque e impuestos, y las condiciones acordadas."></textarea></div>
+  <label class="checkline"><input type="checkbox" id="priceShowClient"> Incluir precio y condiciones en el PDF del cliente y al imprimir</label>
+  <p class="help">La ficha interna y el respaldo JSON siempre conservan estos datos. El importe se calcula con las cantidades S–XXL; no agrega cargos ni impuestos.</p>
+</section>
+<details class="pricing-card" id="internalCosts">
+  <summary>Costos de fabricación · uso interno</summary>
+  <p class="help">Costos por pieza, en la misma moneda del precio final. Deja vacío lo pendiente; captura 0 cuando no aplique.</p>
+  <div class="row">
+    <div class="field"><label for="costFabric">Tela por pieza</label><input id="costFabric" data-cost="fabric" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+    <div class="field"><label for="costTrims">Avíos por pieza</label><input id="costTrims" data-cost="trims" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+    <div class="field"><label for="costSewing">Corte y confección por pieza</label><input id="costSewing" data-cost="sewing" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+    <div class="field"><label for="costDecoration">Aplicaciones por pieza</label><input id="costDecoration" data-cost="decoration" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+    <div class="field"><label for="costPackaging">Empaque por pieza</label><input id="costPackaging" data-cost="packaging" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+    <div class="field"><label for="costOther">Otros costos por pieza</label><input id="costOther" data-cost="other" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+  </div>
+  <p class="help price-error" id="costInputError" role="status"></p>
+  <div class="price-total"><span id="costSummaryLabel">Costos por capturar</span><strong id="costSummaryAmount" aria-live="polite">Por definir</strong><small id="costDifference"></small></div>
+  <div class="field"><label for="costNotes">Notas de costos · internas</label><textarea id="costNotes" maxlength="1500" rows="3" placeholder="Base del cálculo, proveedor o pendientes."></textarea></div>
+  <p class="help">Se guardan dentro del pedido y su JSON. No aparecen en la ficha técnica, PDF del cliente, imágenes ni mensaje de WhatsApp. El costo no modifica el precio de venta.</p>
+</details>
