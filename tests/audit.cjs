@@ -12,7 +12,7 @@ async function newState(){run('state=blank();selectedArt=null;dirty=false;popula
 (async()=>{
  await run('init()');run('download=(blob,name)=>downloads.push({blob,name})');
  await test('startup and every static button has a handler',async()=>{
-  assert.equal(run('VERSION'),6);assert.equal($('#bootStatus').hidden,true);
+  assert.equal(run('VERSION'),7);assert.equal($('#bootStatus').hidden,true);
   const missing=elements.filter(e=>e.tagName==='BUTTON'&&!e.events.click?.length&&e.attrs.type!=='submit');
   assert.deepEqual(missing.map(e=>e.id||e.className),[]);
  });
@@ -68,7 +68,7 @@ async function newState(){run('state=blank();selectedArt=null;dirty=false;popula
  });
  await test('invalid JSON fields and v1–v5 migration',async()=>{
   context.raw=run('clone(state)');const originalTime=context.raw.updatedAt;
-  for(const version of [1,2,3,4,5]){context.old={...context.raw,version};delete context.old.polo;const out=await run('validateOrder(old)');assert.equal(out.version,6);assert.equal(out.updatedAt,originalTime);assert.equal(out.polo.piping,false)}
+  for(const version of [1,2,3,4,5]){context.old={...context.raw,version};delete context.old.polo;const out=await run('validateOrder(old)');assert.equal(out.version,7);assert.equal(out.updatedAt,originalTime);assert.equal(out.polo.piping,false)}
   for(const [path,value]of [['id',''],['version',99],['sizes.M',-2],['sizes.M',1.5],['reference.sampleQty',1.2],['date','2026-02-30'],['polo.color','invalid'],['sleeves.left.bandWidth',500]]){
    context.bad=structuredClone(context.raw);let obj=context.bad;const keys=path.split('.');for(const key of keys.slice(0,-1))obj=obj[key];obj[keys.at(-1)]=value;await assert.rejects(()=>run('validateOrder(bad)'),undefined,path);
   }

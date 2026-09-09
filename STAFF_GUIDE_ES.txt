@@ -4,7 +4,7 @@
 4. Pulsa Cargar logo aquí o Agregar texto aquí; elige frente/espalda y técnica, o reutiliza una aplicación del pedido.
 5. En Logos prepara el original con recorte, limpieza de fondo claro/oscuro o color único; ajusta posición, escala, giro y medidas solicitadas.
 6. Registra Bordado, Serigrafía o Sublimado; para sublimado por piezas recorta la lámina y registra 100% poliéster según la regla del taller.
-7. Completa tallas S–XXL, cuidados, empaque, QC y datos de taller disponibles; deja en blanco lo que falte.
+7. En Tallas y precio captura cantidades S–XXL, precio por prenda terminada, moneda y condiciones; marca si quieres precio en el PDF del cliente. Completa cuidados, empaque y QC en Taller.
 8. En Ficha registra solicitud, medidas y desarrollo de muestra; adjunta PDF, imágenes o archivos de bordado como referencia.
 9. Revisa Frente, Espalda y Ampliar manga; exporta PNG de prenda/manga, PDF de una página y copia el mensaje para el cliente.
 10. Descarga el PDF de ficha interna, pulsa Guardar pedido y respalda todo en JSON; recupéralo desde Abrir.

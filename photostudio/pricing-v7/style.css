@@ -1,0 +1,9 @@
+.pricing-card{margin-top:24px;padding-top:20px;border-top:1px solid var(--line,#dce1ea)}
+.pricing-card .row{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:12px}
+.pricing-card input,.pricing-card select,.pricing-card textarea{min-width:0;width:100%;font-size:16px}
+.pricing-card .checkline input{width:auto;flex-shrink:0}
+.price-total{display:grid;gap:6px;padding:16px;margin:16px 0;background:#eef1fa;border-radius:10px;color:#25314d}
+.price-total strong{font-size:1.4rem;overflow-wrap:anywhere}.price-total small{font-size:14px}
+.price-error{color:#a22b32;min-height:1em}
+.pricing-card summary{font-weight:600;cursor:pointer;padding:6px 0;font-size:16px}
+@media(max-width:420px){.pricing-card .row{grid-template-columns:1fr}}

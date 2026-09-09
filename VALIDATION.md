@@ -1,4 +1,18 @@
-# Validation — TGM v6, 2026-09-07
+# Validation — TGM v7, 2026-09-09
+
+## Price and internal cost update
+
+The 24 existing regression groups and five pricing/cost groups pass against the assembled app, plus the existing cloud-helper suite. Tests execute real app event handlers, storage functions and native Canvas 2D, using synthetic values only. No real customer data or network uploads are used.
+
+- Price entry supports decimal point/comma, blank versus explicit zero, fractional cents rejection, bounds and exact integer-cent multiplication across the full S–XXL quantity range.
+- Saving, reopening, JSON download and the existing cloud-pedido serializer retain price, currency, conditions and optional manufacturing costs. Cloud serialization is tested with an in-memory SDK, not a live Storage round-trip.
+- New/older pedidos start with blank prices and costs. v1–v6 migration and malformed v7 price/cost imports are covered. Pricing edits do not invalidate the garment's visual signature.
+- Client PDF/print pricing is opt-in; the internal ficha retains selling price. Cost totals remain partial until all categories have been entered, and never change the selling price.
+- The actual full ficha renderer is exercised with distinct internal-cost notes, checking that they and the cost subtotal are absent. Client specification text, native print and caption paths also exclude internal cost notes.
+
+These checks do not certify every browser, live cloud configuration or physical iOS/Android device. The earlier browser-upload and download limitations below still apply. The optional cloud feature was already present on main when this update began; its access rules, Firebase configuration and hosting settings were preserved.
+
+## Retained v6 validation — 2026-09-07
 
 ## Current result and scope
 
@@ -35,8 +49,8 @@ The editable render is a development reference, not a calibrated fit or producti
 
 ## Current operating limits
 
-- This is local browser storage, without staff authentication, shared orders, a server backup or cross-device synchronization. Hosting access control and downloaded JSON backups are separate requirements for internal operation.
-- Runtime code and images are embedded; the standalone app needs no CDN or network. Accessing a hosted address offline before it has loaded is not guaranteed. Changing file path, origin or browser may require importing a JSON backup.
+- Local IndexedDB/localStorage remains the draft store. Optional Firebase Storage sharing was added after the v6 audit. Staff authentication and Storage rules are not tested by this pricing update; JSON backups remain separate.
+- Local preview/export code and images are embedded; optional cloud sharing loads the Firebase SDK from its CDN and needs a network connection. Accessing a hosted address offline before it has loaded is not guaranteed. Changing file path, origin or browser may require importing a JSON backup.
 - Cache limits and a serialized preview queue reduce repeated work; large orders still depend on device memory and browser quota. An interrupted tab or full disk can still require recovery from a backup.
 - Photo masks, textile texture, bands, seams, thread relief, material appearance and artwork displacement are approximate. Fixed garment bases cannot validate measurements, semi-fitted pattern grading, exact physical color or cloth behavior.
 - No embroidery digitizing, DST/EMB generation, production ink separations, cutting patterns, calibrated sublimation layouts, process settings or manufacturing guarantees are generated.
