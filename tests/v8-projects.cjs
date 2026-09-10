@@ -35,8 +35,8 @@ const {assert,context,run,$}=require('./harness.cjs');
     order.version=8;
     order.client='CUMBRES - RHINOS';
     order.number='CR-'+String(i+1).padStart(2,'0');
-    order.garment=i<3?'polo':i<6?'hoodie':'playera';
-    order.neck=i<3?'polo':i<6?'hood':'round';
+    order.garment=i<3?'polo':i<6?'hoodie':i<9?'sleeveless':'zipneck';
+    order.neck=i<3?'polo':i<6?'hood':i<9?'round':'zip';
     order.project={id:'cumbres-rhinos-test',name:'CUMBRES - RHINOS',variant:variants[i],position:i,backNote:i>=6?'Referencia de desarrollo; confirmar patrón.':'',preview:{signature:'',front:'',back:''}};
     context.rhino.orders.push(order);
   }
@@ -50,7 +50,12 @@ const {assert,context,run,$}=require('./harness.cjs');
   assert.equal(run('state.project.variant'),'Polo Blanco');
   await run('openProjectOrder(6)');
   assert.equal(run('state.project.variant'),'Top Blanco');
+  assert.equal(run('state.garment'),'sleeveless');
   assert.equal(run('activeProjectIndex'),6);
+  await run('openProjectOrder(9)');
+  assert.equal(run('state.project.variant'),'Cierre Corto Blanco');
+  assert.equal(run('state.garment'),'zipneck');
+  await run('openProjectOrder(6)');
 
   // Editing one project garment must be retained when switching to another project garment.
   run("state.pricing.unitCents=12345;state.sizes.M=10;changed()");
