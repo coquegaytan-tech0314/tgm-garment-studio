@@ -52,6 +52,7 @@
 .price-error{color:#a22b32;min-height:1em}
 .pricing-card summary{font-weight:600;cursor:pointer;padding:6px 0;font-size:16px}
 @media(max-width:420px){.pricing-card .row{grid-template-columns:1fr}}
+.project-banner{max-width:1800px;margin:12px auto 0;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:14px;background:#eef1ff;border:1px solid #d9defb;border-radius:10px}.project-banner[hidden]{display:none!important}.project-banner>div{display:flex;align-items:center;gap:9px;min-width:0;flex-wrap:wrap}.project-banner strong{font-size:.9rem}.project-banner span:last-child{font-size:.8125rem;color:var(--muted)}.project-banner button{min-height:34px;padding:6px 10px}.project-dialog{width:min(980px,96vw);max-width:96vw}.project-dialog .dialog-body{padding:22px}.project-dialog-head{display:flex;justify-content:space-between;gap:16px}.project-dialog-head h2{margin-bottom:4px}.project-search{margin:16px 0 8px}.project-summary{font-size:.875rem;color:var(--muted);margin:10px 0 14px}.project-orders{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-height:58vh;overflow:auto;padding-right:3px}.project-card{display:grid;grid-template-columns:94px minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff}.project-card[data-active=true]{border-color:var(--blue);background:var(--pale)}.project-thumb{height:82px;border-radius:8px;overflow:hidden;background:#f1f3f6;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.75rem;text-align:center}.project-thumb img{width:100%;height:100%;object-fit:cover}.project-card-body{min-width:0}.project-card-body strong,.project-card-body small{display:block}.project-card-body strong{font-size:.875rem;line-height:1.25}.project-card-body small{font-size:.75rem;color:var(--muted);margin-top:5px;line-height:1.35}.project-note{font-size:.7rem;color:#815d24;margin:6px 0 0;line-height:1.35}.project-card button{font-size:.75rem;padding:7px 9px;min-height:36px}.project-dialog .dialog-actions{position:sticky;bottom:0}@media(max-width:900px){.project-orders{grid-template-columns:1fr}.project-banner{margin:10px 12px 0;padding:10px 12px}}@media(max-width:560px){.project-card{grid-template-columns:72px minmax(0,1fr);align-items:start}.project-thumb{height:70px}.project-card button{grid-column:1/-1;width:100%}.project-banner{align-items:flex-start;flex-direction:column}.project-banner button{width:100%}}
 </style>
 </head>
 <body>
@@ -68,8 +69,10 @@
 <symbol id="i-zoom" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></symbol>
 <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
 </defs></svg>
-<header class="topbar"><div class="brand"><div class="monogram">TGM</div><div><strong>TEJIDOS GAYTÁN DE MOROLEÓN</strong><span>Estudio de prendas <b class="pro-version">ESTUDIO · v7</b></span></div></div><span class="internal">Uso interno</span></header>
-<section class="workspace-head"><div><h1 id="workspaceTitle">Nuevo pedido</h1><p class="subtle">Configura la prenda y revisa su acabado antes de compartirla.</p><p class="subtle save-message" id="cloudStatus" role="status">Nube: en espera</p></div><div class="actions"><button id="newOrder"><svg class="icon"><use href="#i-plus"/></svg>Nuevo</button><button id="openOrders"><svg class="icon"><use href="#i-folder"/></svg>Abrir</button><button id="downloadJson"><svg class="icon"><use href="#i-download"/></svg>JSON</button><button id="saveOrder" class="primary"><svg class="icon"><use href="#i-save"/></svg>Guardar pedido</button><button id="cloudUpload">Subir a la nube</button><button id="cloudOpen">Abrir desde la nube</button></div></section>
+<header class="topbar"><div class="brand"><div class="monogram">TGM</div><div><strong>TEJIDOS GAYTÁN DE MOROLEÓN</strong><span>Estudio de prendas <b class="pro-version">ESTUDIO · v8</b></span></div></div><span class="internal">Uso interno</span></header>
+<section class="workspace-head"><div><h1 id="workspaceTitle">Nuevo pedido</h1><p class="subtle">Configura la prenda y revisa su acabado antes de compartirla.</p><p class="subtle save-message" id="cloudStatus" role="status">Nube: en espera</p></div><div class="actions"><button id="newOrder"><svg class="icon"><use href="#i-plus"/></svg>Nuevo</button><button id="openOrders"><svg class="icon"><use href="#i-folder"/></svg>Abrir</button><button id="projectButton"><svg class="icon"><use href="#i-folder"/></svg>Proyecto completo</button><button id="downloadJson"><svg class="icon"><use href="#i-download"/></svg>JSON</button><button id="saveOrder" class="primary"><svg class="icon"><use href="#i-save"/></svg>Guardar pedido</button><button id="cloudUpload">Subir a la nube</button><button id="cloudOpen">Abrir desde la nube</button></div></section>
+<div id="projectBanner" class="project-banner" hidden><div><span class="small-label">Proyecto activo</span><strong id="projectBannerName"></strong><span id="projectBannerVariant"></span></div><button id="projectBannerOpen">Ver proyecto</button></div>
+
 <div id="bootStatus" role="status">Abriendo el almacenamiento de pedidos…</div><main class="layout"><section class="editor" aria-label="Configuración del pedido">
 <div class="order-fields"><div class="section-title"><h2>01 <span style="font-weight:500;color:var(--muted)">/ Pedido</span></h2><span class="small-label">Datos internos</span></div><div class="field"><label for="client">Cliente</label><input id="client" data-bind="client" maxlength="90" placeholder="Nombre del cliente" autocomplete="off"></div><div class="row"><div class="field"><label for="orderNumber">N.º de pedido</label><input id="orderNumber" data-bind="number" maxlength="40" placeholder="Sin asignar" autocomplete="off"></div><div class="field"><label for="orderDate">Fecha</label><input id="orderDate" data-bind="date" type="date"></div></div></div>
 <nav class="tabs" role="tablist" aria-label="Etapas del pedido"><button role="tab" id="tab-garment" data-tab="garment" aria-controls="panel-garment" aria-selected="true">Prenda</button><button role="tab" id="tab-sleeves" data-tab="sleeves" aria-controls="panel-sleeves" aria-selected="false" tabindex="-1">Mangas</button><button role="tab" id="tab-art" data-tab="art" aria-controls="panel-art" aria-selected="false" tabindex="-1">Logos</button><button role="tab" id="tab-sizes" data-tab="sizes" aria-controls="panel-sizes" aria-selected="false" tabindex="-1">Tallas y precio</button><button role="tab" id="tab-workshop" data-tab="workshop" aria-controls="panel-workshop" aria-selected="false" tabindex="-1">Taller</button><button role="tab" id="tab-studio" data-tab="studio" aria-controls="panel-studio" aria-selected="false" tabindex="-1">Boceto 3D</button><button role="tab" id="tab-photo" data-tab="photo" aria-controls="panel-photo" aria-selected="false" tabindex="-1">Acabado</button><button role="tab" id="tab-ficha" data-tab="ficha" aria-controls="panel-ficha" aria-selected="false" tabindex="-1">Ficha de referencia</button></nav>
@@ -298,7 +301,9 @@
 <div class="model-toolbar"><div class="camera-buttons" aria-label="Vistas de cámara"><button data-camera="front">Frente</button><button data-camera="back">Espalda</button><button data-camera="left">Izquierda</button><button data-camera="right">Derecha</button><button data-camera="perspective">Perspectiva</button></div><div class="viewport-actions"><button id="spin3d" aria-pressed="false">Girar 360°</button><button id="fit3d" aria-label="Centrar y encuadrar la prenda">Centrar</button></div></div>
 <div class="stage3d" id="studioStage" data-background="light"><div class="ground-shadow"></div><div class="stage-label"><b>TGM</b> / Estudio de materiales</div><canvas id="webglCanvas" width="1000" height="1000" tabindex="0" aria-label="Prenda 3D. Arrastra para girar. Rueda o pellizco para zoom. Flechas para girar y tecla Inicio para centrar."></canvas><div class="axis-key">3D · referencia visual</div><span id="cameraLabel" class="camera-label">Giro 24°</span></div>
 <div class="studio-hint"><span>Arrastra para girar · rueda / pellizco para zoom</span><button id="edit2d">Colocar diseños en 2D</button></div></section><section class="flat-pane" aria-label="Distribución gráfica de frente y espalda"><div class="preview-bar"><div><h2>Distribución 2D</h2><p class="subtle" id="previewName">Playera · sin cantidad</p></div><div style="display:flex;gap:8px;align-items:center"><div class="segmented" aria-label="Estilo de la vista 2D"><button data-render="realistic" aria-pressed="true">Sombreado</button><button data-render="flat" aria-pressed="false">Plano</button></div><button id="zoomPreview" aria-label="Ampliar vista"><svg class="icon"><use href="#i-zoom"/></svg></button></div></div><div class="studio"><figure class="garment-view"><div class="canvas-wrap"><canvas id="frontCanvas" width="800" height="920" role="img" aria-label="Vista frontal de la prenda"></canvas></div><figcaption><span class="view-dash"></span>Frente<span class="view-dash"></span></figcaption></figure><figure class="garment-view"><div class="canvas-wrap"><canvas id="backCanvas" width="800" height="920" role="img" aria-label="Vista posterior de la prenda"></canvas></div><figcaption><span class="view-dash"></span>Espalda<span class="view-dash"></span></figcaption></figure></div><p class="flat-note">Distribución gráfica de referencia. No es un patrón de corte.</p></section></div><div class="preview-bottom"><span><strong id="summaryColor">#255AD9</strong> · <span id="summaryFabric">Tela por definir</span></span><span class="badge">Referencia visual</span></div></div>
-<section class="export-card" aria-label="Archivos para el cliente"><div class="export-top"><div><h2>Listo para compartir</h2><p class="subtle">Exporta la vista de acabado, sin datos internos.</p></div><button id="printOrder" style="color:white;background:transparent;border-color:#5b6c81">Imprimir</button></div><div class="export-buttons"><button id="exportAngle"><svg class="icon"><use href="#i-image"/></svg>PNG vista 3D</button><button id="exportFront"><svg class="icon"><use href="#i-image"/></svg>PNG frente</button><button id="exportBack"><svg class="icon"><use href="#i-image"/></svg>PNG espalda</button><button id="exportPdf" class="pdf-button"><svg class="icon"><use href="#i-download"/></svg>PDF · 1 página</button></div><div class="caption-row"><p id="captionPreview">así se vería terminada tu playera. quedo pendiente de tus comentarios.</p><button id="copyCaption"><svg class="icon"><use href="#i-copy"/></svg>Copiar mensaje</button></div></section><div id="exportFallback" class="note" role="status" hidden>Archivo listo. Si la descarga no inició, toca este enlace: <a id="lastExportLink">Descargar archivo</a></div><footer class="local-footer"><span class="save-message" id="saveStatus" role="status">Borrador local</span><span>Borrador local · nube opcional · v7.0</span></footer></section></main>
+<section class="export-card" aria-label="Archivos para el cliente"><div class="export-top"><div><h2>Listo para compartir</h2><p class="subtle">Exporta la vista de acabado, sin datos internos.</p></div><button id="printOrder" style="color:white;background:transparent;border-color:#5b6c81">Imprimir</button></div><div class="export-buttons"><button id="exportAngle"><svg class="icon"><use href="#i-image"/></svg>PNG vista 3D</button><button id="exportFront"><svg class="icon"><use href="#i-image"/></svg>PNG frente</button><button id="exportBack"><svg class="icon"><use href="#i-image"/></svg>PNG espalda</button><button id="exportPdf" class="pdf-button"><svg class="icon"><use href="#i-download"/></svg>PDF · 1 página</button></div><div class="caption-row"><p id="captionPreview">así se vería terminada tu playera. quedo pendiente de tus comentarios.</p><button id="copyCaption"><svg class="icon"><use href="#i-copy"/></svg>Copiar mensaje</button></div></section><div id="exportFallback" class="note" role="status" hidden>Archivo listo. Si la descarga no inició, toca este enlace: <a id="lastExportLink">Descargar archivo</a></div><footer class="local-footer"><span class="save-message" id="saveStatus" role="status">Borrador local</span><span>Borrador local · nube opcional · v8.0</span></footer></section></main>
+<dialog id="projectDialog" class="project-dialog" aria-labelledby="projectTitle"><div class="dialog-body"><div class="project-dialog-head"><div><h2 id="projectTitle">Proyecto completo</h2><p class="help">Agrupa varias prendas sin perder la compatibilidad con pedidos individuales anteriores.</p></div></div><input id="projectImport" class="hidden-input" type="file" accept=".json,application/json"><label class="upload-label" for="projectImport"><svg class="icon"><use href="#i-folder"/></svg>Importar proyecto JSON</label><div class="field project-search"><label for="projectSearch">Filtrar prendas</label><input id="projectSearch" type="search" placeholder="Ej. Polo, Hoodie, Top, Cierre"></div><p id="projectSummary" class="project-summary"></p><div id="projectOrders" class="project-orders"></div></div><div class="dialog-actions"><button id="downloadProject" disabled>Descargar proyecto JSON</button><button data-close>Cerrar</button></div></dialog>
+
 <dialog id="ordersDialog" aria-labelledby="ordersTitle"><div class="dialog-body"><h2 id="ordersTitle">Abrir pedido</h2><input id="importJson" class="hidden-input" type="file" accept=".json,application/json"><label class="upload-label" for="importJson"><svg class="icon"><use href="#i-folder"/></svg>Importar archivo JSON</label><p class="help">Pedidos guardados en este navegador. Para compartirlos, usa Subir a la nube.</p><div id="savedOrders" class="saved-orders"></div></div><div class="dialog-actions"><button data-close>Cerrar</button></div></dialog>
 <dialog id="cloudDialog" aria-labelledby="cloudTitle"><div class="dialog-body"><h2 id="cloudTitle">Abrir desde la nube</h2><p class="help">Pedidos compartidos en Firebase Storage. El borrador de este navegador no se borra.</p><div id="cloudOrders" class="saved-orders"></div></div><div class="dialog-actions"><button data-close>Cerrar</button></div></dialog>
 <dialog id="newDialog" aria-labelledby="newTitle"><div class="dialog-body"><h2 id="newTitle">Comenzar un pedido nuevo</h2><p>Guarda el pedido actual para conservarlo en este navegador o descarga su JSON.</p></div><div class="dialog-actions"><button data-close>Cancelar</button><button id="newWithoutSaving">Nuevo sin guardar</button><button class="primary" id="saveAndNew">Guardar y crear</button></div></dialog>
@@ -452,7 +457,7 @@ function validatePro(pro){if(pro===undefined)return {...PRO_DEFAULTS};if(!pro||t
 'use strict';
 /* TGM Estudio de pedidos. Standalone, offline; no requests, remote assets or dependencies.
    Extend GARMENTS and garmentPath/drawDetails to add garment families. JSON schema v1. */
-const W=800,H=920,SCHEMA='tgm-pedido',VERSION=7,KEY='tgm-estudio-v5';
+const W=800,H=920,SCHEMA='tgm-pedido',VERSION=8,KEY='tgm-estudio-v5';
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 const GARMENTS={playera:{label:'Playera',plural:'playeras',necks:[['round','Redondo'],['v','En V']]},hoodie:{label:'Hoodie',plural:'hoodies',necks:[['hood','Con capucha']]},polo:{label:'Polo',plural:'polos',necks:[['polo','Polo con botones']]}};
 const ZONES={chest:{label:'Pecho',x:400,y:315,width:170},back:{label:'Espalda',x:400,y:355,width:235},leftSleeve:{label:'Manga izq. (al vestir)',x:650,y:285,width:65},rightSleeve:{label:'Manga der. (al vestir)',x:150,y:285,width:65},hem:{label:'Dobladillo',x:495,y:712,width:80}};
@@ -534,7 +539,7 @@ function checkPng(data){if(!/^data:image\/png;base64,/.test(data))throw Error('L
 async function sanitizeImageFile(file){if(file.size>5*1024*1024)throw Error('La imagen excede 5 MB.');if(!/\.(png|svg)$/i.test(file.name))throw Error('Carga un archivo PNG o SVG.');const data=await new Promise((r,j)=>{const f=new FileReader();f.onload=()=>r(f.result);f.onerror=j;f.readAsDataURL(file)});return rasterize(data,/\.svg$/i.test(file.name)?'svg':'png')}
 function safeSvgCss(value){if(/@import|@font-face|javascript:|expression\s*\(/i.test(value))return false;const urls=Array.from(value.matchAll(/url\s*\(([^)]*)\)/gi));return urls.every(m=>/^['"]?#[\w.-]+['"]?$/.test(m[1].trim()))}
 async function rasterize(data,type){let src=data;if(type==='svg'){const b64=data.split(',')[1];let text;try{text=new TextDecoder().decode(Uint8Array.from(atob(b64),c=>c.charCodeAt(0)))}catch{throw Error('SVG inválido.')}const doc=new DOMParser().parseFromString(text,'image/svg+xml');if(doc.querySelector('parsererror')||doc.documentElement.localName!=='svg')throw Error('SVG inválido.');const allowed=new Set(['svg','g','path','rect','circle','ellipse','line','polyline','polygon','defs','linearGradient','radialGradient','stop','clipPath','mask','pattern','symbol','use','text','tspan','title','desc','style']);for(const el of Array.from(doc.querySelectorAll('*'))){if(!allowed.has(el.localName))throw Error('SVG con contenido no admitido. Exporta una versión de trazados o PNG.');if(el.localName==='style'&&!safeSvgCss(el.textContent))throw Error('El SVG contiene estilos con recursos externos.');for(const a of Array.from(el.attributes)){const name=a.name.toLowerCase(),value=a.value.trim();if(name.startsWith('on')||/javascript:|@import|expression\s*\(/i.test(value)||((name==='href'||name==='xlink:href')&&!value.startsWith('#'))||!safeSvgCss(value))throw Error('El SVG debe ser autónomo, sin scripts ni recursos externos.')}}const root=doc.documentElement;root.setAttribute('xmlns','http://www.w3.org/2000/svg');if(!root.getAttribute('width')||!root.getAttribute('height')){const vb=(root.getAttribute('viewBox')||'0 0 1000 1000').split(/[ ,]+/).map(Number);if(vb.length!==4||!Number.isFinite(vb[2])||!Number.isFinite(vb[3])||vb[2]<=0||vb[3]<=0)throw Error('Tamaño SVG inválido.');root.setAttribute('width',String(vb[2]));root.setAttribute('height',String(vb[3]))}src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(new XMLSerializer().serializeToString(doc))))}else if(!/^data:image\/png;base64,/.test(data))throw Error('La imagen debe ser PNG.');if(type==='png')checkPng(src);const img=await getImage(src);if(!img.naturalWidth||!img.naturalHeight||img.naturalWidth*img.naturalHeight>50000000)throw Error('Imagen demasiado grande o inválida.');const scale=Math.min(1,1800/Math.max(img.naturalWidth,img.naturalHeight));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.naturalWidth*scale));c.height=Math.max(1,Math.round(img.naturalHeight*scale));c.getContext('2d').drawImage(img,0,0,c.width,c.height);const png=c.toDataURL('image/png');if(png.length>3500000)throw Error('Imagen pesada después de procesarla. Usa un PNG más pequeño.');return png}
-async function validateOrder(raw){if(!raw||typeof raw!=='object'||raw.schema!==SCHEMA||![1,2,3,4,5,6,7].includes(raw.version))throw Error('El archivo no es un pedido compatible de TGM (versiones 1 a 7).');const out=blank();out.id=safeString(raw.id,100,'id');for(const [k,len]of Object.entries({client:90,number:40,date:10,fabric:70,stretch:120,care:200,packaging:160,notes:3000}))out[k]=safeString(raw[k],len,k);if(out.date&&(!/^\d{4}-\d{2}-\d{2}$/.test(out.date)||Number.isNaN(Date.parse(out.date))||new Date(out.date).toISOString().slice(0,10)!==out.date))throw Error('Fecha inválida.');out.garment=oneOf(raw.garment,Object.keys(GARMENTS),'prenda');for(const k of['bodyColor','contrastColor']){if(!validHex(raw[k]))throw Error('Color inválido.');out[k]=raw[k]}for(const k of['neck','cuff','hem'])out.contrast[k]=boolean(raw.contrast?.[k],'contraste');out.texture=oneOf(raw.texture,['jersey','pique','fleece','smooth'],'textura');out.neck=oneOf(raw.neck,GARMENTS[out.garment].necks.map(n=>n[0]),'cuello');out.cuff=oneOf(raw.cuff,['simple','rib'],'puño');out.hem=oneOf(raw.hem,['double','rib'],'dobladillo');out.renderMode=oneOf(raw.renderMode,['realistic','flat'],'render');for(const k of['drawstring','pocket'])out.hood[k]=boolean(raw.hood?.[k],'capucha');for(const [k,max]of[['gsm',2000],['minutes',100000]])out[k]=raw[k]===''?'':numeric(raw[k],0,max,k);for(const s of SIZES){out.sizes[s]=numeric(raw.sizes?.[s],0,999999,'talla '+s);if(!Number.isInteger(out.sizes[s]))throw Error('Las cantidades deben ser enteras.')}if(!Array.isArray(raw.qc)||raw.qc.length!==QC.length)throw Error('QC inválido.');out.qc=raw.qc.map(v=>boolean(v,'QC'));if(!Array.isArray(raw.artworks)||raw.artworks.length>12)throw Error('Demasiados diseños.');const ids=new Set();out.artworks=[];for(const a of raw.artworks){const art={};art.id=safeString(a.id,100,'diseño');if(ids.has(art.id))throw Error('Diseños duplicados.');ids.add(art.id);art.view=oneOf(a.view,['front','back'],'vista');art.zone=oneOf(a.zone,Object.keys(ZONES),'zona');art.kind=oneOf(a.kind,['text','image'],'contenido');art.method=oneOf(a.method,['print','sublimation','embroidery'],'técnica');art.font=oneOf(a.font,['sans','serif','mono'],'letra');art.text=safeString(a.text,80,'texto');art.fileName=safeString(a.fileName,150,'nombre de imagen');art.dimensions=safeString(a.dimensions,100,'medidas');if(!validHex(a.color))throw Error('Color de diseño inválido.');art.color=a.color;art.x=numeric(a.x,0,W,'posición');art.y=numeric(a.y,0,H,'posición');art.width=numeric(a.width,32,640,'ancho');art.rotation=numeric(a.rotation,-180,180,'giro');art.image=safeString(a.image,3500000,'imagen');if(art.image){if(typeof isCloudArtRef==='function'&&isCloudArtRef(art.image))await getImage(art.image);else{if(!/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(art.image))throw Error('Imagen de pedido inválida.');checkPng(art.image);await getImage(art.image)}}out.artworks.push(art)}if(typeof raw.updatedAt==='string'&&Number.isFinite(Date.parse(raw.updatedAt)))out.updatedAt=new Date(raw.updatedAt).toISOString();out.pro=validatePro(raw.pro);out.photo=await validatePhoto(raw.photo);if(raw.version<3)out.pro.workspace='photo';return out}
+async function validateOrder(raw){if(!raw||typeof raw!=='object'||raw.schema!==SCHEMA||![1,2,3,4,5,6,7,8].includes(raw.version))throw Error('El archivo no es un pedido compatible de TGM (versiones 1 a 8).');const out=blank();out.id=safeString(raw.id,100,'id');for(const [k,len]of Object.entries({client:90,number:40,date:10,fabric:70,stretch:120,care:200,packaging:160,notes:3000}))out[k]=safeString(raw[k],len,k);if(out.date&&(!/^\d{4}-\d{2}-\d{2}$/.test(out.date)||Number.isNaN(Date.parse(out.date))||new Date(out.date).toISOString().slice(0,10)!==out.date))throw Error('Fecha inválida.');out.garment=oneOf(raw.garment,Object.keys(GARMENTS),'prenda');for(const k of['bodyColor','contrastColor']){if(!validHex(raw[k]))throw Error('Color inválido.');out[k]=raw[k]}for(const k of['neck','cuff','hem'])out.contrast[k]=boolean(raw.contrast?.[k],'contraste');out.texture=oneOf(raw.texture,['jersey','pique','fleece','smooth'],'textura');out.neck=oneOf(raw.neck,GARMENTS[out.garment].necks.map(n=>n[0]),'cuello');out.cuff=oneOf(raw.cuff,['simple','rib'],'puño');out.hem=oneOf(raw.hem,['double','rib'],'dobladillo');out.renderMode=oneOf(raw.renderMode,['realistic','flat'],'render');for(const k of['drawstring','pocket'])out.hood[k]=boolean(raw.hood?.[k],'capucha');for(const [k,max]of[['gsm',2000],['minutes',100000]])out[k]=raw[k]===''?'':numeric(raw[k],0,max,k);for(const s of SIZES){out.sizes[s]=numeric(raw.sizes?.[s],0,999999,'talla '+s);if(!Number.isInteger(out.sizes[s]))throw Error('Las cantidades deben ser enteras.')}if(!Array.isArray(raw.qc)||raw.qc.length!==QC.length)throw Error('QC inválido.');out.qc=raw.qc.map(v=>boolean(v,'QC'));if(!Array.isArray(raw.artworks)||raw.artworks.length>12)throw Error('Demasiados diseños.');const ids=new Set();out.artworks=[];for(const a of raw.artworks){const art={};art.id=safeString(a.id,100,'diseño');if(ids.has(art.id))throw Error('Diseños duplicados.');ids.add(art.id);art.view=oneOf(a.view,['front','back'],'vista');art.zone=oneOf(a.zone,Object.keys(ZONES),'zona');art.kind=oneOf(a.kind,['text','image'],'contenido');art.method=oneOf(a.method,['print','sublimation','embroidery'],'técnica');art.font=oneOf(a.font,['sans','serif','mono'],'letra');art.text=safeString(a.text,80,'texto');art.fileName=safeString(a.fileName,150,'nombre de imagen');art.dimensions=safeString(a.dimensions,100,'medidas');if(!validHex(a.color))throw Error('Color de diseño inválido.');art.color=a.color;art.x=numeric(a.x,0,W,'posición');art.y=numeric(a.y,0,H,'posición');art.width=numeric(a.width,32,640,'ancho');art.rotation=numeric(a.rotation,-180,180,'giro');art.image=safeString(a.image,3500000,'imagen');if(art.image){if(typeof isCloudArtRef==='function'&&isCloudArtRef(art.image))await getImage(art.image);else{if(!/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(art.image))throw Error('Imagen de pedido inválida.');checkPng(art.image);await getImage(art.image)}}out.artworks.push(art)}if(typeof raw.updatedAt==='string'&&Number.isFinite(Date.parse(raw.updatedAt)))out.updatedAt=new Date(raw.updatedAt).toISOString();out.pro=validatePro(raw.pro);out.photo=await validatePhoto(raw.photo);if(raw.version<3)out.pro.workspace='photo';return out}
 async function loadOrder(raw){const next=await validateOrder(raw);clearTimeout(saveTimer);if(dirty&&!saveOrder(true))throw Error('Descarga el pedido actual como JSON antes de abrir otro.');state=next;selectedArt=state.artworks[0]?.id||null;dirty=false;imageCache.clear();populate();saveDraft();$('#ordersDialog').close();toast('Pedido cargado.');}
 function openOrders(){const root=$('#savedOrders');root.replaceChildren();try{const list=readLibrary();if(!list.length){const p=document.createElement('p');p.className='empty';p.textContent='Todavía no hay pedidos guardados.';root.append(p)}for(const order of list){const div=document.createElement('div');div.className='saved-row';const info=document.createElement('div'),t=document.createElement('strong'),meta=document.createElement('small');t.textContent=(order.number?'#'+order.number:'Sin folio')+' · '+(order.client||'Sin cliente');meta.textContent=(GARMENTS[order.garment]?.label||'Prenda')+' · '+(order.date||'Sin fecha');info.append(t,meta);const b=document.createElement('button');b.textContent='Abrir';b.addEventListener('click',()=>busy(b,()=>loadOrder(order)));div.append(info,b);root.append(div)}}catch(e){root.textContent='No se pueden leer los pedidos locales. Puedes importar un JSON.'}$('#ordersDialog').showModal()}
 function resetOrder(){clearTimeout(saveTimer);state=blank();selectedArt=null;imageCache.clear();dirty=false;populate();tab('garment');saveDraft();$('#newDialog').close();toast('Nuevo pedido listo.');$('#client').focus()}
@@ -1313,6 +1318,197 @@ initUI=function(){
     input.addEventListener('change',()=>{input.value=priceInputValue(ensureCosting().unitCents[input.dataset.cost])});
   });
   $('#costNotes').addEventListener('input',e=>{ensureCosting().notes=e.target.value.slice(0,1500);changed()});
+};
+
+/* V8 project collections. Keeps standalone pedido JSON compatibility (v1-v8). */
+const PROJECT_SCHEMA='tgm-project';
+const PROJECT_VERSION=1;
+const PROJECT_MAX_ORDERS=60;
+const PROJECT_MAX_BYTES=220*1024*1024;
+const SINGLE_ORDER_MAX_BYTES=60*1024*1024;
+let activeProject=null;
+let activeProjectIndex=-1;
+let projectOrderOpening=false;
+
+function blankProjectMembership(){return null}
+function validateProjectPreviewValue(value,label){
+  if(value==null||value==='')return '';
+  const data=safeString(value,18000000,label);
+  if(!/^data:image\/(?:png|jpeg);base64,[A-Za-z0-9+/=]+$/.test(data))throw Error(label+' inválida.');
+  return data;
+}
+function validateProjectMembership(raw){
+  if(raw==null)return null;
+  if(typeof raw!=='object'||Array.isArray(raw))throw Error('Datos de proyecto inválidos.');
+  const id=safeString(raw.id??'',100,'id de proyecto');
+  const name=safeString(raw.name??'',120,'nombre de proyecto');
+  const variant=safeString(raw.variant??'',120,'variante de proyecto');
+  const backNote=safeString(raw.backNote??'',700,'nota de espalda');
+  if(!id.trim()||!name.trim())throw Error('El pedido de proyecto requiere id y nombre de proyecto.');
+  const position=raw.position==null?0:numeric(raw.position,0,PROJECT_MAX_ORDERS-1,'posición de proyecto');
+  if(!Number.isInteger(position))throw Error('La posición de proyecto debe ser entera.');
+  const previewRaw=raw.preview??{};
+  if(typeof previewRaw!=='object'||Array.isArray(previewRaw))throw Error('Vista previa de proyecto inválida.');
+  const signature=safeString(previewRaw.signature??'',32,'firma de vista previa');
+  if(signature&&!/^[a-f0-9]{8,32}$/i.test(signature))throw Error('Firma de vista previa inválida.');
+  return {id,name,variant,position,backNote,preview:{signature,front:validateProjectPreviewValue(previewRaw.front,'Vista previa frontal'),back:validateProjectPreviewValue(previewRaw.back,'Vista previa posterior')}};
+}
+
+const blankBeforeProjectV8=blank;
+blank=function(){return {...blankBeforeProjectV8(),project:blankProjectMembership()}};
+if(state.project===undefined)state.project=null;
+
+const validateOrderBeforeProjectV8=validateOrder;
+validateOrder=async function(raw){
+  const out=await validateOrderBeforeProjectV8(raw);
+  out.project=validateProjectMembership(raw.project);
+  return out;
+};
+
+async function validateProject(raw){
+  if(!raw||typeof raw!=='object'||Array.isArray(raw)||raw.schema!==PROJECT_SCHEMA||raw.version!==PROJECT_VERSION)throw Error('El archivo no es un proyecto compatible de TGM.');
+  const id=safeString(raw.id??'',100,'id de proyecto');
+  const name=safeString(raw.name??'',120,'nombre de proyecto');
+  if(!id.trim()||!name.trim())throw Error('El proyecto requiere id y nombre.');
+  if(!Array.isArray(raw.orders)||!raw.orders.length||raw.orders.length>PROJECT_MAX_ORDERS)throw Error('El proyecto debe contener entre 1 y '+PROJECT_MAX_ORDERS+' prendas.');
+  const ids=new Set(),orders=[];
+  for(let i=0;i<raw.orders.length;i++){
+    const order=await validateOrder(raw.orders[i]);
+    if(ids.has(order.id))throw Error('El proyecto contiene pedidos duplicados.');
+    ids.add(order.id);
+    if(order.project&&order.project.id!==id)throw Error('Una prenda pertenece a otro proyecto.');
+    if(!order.project)order.project={id,name,variant:order.number||('Prenda '+(i+1)),position:i,backNote:'',preview:{signature:'',front:'',back:''}};
+    order.project.id=id;order.project.name=name;
+    orders.push(order);
+  }
+  orders.sort((a,b)=>(a.project?.position??0)-(b.project?.position??0));
+  orders.forEach((order,index)=>order.project.position=index);
+  return {schema:PROJECT_SCHEMA,version:PROJECT_VERSION,id,name,orders,updatedAt:typeof raw.updatedAt==='string'&&Number.isFinite(Date.parse(raw.updatedAt))?new Date(raw.updatedAt).toISOString():new Date().toISOString()};
+}
+
+function projectPieces(order){return SIZES.reduce((sum,size)=>sum+Number(order.sizes?.[size]||0),0)}
+function projectMoney(order){
+  const cents=order.pricing?.unitCents;
+  if(cents===''||cents==null)return 'Precio por definir';
+  return (Number(cents)/100).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2})+' '+(order.pricing?.currency||'MXN');
+}
+function projectVariantLabel(order,index){return order.project?.variant||order.number||((GARMENTS[order.garment]?.label||'Prenda')+' '+(index+1))}
+function syncProjectBanner(){
+  const banner=$('#projectBanner');if(!banner)return;
+  const membership=state.project;
+  banner.hidden=!membership;
+  if(!membership)return;
+  $('#projectBannerName').textContent=membership.name;
+  $('#projectBannerVariant').textContent=membership.variant||state.number||'Prenda del proyecto';
+}
+function storeCurrentProjectOrder(){
+  if(!activeProject||activeProjectIndex<0||state.project?.id!==activeProject.id)return;
+  activeProject.orders[activeProjectIndex]=clone(state);
+  activeProject.orders[activeProjectIndex].version=VERSION;
+  activeProject.updatedAt=new Date().toISOString();
+}
+function projectFileName(){return ((activeProject?.name||'proyecto-tgm').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_-]+/g,'-').replace(/^-+|-+$/g,'').slice(0,80)||'proyecto-tgm')+'_v8.json'}
+
+function renderProjectDialog(){
+  const root=$('#projectOrders'),summary=$('#projectSummary'),downloadButton=$('#downloadProject');
+  if(!root||!summary||!downloadButton)return;
+  root.replaceChildren();
+  if(!activeProject){
+    summary.textContent='Importa un proyecto JSON para ver todas sus prendas en un solo lugar.';
+    downloadButton.disabled=true;
+    const empty=document.createElement('p');empty.className='empty';empty.textContent='No hay un proyecto abierto.';root.append(empty);return;
+  }
+  downloadButton.disabled=false;
+  const query=($('#projectSearch')?.value||'').trim().toLowerCase();
+  const pieces=activeProject.orders.reduce((sum,order)=>sum+projectPieces(order),0);
+  summary.textContent=activeProject.name+' · '+activeProject.orders.length+' prendas'+(pieces?' · '+pieces.toLocaleString('es-MX')+' piezas capturadas':' · cantidades por definir');
+  let shown=0;
+  activeProject.orders.forEach((order,index)=>{
+    const label=projectVariantLabel(order,index),haystack=(label+' '+order.number+' '+(GARMENTS[order.garment]?.label||'')).toLowerCase();
+    if(query&&!haystack.includes(query))return;
+    shown++;
+    const card=document.createElement('article');card.className='project-card';if(index===activeProjectIndex)card.dataset.active='true';
+    const preview=order.project?.preview?.front;
+    const media=document.createElement('div');media.className='project-thumb';
+    if(preview){const img=document.createElement('img');img.src=preview;img.alt='Vista previa de '+label;media.append(img)}else{const fallback=document.createElement('span');fallback.textContent=GARMENTS[order.garment]?.label||'Prenda';media.append(fallback)}
+    const body=document.createElement('div');body.className='project-card-body';
+    const title=document.createElement('strong');title.textContent=label;
+    const meta=document.createElement('small');const qty=projectPieces(order);meta.textContent=(order.number||'Sin folio')+' · '+(qty?qty.toLocaleString('es-MX')+' piezas':'cantidades por definir')+' · '+projectMoney(order);
+    if(order.project?.backNote){const note=document.createElement('p');note.className='project-note';note.textContent=order.project.backNote;body.append(title,meta,note)}else body.append(title,meta);
+    const open=document.createElement('button');open.textContent=index===activeProjectIndex?'Prenda abierta':'Abrir prenda';open.className=index===activeProjectIndex?'':'primary';open.disabled=index===activeProjectIndex;open.addEventListener('click',()=>busy(open,()=>openProjectOrder(index)));
+    card.append(media,body,open);root.append(card);
+  });
+  if(!shown){const empty=document.createElement('p');empty.className='empty';empty.textContent='No hay variantes que coincidan con el filtro.';root.append(empty)}
+}
+function showProjectDialog(){renderProjectDialog();$('#projectDialog').showModal();$('#projectSearch')?.focus()}
+
+async function loadProject(raw){
+  const project=await validateProject(raw);
+  activeProject=project;activeProjectIndex=-1;
+  $('#ordersDialog')?.close();
+  renderProjectDialog();
+  if(!$('#projectDialog').open)$('#projectDialog').showModal();
+  toast('Proyecto '+project.name+' cargado: '+project.orders.length+' prendas.');
+  return project;
+}
+async function openProjectOrder(index){
+  if(!activeProject||!Number.isInteger(index)||index<0||index>=activeProject.orders.length)throw Error('Prenda de proyecto inválida.');
+  storeCurrentProjectOrder();
+  projectOrderOpening=true;
+  try{
+    await loadOrder(activeProject.orders[index]);
+    activeProjectIndex=index;
+    storeCurrentProjectOrder();
+    syncProjectBanner();renderProjectDialog();
+    $('#projectDialog').close();
+    toast('Prenda abierta: '+projectVariantLabel(state,index)+'.');
+  }finally{projectOrderOpening=false}
+}
+async function importTgmJsonFile(file,{projectOnly=false}={}){
+  if(!file)return;
+  if(file.size>PROJECT_MAX_BYTES)throw Error('El JSON excede 220 MB. Divide el proyecto o reduce adjuntos.');
+  const raw=JSON.parse(await file.text());
+  if(raw?.schema===PROJECT_SCHEMA)return loadProject(raw);
+  if(projectOnly)throw Error('Selecciona un archivo de proyecto TGM (tgm-project).');
+  if(file.size>SINGLE_ORDER_MAX_BYTES)throw Error('El pedido individual excede 60 MB.');
+  activeProject=null;activeProjectIndex=-1;
+  await loadOrder(raw);
+  syncProjectBanner();
+  return state;
+}
+async function downloadActiveProject(){
+  if(!activeProject)throw Error('Primero importa o abre un proyecto.');
+  storeCurrentProjectOrder();
+  const payload=clone(activeProject);payload.updatedAt=new Date().toISOString();
+  download(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),projectFileName());
+  toast('Proyecto completo descargado.');
+}
+
+const saveOrderBeforeProjectV8=saveOrder;
+saveOrder=function(silent=false){const result=saveOrderBeforeProjectV8(silent);if(result)storeCurrentProjectOrder();return result};
+const resetOrderBeforeProjectV8=resetOrder;
+resetOrder=function(){activeProject=null;activeProjectIndex=-1;const result=resetOrderBeforeProjectV8();syncProjectBanner();return result};
+const loadOrderBeforeProjectV8=loadOrder;
+loadOrder=async function(raw){
+  if(!projectOrderOpening){activeProject=null;activeProjectIndex=-1}
+  const result=await loadOrderBeforeProjectV8(raw);syncProjectBanner();return result;
+};
+const populateBeforeProjectV8=populate;
+populate=function(){populateBeforeProjectV8();syncProjectBanner()};
+
+const initUIBeforeProjectV8=initUI;
+initUI=function(){
+  initUIBeforeProjectV8();
+  $('#projectButton').addEventListener('click',showProjectDialog);
+  $('#projectBannerOpen').addEventListener('click',showProjectDialog);
+  $('#downloadProject').addEventListener('click',e=>busy(e.currentTarget,downloadActiveProject));
+  $('#projectSearch').addEventListener('input',renderProjectDialog);
+  $('#projectImport').addEventListener('change',async e=>{const file=e.target.files[0];e.target.value='';if(!file)return;try{await importTgmJsonFile(file,{projectOnly:true})}catch(error){toast(error instanceof SyntaxError?'El archivo no contiene JSON válido.':error.message)}});
+  $('#importJson').addEventListener('change',async e=>{
+    e.stopImmediatePropagation();const file=e.target.files[0];e.target.value='';if(!file)return;
+    try{await importTgmJsonFile(file)}catch(error){toast(error instanceof SyntaxError?'El archivo no contiene JSON válido.':error.message)}
+  },true);
+  syncProjectBanner();
 };
 
 init().catch(e=>toast('No se pudo iniciar el estudio: '+e.message));
