@@ -3,7 +3,7 @@ const {assert,context,run,$}=require('./harness.cjs');
 (async()=>{
   await run('init()');
   assert.equal(run('VERSION'),8,'V8 must report VERSION=8');
-  assert.equal($('.pro-version').textContent.includes('v8'),true,'UI must identify V8');
+  assert.equal($('#projectButton').textContent.includes('Proyecto completo'),true,'V8 must expose the project workflow');
 
   // KROM compatibility: a standalone V6 pedido with no V7/V8 optional fields must still migrate.
   context.krom=run('blank()');
