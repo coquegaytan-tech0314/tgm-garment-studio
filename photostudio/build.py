@@ -6,7 +6,14 @@ import base64, json, re
 root = Path(__file__).resolve().parent
 html = (root / 'v2-reference.html').read_text()
 assets = {kind: 'data:image/png;base64,' + base64.b64encode((root / 'assets' / name).read_bytes()).decode()
-          for kind, name in [('playera', 'cotton-tshirt-front-back.png'), ('hoodie', 'pullover-hoodie-front-back.png'), ('polo', 'pique-polo-front-back.png')]}
+          for kind, name in [
+              ('playera', 'cotton-tshirt-front-back.png'),
+              ('hoodie', 'pullover-hoodie-front-back.png'),
+              ('polo', 'pique-polo-front-back.png'),
+              ('sleeveless', 'chifon-sleeveless-hombre-front-back.png'),
+              ('sleevelessMujer', 'chifon-sleeveless-mujer-front-back.png'),
+              ('zipneck', 'chifon-zipneck-front-back.png'),
+          ]}
 html = html.replace('</style>', (root / 'photo.css').read_text() + '</style>', 1)
 html = html.replace('<title>TGM · Estudio 3D de prendas</title>', '<title>TGM · Estudio de acabado de prendas</title>')
 html = html.replace('3D · v2', 'ESTUDIO · v3').replace('Funciona sin conexión · v2.0', 'Funciona sin conexión · v3.0')
