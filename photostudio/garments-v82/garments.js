@@ -8,9 +8,34 @@ Object.assign(ZONES,{
   rightCostado:{label:'Costado der. (al vestir)',x:170,y:430,width:58}
 });
 if(typeof PHOTO_BASES==='object')Object.assign(PHOTO_BASES,{
-  sleeveless:{label:'Top sin mangas · jersey',neck:'round',cuff:'simple',hem:'double',texture:'jersey',crop:{front:[0,0,740,800],back:[0,0,740,800]},generated:true},
-  zipneck:{label:'Manga larga con cierre · jersey',neck:'zip',cuff:'rib',hem:'double',texture:'jersey',crop:{front:[0,0,740,860],back:[0,0,740,860]},generated:true}
+  sleeveless:{label:'Top sin mangas · Chifón',neck:'round',cuff:'simple',hem:'double',texture:'jersey',crop:{front:[250,110,424,789],back:[863,110,413,789]}},
+  sleevelessMujer:{label:'Top sin mangas mujer · Chifón',neck:'round',cuff:'simple',hem:'double',texture:'jersey',crop:{front:[172,147,529,710],back:[847,147,521,711]}},
+  zipneck:{label:'Manga larga con cierre · Chifón',neck:'zip',cuff:'rib',hem:'double',texture:'jersey',crop:{front:[142,132,576,716],back:[819,132,572,717]}}
 });
+const CHIFON_FABRIC='Chifón Estrella';
+function photoAssetKey(garment=state.garment){return garment==='sleeveless'&&(state.photoCut||'hombre')==='mujer'?'sleevelessMujer':garment}
+function photoBaseInfo(garment=state.garment){return PHOTO_BASES[photoAssetKey(garment)]||PHOTO_BASES[garment]}
+const blankBeforeChifon=blank;
+blank=function(){return {...blankBeforeChifon(),photoCut:'hombre'}};
+const validateOrderBeforeChifon=validateOrder;
+validateOrder=async function(raw){
+  const out=await validateOrderBeforeChifon(raw);
+  out.photoCut=oneOf(raw.photoCut??'hombre',['hombre','mujer'],'corte de sisada');
+  return out;
+};
+const visualSignatureBeforeChifon=visualSignature;
+visualSignature=function(){
+  if(state.garment!=='sleeveless')return visualSignatureBeforeChifon();
+  const prev=state.garment;
+  state.garment=prev+'/'+(state.photoCut||'hombre');
+  try{return visualSignatureBeforeChifon()}finally{state.garment=prev}
+};
+const photoRectBeforeChifon=photoRect;
+photoRect=function(garment=state.garment,view='front'){
+  if(garment!=='sleeveless'&&garment!=='zipneck')return photoRectBeforeChifon(garment,view);
+  const[,,w,h]=photoBaseInfo(garment).crop[view],scale=Math.min(674/w,768/h);
+  return {x:(W-w*scale)/2,y:(H-h*scale)/2-8,w:w*scale,h:h*scale};
+};
 function hasLongSleeves(g=state.garment){return g==='hoodie'||g==='zipneck'}
 function hasSetInSleeves(g=state.garment){return g!=='sleeveless'}
 const GARMENT_PATHS={
@@ -121,6 +146,13 @@ configureNeck=function(){
   if(cuffField)cuffField.dataset.sleeveless=state.garment==='sleeveless';
   const cuffContrast=[...$$('.checkline')].find(el=>/^(Puño|Sisa)$/.test((el.textContent||'').trim()));
   if(cuffContrast){const input=cuffContrast.querySelector('input');if(input){cuffContrast.replaceChildren();cuffContrast.append(input,document.createTextNode(state.garment==='sleeveless'?'Sisa':'Puño'))}}
+  const cutField=$('#photoCutField');
+  if(cutField){
+    cutField.hidden=state.garment!=='sleeveless';
+    $$('[data-photo-cut]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.photoCut===(state.photoCut||'hombre')));
+  }
+  const fabric=$('#fabric');
+  if(fabric)fabric.placeholder=state.garment==='sleeveless'||state.garment==='zipneck'?'Chifón / Chifón Estrella':'Ej. jersey de algodón';
 };
 
 const clientSpecLinesBeforeV82=clientSpecLines;
@@ -136,8 +168,12 @@ const photoBaseDefaultsBeforeV82=typeof photoBaseDefaults==='function'?photoBase
 if(photoBaseDefaultsBeforeV82)photoBaseDefaults=function(){
   const b=PHOTO_BASES[state.garment];if(!b)return;
   photoBaseDefaultsBeforeV82();
-  if(state.garment==='sleeveless'){state.pro.sleeve=80;state.hood.drawstring=false;state.hood.pocket=false}
-  if(state.garment==='zipneck'){state.pro.sleeve=110;state.hood.drawstring=false;state.hood.pocket=false}
+  if(state.garment==='sleeveless'||state.garment==='zipneck'){
+    state.fabric=CHIFON_FABRIC;
+    state.texture=photoBaseInfo().texture||'jersey';
+    if(state.garment==='sleeveless'){state.pro.sleeve=80;state.hood.drawstring=false;state.hood.pocket=false}
+    if(state.garment==='zipneck'){state.pro.sleeve=110;state.hood.drawstring=false;state.hood.pocket=false;state.photoCut='hombre'}
+  }else if(state.fabric===CHIFON_FABRIC)state.fabric='';
 };
 
 function generateDrawnPhotoBase(garment,view){
@@ -171,7 +207,20 @@ if(photoTrimMaskBeforeV82)photoTrimMask=function(garment,view,width,height,part)
 };
 const preparePhotoBeforeV82=typeof preparePhoto==='function'?preparePhoto:null;
 if(preparePhotoBeforeV82)preparePhoto=async function(garment,view){
-  if(PHOTO_ASSETS[garment])return preparePhotoBeforeV82(garment,view);
+  const assetKey=photoAssetKey(garment),asset=typeof PHOTO_ASSETS==='object'&&PHOTO_ASSETS[assetKey];
+  if(asset){
+    const key=assetKey+':'+view;if(photoPrepared.has(key))return photoPrepared.get(key);
+    const promise=(async()=>{
+      const img=await getImage(asset),crop=photoBaseInfo(garment).crop[view],w=crop[2],h=crop[3],c=document.createElement('canvas');
+      c.width=w;c.height=h;const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(img,...crop,0,0,w,h);
+      const pixels=x.getImageData(0,0,w,h),lum=new Float32Array(w*h);
+      for(let i=0;i<lum.length;i++){const n=i*4;lum[i]=(pixels.data[n]*.2126+pixels.data[n+1]*.7152+pixels.data[n+2]*.0722)/255}
+      const masks={};for(const part of['neck','cuff','hem'])masks[part]=photoTrimMask(garment,view,w,h,part).getContext('2d').getImageData(0,0,w,h).data;
+      return{c,w,h,pixels,lum,masks};
+    })();
+    photoPrepared.set(key,promise);try{return await promise}catch(e){photoPrepared.delete(key);throw e}
+  }
+  if(garment!=='sleeveless'&&garment!=='zipneck')return preparePhotoBeforeV82(garment,view);
   const key=garment+':'+view;if(photoPrepared.has(key))return photoPrepared.get(key);
   const promise=(async()=>{
     const src=generateDrawnPhotoBase(garment,view),w=src.width,h=src.height,pixels=src.getContext('2d',{willReadFrequently:true}).getImageData(0,0,w,h),lum=new Float32Array(w*h);
@@ -180,6 +229,18 @@ if(preparePhotoBeforeV82)preparePhoto=async function(garment,view){
     return{c:src,w,h,pixels,lum,masks};
   })();
   photoPrepared.set(key,promise);try{return await promise}catch(e){photoPrepared.delete(key);throw e}
+};
+const sleevelessTintCache=new Map();
+const tintedPhotoBeforeChifon=typeof tintedPhoto==='function'?tintedPhoto:null;
+if(tintedPhotoBeforeChifon)tintedPhoto=async function(garment,view){
+  if(garment!=='sleeveless')return tintedPhotoBeforeChifon(garment,view);
+  const p=ensurePhoto(),cut=state.photoCut||'hombre';
+  const key=JSON.stringify([cut,garment,view,state.bodyColor,state.contrastColor,state.contrast,state.texture,p.exposure,p.relief,p.thread]);
+  if(sleevelessTintCache.has(key))return sleevelessTintCache.get(key);
+  for(const cached of[...photoTintCache.keys()]){try{if(JSON.parse(cached)[0]==='sleeveless')photoTintCache.delete(cached)}catch{}}
+  const canvas=await tintedPhotoBeforeChifon(garment,view);
+  sleevelessTintCache.set(key,canvas);while(sleevelessTintCache.size>8)sleevelessTintCache.delete(sleevelessTintCache.keys().next().value);
+  return canvas;
 };
 
 if(typeof SLEEVE_SEAMS==='object'){
@@ -260,3 +321,18 @@ garmentGeometry=function(order){
 
 const populateBeforeV82=populate;
 populate=function(){populateBeforeV82();configureNeck()};
+const syncPhotoUIBeforeChifon=typeof syncPhotoUI==='function'?syncPhotoUI:null;
+if(syncPhotoUIBeforeChifon)syncPhotoUI=function(){
+  syncPhotoUIBeforeChifon();
+  if($('#photoBaseName')&&photoBaseInfo())$('#photoBaseName').textContent=photoBaseInfo().label;
+};
+const initPhotoBeforeChifon=typeof initPhoto==='function'?initPhoto:null;
+if(initPhotoBeforeChifon)initPhoto=function(){
+  initPhotoBeforeChifon();
+  $$('[data-photo-cut]').forEach(b=>b.addEventListener('click',()=>{
+    if(state.garment!=='sleeveless'||state.photoCut===b.dataset.photoCut)return;
+    state.photoCut=b.dataset.photoCut;
+    sleevelessTintCache.clear();
+    populate();changed();
+  }));
+};
