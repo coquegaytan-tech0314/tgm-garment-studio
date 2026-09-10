@@ -5,7 +5,7 @@
   "scripts": {
     "build": "python3 photostudio/build.py",
     "dev": "node preview-server.mjs",
-    "test": "node tests/audit-v8.cjs && node tests/edge-cases.cjs && node tests/pricing.cjs && node tests/v8-projects.cjs && node --test photostudio/cloud/helpers.test.mjs"
+    "test": "node tests/audit-v8.cjs && node tests/edge-cases.cjs && node tests/pricing-v8.cjs && node tests/v8-projects.cjs && node --test photostudio/cloud/helpers.test.mjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100",
