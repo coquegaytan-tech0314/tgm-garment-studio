@@ -39,7 +39,7 @@ const {assert,context,run,$}=require('./harness.cjs');
   }
   const project=await run('validateProject(rhino)');
   assert.equal(project.orders.length,12);
-  assert.deepEqual(project.orders.map(o=>o.project.variant),variants);
+  assert.equal(project.orders.map(o=>o.project.variant).join('|'),variants.join('|'));
   await run('loadProject(rhino)');
   assert.equal(run('activeProject.orders.length'),12);
   await run('openProjectOrder(0)');
