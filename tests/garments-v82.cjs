@@ -1,0 +1,89 @@
+const {assert,context,run,$,createCanvas}=require('./harness.cjs');
+
+function opaqueBox(canvas){
+  const {width,height}=canvas,data=canvas.getContext('2d').getImageData(0,0,width,height).data;
+  let minX=width,minY=height,maxX=-1,maxY=-1,count=0;
+  for(let y=0;y<height;y++)for(let x=0;x<width;x++)if(data[(y*width+x)*4+3]>20){count++;minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y)}
+  return {count,minX,maxX,minY,maxY,width:maxX-minX+1,height:maxY-minY+1};
+}
+
+(async()=>{
+  await run('init()');
+  assert.equal(run('VERSION'),8,'Schema version stays 8 so tgm-pedido 1–8 still open');
+  assert.match(require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8'),/ESTUDIO · v8\.2/);
+  assert.equal(run("Object.keys(GARMENTS).join(',')"),'playera,hoodie,polo,sleeveless,zipneck');
+  assert.equal(run("GARMENTS.sleeveless.label"),'Top sin mangas');
+  assert.equal(run("GARMENTS.zipneck.label"),'Manga larga con cierre');
+  assert.equal(run("$$('[data-garment]').map(b=>b.dataset.garment).join(',')"),'playera,hoodie,polo,sleeveless,zipneck');
+
+  for(const [garment,neck] of [['sleeveless','round'],['zipneck','zip']]){
+    context.sample=run('blank()');
+    context.sample.garment=garment;
+    context.sample.neck=neck;
+    if(garment==='zipneck')context.sample.cuff='rib';
+    const out=await run('validateOrder(sample)');
+    assert.equal(out.garment,garment);
+    assert.equal(out.neck,neck);
+  }
+  context.bad=run('blank()');context.bad.garment='sleeveless';context.bad.neck='hood';
+  await assert.rejects(()=>run('validateOrder(bad)'),/cuello/);
+
+  const paths={};
+  for(const garment of ['playera','hoodie','polo','sleeveless','zipneck']){
+    run(`state.garment='${garment}'`);
+    paths[garment]=run('garmentPath()');
+  }
+  assert.equal(paths.playera,paths.polo);
+  assert.notEqual(paths.sleeveless,paths.playera);
+  assert.notEqual(paths.zipneck,paths.playera);
+  assert.notEqual(paths.zipneck,paths.hoodie);
+  assert.match(paths.sleeveless,/618/);
+  assert.match(paths.zipneck,/750 688/);
+
+  async function drawBox(garment){
+    run(`state=blank();state.garment='${garment}';photoBaseDefaults()`);
+    const c=createCanvas(800,920);context.c=c;
+    await run("drawGarment(c,'front')");
+    return opaqueBox(c);
+  }
+  const playera=await drawBox('playera');
+  const sleeveless=await drawBox('sleeveless');
+  const zipneck=await drawBox('zipneck');
+  const hoodie=await drawBox('hoodie');
+  const polo=await drawBox('polo');
+  assert(sleeveless.height<playera.height-40,'Sleeveless crop hem must sit higher than a playera');
+  assert(sleeveless.width<playera.width-40,'Sleeveless must drop the short sleeves');
+  assert(zipneck.width>playera.width+20,'Zipneck long sleeves must be wider than a playera');
+  assert(hoodie.width>playera.width+40,'Hoodie long sleeves stay wider than a playera');
+  assert(Math.abs(polo.width-playera.width)<20,'Polo keeps the existing short-sleeve outline');
+
+  run("state=blank();state.garment='sleeveless';state.neck='round'");
+  const sleevelessMesh=run('garmentGeometry(state)');
+  assert.equal(sleevelessMesh.some(m=>m.name.startsWith('Manga')),false);
+  assert(sleevelessMesh.some(m=>m.name.startsWith('Sisa')));
+  run("state.garment='zipneck';state.neck='zip'");
+  const zipMesh=run('garmentGeometry(state)');
+  assert(zipMesh.some(m=>m.name.startsWith('Manga')));
+  assert(zipMesh.some(m=>m.name==='Cierre'));
+  run("state.garment='playera';state.neck='round'");
+  assert.equal(run('garmentGeometry(state).some(m=>m.name==="Cierre")'),false);
+  run("state.garment='hoodie';state.neck='hood'");
+  assert(run('garmentGeometry(state).some(m=>m.name==="Capucha")'));
+
+  run("state=blank();state.garment='zipneck';photoBaseDefaults()");
+  run("addArt();selected().zone='leftCostado';Object.assign(selected(),zonePosition('leftCostado','front'))");
+  assert.equal(run('selected().zone'),'leftCostado');
+  assert.equal(run("sleeveSideForZone('leftCostado')"),'left');
+  const photo=await run("tintedPhoto('zipneck','front')");
+  assert.equal(photo.width>100,true);
+  const tank=await run("tintedPhoto('sleeveless','front')");
+  assert.equal(tank.width>100,true);
+
+  context.legacy=run('blank()');context.legacy.version=6;context.legacy.garment='polo';context.legacy.neck='polo';
+  delete context.legacy.pricing;delete context.legacy.costing;delete context.legacy.project;
+  const migrated=await run('validateOrder(legacy)');
+  assert.equal(migrated.garment,'polo');
+  assert.equal(migrated.version,8);
+
+  console.log('PASS v8.2 sleeveless and zipneck silhouettes, validation and legacy polo/hoodie/playera');
+})().catch(error=>{console.error(error);process.exitCode=1});

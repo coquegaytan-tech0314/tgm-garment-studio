@@ -28,7 +28,7 @@ The V8 project workflow is designed to import `CUMBRES_RHINOS_Proyecto_v8.json` 
 
 Use **Proyecto completo** → **Importar proyecto JSON**. Each card can be opened as an editable pedido while retaining its project identity, price/cost fields, references and preview metadata.
 
-Top/cierre variants may use a generic editable garment base until dedicated production-pattern bases exist. Their received reference images and project preview remain the visual source of truth; the app must not imply that a generic base validates the final pattern.
+v8.2 adds first-class `sleeveless` (top sin mangas) and `zipneck` (manga larga con cierre) silhouettes. CUMBRES–RHINOS Top and Cierre Corto variants keep those garment keys instead of remapping to playera. Generated 2D/acabado and 3D previews use dedicated outlines; they remain approximate visual references, not production patterns.
 
 ## Historical orders (example: KROM)
 
