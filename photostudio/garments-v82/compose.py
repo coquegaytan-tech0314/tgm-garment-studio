@@ -5,7 +5,7 @@ def extend(html, root):
         if html.count(before) != 1:
             raise RuntimeError('Expected one v8.2 integration anchor: ' + before[:120])
         html = html.replace(before, after, 1)
-    html = html.replace('ESTUDIO · v8', 'ESTUDIO · v8.2.2').replace('v8.0</span></footer>', 'v8.2.2</span></footer>')
+    html = html.replace('ESTUDIO · v8', 'ESTUDIO · v8.2.3').replace('v8.0</span></footer>', 'v8.2.3</span></footer>')
     once('<symbol id="i-polo" viewBox="0 0 24 24"><path d="m8 3-6 4 3 5 3-2v11h8V10l3 2 3-5-6-4-4 4zM8 3l1 6 3-2 3 2 1-6M12 7v6"/></symbol>',
          '<symbol id="i-polo" viewBox="0 0 24 24"><path d="m8 3-6 4 3 5 3-2v11h8V10l3 2 3-5-6-4-4 4zM8 3l1 6 3-2 3 2 1-6M12 7v6"/></symbol>'
          '<symbol id="i-sleeveless" viewBox="0 0 24 24"><path d="M8 4c1 3 7 3 8 0l2 2v3l-3 3v8H9v-8L6 9V6zM9 4l3 3 3-3"/></symbol>'

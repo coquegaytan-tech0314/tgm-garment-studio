@@ -206,6 +206,76 @@ if(photoTrimMaskBeforeV82)photoTrimMask=function(garment,view,width,height,part)
   return c;
 };
 const PHOTO_TINT_REF=.66;
+function hardenSleevelessPhoto(pixels,lum,w,h){
+  const d=pixels.data,n=w*h,garment=new Uint8Array(n),dist=new Uint8Array(n),INF=63;
+  for(let i=0;i<n;i++){garment[i]=d[i*4+3]>10?1:0;dist[i]=garment[i]?INF:0}
+  const r=2;
+  for(let y=r;y<h-r;y++)for(let x=r;x<w-r;x++){
+    let ok=1;
+    for(let dy=-r;dy<=r&&ok;dy++)for(let dx=-r;dx<=r;dx++)if(!garment[(y+dy)*w+x+dx])ok=0;
+    if(ok)d[(y*w+x)*4+3]=255;
+  }
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+    const i=y*w+x;if(!garment[i])continue;
+    let m=dist[i];
+    if(x>0)m=Math.min(m,dist[i-1]+1);
+    if(y>0)m=Math.min(m,dist[i-w]+1);
+    if(x>0&&y>0)m=Math.min(m,dist[i-w-1]+1);
+    if(x+1<w&&y>0)m=Math.min(m,dist[i-w+1]+1);
+    dist[i]=m;
+  }
+  for(let y=h-1;y>=0;y--)for(let x=w-1;x>=0;x--){
+    const i=y*w+x;if(!garment[i])continue;
+    let m=dist[i];
+    if(x+1<w)m=Math.min(m,dist[i+1]+1);
+    if(y+1<h)m=Math.min(m,dist[i+w]+1);
+    if(x+1<w&&y+1<h)m=Math.min(m,dist[i+w+1]+1);
+    if(x>0&&y+1<h)m=Math.min(m,dist[i+w-1]+1);
+    dist[i]=m;
+  }
+  const samples=[],left=new Int32Array(h),right=new Int32Array(h);
+  left.fill(w);right.fill(-1);
+  for(let i=0;i<n;i++){
+    const p=i*4;
+    lum[i]=(d[p]*.2126+d[p+1]*.7152+d[p+2]*.0722)/255;
+    if(d[p+3]>20){
+      samples.push(lum[i]);
+      const y=i/w|0,x=i-y*w;
+      if(x<left[y])left[y]=x;if(x>right[y])right[y]=x;
+    }
+  }
+  if(samples.length<100)return;
+  samples.sort((a,b)=>a-b);
+  const med=samples[samples.length>>1],scale=PHOTO_TINT_REF/Math.max(med,1e-4);
+  const needsScale=med<0.58||med>0.70;
+  let varSum=0;
+  for(let i=0;i<n;i++)if(d[i*4+3]>20){const v=(needsScale?lum[i]*scale:lum[i])-PHOTO_TINT_REF;varSum+=v*v}
+  const std=Math.sqrt(varSum/samples.length),contrast=std<0.07?Math.min(1.6,0.09/Math.max(std,0.018)):1;
+  const srcL=Float32Array.from(lum);
+  for(let i=0;i<n;i++){
+    const p=i*4;if(!d[p+3])continue;
+    let L=needsScale?lum[i]*scale:lum[i];
+    const y=i/w|0,x=i-y*w;
+    if(x>0&&x<w-1&&y>0&&y<h-1&&d[p+3]>20){
+      let s=0,c=0;
+      for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+        const j=i+dy*w+dx;if(d[j*4+3]<20)continue;
+        s+=needsScale?srcL[j]*scale:srcL[j];c++;
+      }
+      if(c){const local=needsScale?srcL[i]*scale:srcL[i];L=local+(local-s/c)*.45}
+    }
+    L=PHOTO_TINT_REF+(L-PHOTO_TINT_REF)*contrast;
+    const t=Math.min(1,dist[i]/10),edgeTarget=.47+.19*t;
+    if(L>edgeTarget)L=edgeTarget+(L-edgeTarget)*(.22+.78*t);
+    const span=right[y]-left[y];
+    if(span>8){const u=(x-left[y])/span,side=Math.pow(Math.abs(u*2-1),2.05);L*=1-.11*side}
+    if(L>0.78)L=0.78+(L-0.78)*0.35;
+    if(L<0.08)L=0.08;
+    const f=L/Math.max(lum[i],1e-4);
+    d[p]=Math.min(255,d[p]*f);d[p+1]=Math.min(255,d[p+1]*f);d[p+2]=Math.min(255,d[p+2]*f);
+    lum[i]=L;
+  }
+}
 function hardenZipneckPhoto(pixels,lum,w,h){
   const d=pixels.data,r=2,garment=new Uint8Array(w*h);
   for(let i=0;i<w*h;i++)garment[i]=d[i*4+3]>10?1:0;
@@ -244,6 +314,7 @@ if(preparePhotoBeforeV82)preparePhoto=async function(garment,view){
       const pixels=x.getImageData(0,0,w,h),lum=new Float32Array(w*h);
       for(let i=0;i<lum.length;i++){const n=i*4;lum[i]=(pixels.data[n]*.2126+pixels.data[n+1]*.7152+pixels.data[n+2]*.0722)/255}
       if(garment==='zipneck')hardenZipneckPhoto(pixels,lum,w,h);
+      if(garment==='sleeveless')hardenSleevelessPhoto(pixels,lum,w,h);
       x.putImageData(pixels,0,0);
       const masks={};for(const part of['neck','cuff','hem'])masks[part]=photoTrimMask(garment,view,w,h,part).getContext('2d').getImageData(0,0,w,h).data;
       return{c,w,h,pixels,lum,masks};
@@ -255,6 +326,9 @@ if(preparePhotoBeforeV82)preparePhoto=async function(garment,view){
   const promise=(async()=>{
     const src=generateDrawnPhotoBase(garment,view),w=src.width,h=src.height,pixels=src.getContext('2d',{willReadFrequently:true}).getImageData(0,0,w,h),lum=new Float32Array(w*h);
     for(let i=0;i<lum.length;i++){const n=i*4;lum[i]=(pixels.data[n]*.2126+pixels.data[n+1]*.7152+pixels.data[n+2]*.0722)/255}
+    if(garment==='sleeveless')hardenSleevelessPhoto(pixels,lum,w,h);
+    if(garment==='zipneck')hardenZipneckPhoto(pixels,lum,w,h);
+    src.getContext('2d').putImageData(pixels,0,0);
     const masks={};for(const part of['neck','cuff','hem'])masks[part]=photoTrimMask(garment,view,w,h,part).getContext('2d').getImageData(0,0,w,h).data;
     return{c:src,w,h,pixels,lum,masks};
   })();
@@ -268,7 +342,21 @@ if(tintedPhotoBeforeChifon)tintedPhoto=async function(garment,view){
   const key=JSON.stringify([cut,garment,view,state.bodyColor,state.contrastColor,state.contrast,state.texture,p.exposure,p.relief,p.thread]);
   if(sleevelessTintCache.has(key))return sleevelessTintCache.get(key);
   for(const cached of[...photoTintCache.keys()]){try{if(JSON.parse(cached)[0]==='sleeveless')photoTintCache.delete(cached)}catch{}}
-  const canvas=await tintedPhotoBeforeChifon(garment,view);
+  const src=await preparePhoto(garment,view);
+  const body=parseColor(state.bodyColor),bodyLum=(body[0]*.2126+body[1]*.7152+body[2]*.0722)/255;
+  const boost=bodyLum>0.80?Math.min(.6,(bodyLum-0.80)/0.18*.6):0;
+  const saved=boost?Float32Array.from(src.lum):null;
+  if(boost){
+    for(let i=0;i<src.lum.length;i++){
+      if(!src.pixels.data[i*4+3])continue;
+      let L=PHOTO_TINT_REF+(src.lum[i]-PHOTO_TINT_REF)*(1+boost);
+      if(L>0.76)L=0.76+(L-0.76)*0.2;
+      src.lum[i]=Math.max(0.08,L);
+    }
+  }
+  let canvas;
+  try{canvas=await tintedPhotoBeforeChifon(garment,view)}
+  finally{if(saved)src.lum.set(saved)}
   sleevelessTintCache.set(key,canvas);while(sleevelessTintCache.size>8)sleevelessTintCache.delete(sleevelessTintCache.keys().next().value);
   return canvas;
 };
