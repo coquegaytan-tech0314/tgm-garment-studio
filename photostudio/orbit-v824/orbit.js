@@ -51,17 +51,19 @@ function paintPhotoOrbitSheet(canvas,front,back,yaw,pitch,distance){
   return canvas;
 }
 class PhotoOrbitRenderer{
-  constructor(canvas){
-    this.canvas=canvas;this.yaw=.32;this.pitch=.05;this.distance=5.3;this.pan=[0,0];
+  constructor(stage,flat,glCanvas){
+    this.stage=stage;this.canvas=flat;this.glCanvas=glCanvas;this.yaw=.32;this.pitch=.05;this.distance=5.3;this.pan=[0,0];
     this.spinning=false;this.lastTime=0;this.lost=false;this.meshes=[];this.sheets=[null,null];this.texturesReady=false;
     this.gl=null;
-    try{this.gl=canvas.getContext('webgl',{alpha:true,antialias:true,preserveDrawingBuffer:true,premultipliedAlpha:false})}catch{}
+    try{this.gl=glCanvas&&glCanvas.getContext('webgl',{alpha:true,antialias:true,preserveDrawingBuffer:true,premultipliedAlpha:false})}catch{}
     if(this.gl){this.buildProgram();this.frontTexture=this.createTexture();this.backTexture=this.createTexture();this.whiteTexture=this.createTexture()}
     this.configureInput();
     this.resizeObserver=new ResizeObserver(()=>this.resize());
-    this.resizeObserver.observe(canvas);
-    canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();this.lost=true;this.spinning=false});
-    canvas.addEventListener('webglcontextrestored',()=>{this.lost=false;if(this.gl){this.buildProgram();this.frontTexture=this.createTexture();this.backTexture=this.createTexture();this.whiteTexture=this.createTexture();this.geometryKey=null;this.meshes=[];this.rebuild();if(this.sheets[0])this.setSheets(this.sheets)}});
+    this.resizeObserver.observe(stage);
+    if(glCanvas){
+      glCanvas.addEventListener('webglcontextlost',e=>{e.preventDefault();this.lost=true;this.texturesReady=false;this.spinning=false;this.syncMode();this.render()});
+      glCanvas.addEventListener('webglcontextrestored',()=>{this.lost=false;if(this.gl){this.buildProgram();this.frontTexture=this.createTexture();this.backTexture=this.createTexture();this.whiteTexture=this.createTexture();this.geometryKey=null;this.meshes=[];if(this.sheets[0])this.setSheets(this.sheets)}});
+    }
     this.resize();
   }
   buildProgram(){
@@ -141,24 +143,26 @@ class PhotoOrbitRenderer{
     });
   }
   resize(){
-    const rect=this.canvas.getBoundingClientRect();if(!rect.width||!rect.height){this.render();return}
+    const rect=this.stage.getBoundingClientRect();if(!rect.width||!rect.height){this.render();return}
     const dpr=Math.min(window.devicePixelRatio||1,2);
     const w=Math.max(2,Math.round(rect.width*dpr)),h=Math.max(2,Math.round(rect.height*dpr));
-    if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;
+    for(const c of[this.canvas,this.glCanvas]){if(!c)continue;if(c.width!==w)c.width=w;if(c.height!==h)c.height=h}
     this.render();
   }
-  camera(width=this.canvas.width,height=this.canvas.height){
+  camera(width=(this.glCanvas||this.canvas).width,height=(this.glCanvas||this.canvas).height){
     const focus=this.centerY??.15,dist=this.distance*(this.frameScale||1)*Math.max(1,.85/Math.max(width/Math.max(height,1),.4));
     const target=[this.pan[0],focus+this.pan[1],0],eye=[target[0]+Math.sin(this.yaw)*Math.cos(this.pitch)*dist,target[1]+Math.sin(this.pitch)*dist,target[2]+Math.cos(this.yaw)*Math.cos(this.pitch)*dist];
     const projection=perspective4(37*Math.PI/180,Math.max(width,1)/Math.max(height,1),.1,50),view=lookAt4(eye,target);
     return {eye,mvp:multiply4(projection,view)};
   }
+  syncMode(){if(this.stage)this.stage.dataset.mode=this.gl&&!this.lost&&this.texturesReady?'gl':'flat'}
   render(){
-    this.syncAngle();
-    if(!this.gl||this.lost||!this.program||!this.texturesReady){paintPhotoOrbitSheet(this.canvas,this.sheets[0],this.sheets[1],this.yaw,this.pitch,this.distance);return}
+    this.syncAngle();this.syncMode();
+    paintPhotoOrbitSheet(this.canvas,this.sheets[0],this.sheets[1],this.yaw,this.pitch,this.distance);
+    if(!this.gl||this.lost||!this.program||!this.texturesReady)return;
     this.rebuild();
     const gl=this.gl,L=this.locations,c=this.camera();
-    gl.viewport(0,0,this.canvas.width,this.canvas.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+    gl.viewport(0,0,this.glCanvas.width,this.glCanvas.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
     gl.useProgram(this.program);gl.uniformMatrix4fv(L.uMVP,false,c.mvp);gl.uniform3fv(L.uEye,c.eye);
     gl.uniform3fv(L.uLight,[-2,3,4]);gl.uniform1i(L.uFront,0);gl.uniform1i(L.uBack,1);
     gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.frontTexture);
@@ -184,14 +188,14 @@ class PhotoOrbitRenderer{
   }
   syncAngle(){const el=$('#photoOrbitAngle');if(el)el.textContent='Giro '+Math.round(((this.yaw*180/Math.PI)%360+360)%360)+'°'}
   configureInput(){
-    const canvas=this.canvas,pointers=new Map();let last=null,pinch=null;
-    canvas.addEventListener('pointerdown',e=>{canvas.focus();pointers.set(e.pointerId,[e.clientX,e.clientY]);canvas.setPointerCapture(e.pointerId);last=[e.clientX,e.clientY];if(pointers.size===2){const a=[...pointers.values()];pinch=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1])}canvas.classList.add('orbiting')});
-    canvas.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,[e.clientX,e.clientY]);if(pointers.size===2){const a=[...pointers.values()],distance=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]);if(pinch&&distance)this.distance=clamp(this.distance*pinch/distance,3.2,10);pinch=distance}else if(last){const dx=e.clientX-last[0],dy=e.clientY-last[1];if(e.shiftKey||e.buttons===2){this.pan[0]-=dx*.003;this.pan[1]+=dy*.003}else{this.yaw-=dx*.008;this.pitch=clamp(this.pitch+dy*.006,-.85,.85)}}last=[e.clientX,e.clientY];this.render()});
-    const finish=e=>{pointers.delete(e.pointerId);pinch=null;last=null;canvas.classList.remove('orbiting')};
-    canvas.addEventListener('pointerup',finish);canvas.addEventListener('pointercancel',finish);canvas.addEventListener('lostpointercapture',finish);
-    canvas.addEventListener('contextmenu',e=>e.preventDefault());
-    canvas.addEventListener('wheel',e=>{e.preventDefault();this.distance=clamp(this.distance*Math.exp(e.deltaY*.001),3.2,10);this.render()},{passive:false});
-    canvas.addEventListener('keydown',e=>{const action={ArrowLeft:()=>this.yaw-=.12,ArrowRight:()=>this.yaw+=.12,ArrowUp:()=>this.pitch=clamp(this.pitch+.1,-.85,.85),ArrowDown:()=>this.pitch=clamp(this.pitch-.1,-.85,.85),'+':()=>this.distance=Math.max(3.2,this.distance-.3),'=':()=>this.distance=Math.max(3.2,this.distance-.3),'-':()=>this.distance=Math.min(10,this.distance+.3),Home:()=>this.preset('perspective')}[e.key];if(action){e.preventDefault();action();this.render()}});
+    const surface=this.stage,pointers=new Map();let last=null,pinch=null;
+    surface.addEventListener('pointerdown',e=>{this.canvas.focus();pointers.set(e.pointerId,[e.clientX,e.clientY]);surface.setPointerCapture(e.pointerId);last=[e.clientX,e.clientY];if(pointers.size===2){const a=[...pointers.values()];pinch=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1])}surface.classList.add('orbiting')});
+    surface.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,[e.clientX,e.clientY]);if(pointers.size===2){const a=[...pointers.values()],distance=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]);if(pinch&&distance)this.distance=clamp(this.distance*pinch/distance,3.2,10);pinch=distance}else if(last){const dx=e.clientX-last[0],dy=e.clientY-last[1];if(e.shiftKey||e.buttons===2){this.pan[0]-=dx*.003;this.pan[1]+=dy*.003}else{this.yaw-=dx*.008;this.pitch=clamp(this.pitch+dy*.006,-.85,.85)}}last=[e.clientX,e.clientY];this.render()});
+    const finish=e=>{pointers.delete(e.pointerId);pinch=null;last=null;surface.classList.remove('orbiting')};
+    surface.addEventListener('pointerup',finish);surface.addEventListener('pointercancel',finish);surface.addEventListener('lostpointercapture',finish);
+    surface.addEventListener('contextmenu',e=>e.preventDefault());
+    surface.addEventListener('wheel',e=>{e.preventDefault();this.distance=clamp(this.distance*Math.exp(e.deltaY*.001),3.2,10);this.render()},{passive:false});
+    this.canvas.addEventListener('keydown',e=>{const action={ArrowLeft:()=>this.yaw-=.12,ArrowRight:()=>this.yaw+=.12,ArrowUp:()=>this.pitch=clamp(this.pitch+.1,-.85,.85),ArrowDown:()=>this.pitch=clamp(this.pitch-.1,-.85,.85),'+':()=>this.distance=Math.max(3.2,this.distance-.3),'=':()=>this.distance=Math.max(3.2,this.distance-.3),'-':()=>this.distance=Math.min(10,this.distance+.3),Home:()=>this.preset('perspective')}[e.key];if(action){e.preventDefault();action();this.render()}});
   }
   toggleSpin(){
     this.spinning=!this.spinning;
@@ -230,7 +234,7 @@ function syncPhotoOrbitUI(){
 function initPhotoOrbit(){
   if(photoOrbitReady||!$('#photoOrbitCanvas'))return;
   photoOrbitReady=true;
-  photoOrbit=new PhotoOrbitRenderer($('#photoOrbitCanvas'));
+  photoOrbit=new PhotoOrbitRenderer($('#photoOrbit'),$('#photoOrbitCanvas'),$('#photoOrbitGL'));
   if(photoOrbitSheets)photoOrbit.setSheets(photoOrbitSheets);
   $('#photoOrbitSpin').addEventListener('click',()=>photoOrbit?.toggleSpin());
   $('#photoOrbitFit').addEventListener('click',()=>photoOrbit?.preset('perspective'));
