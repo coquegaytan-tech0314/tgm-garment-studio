@@ -14,7 +14,7 @@
     {
       "file": "chifon-zipneck-front-back.png",
       "id": "zipneck",
-      "prompt": "Chifón long-sleeve crewneck photobase sheet (manga larga / zipneck body). Same front-left + back-right ghost-mannequin layout as the playera/hoodie/polo sheets. Neutral mid-gray, no logos, no zipper. Derived from Koke Chifón product reference (navy crewneck long-sleeve) and remapped to the existing tintable gray sheet format."
+      "prompt": "Chifón long-sleeve crewneck photobase sheet (manga larga / zipneck body). Same front-left + back-right ghost-mannequin layout as the playera/hoodie/polo sheets. Neutral mid-gray, no logos, no zipper. Derived from Koke Chifón product reference (navy crewneck long-sleeve) and remapped to the existing tintable gray sheet format. v8.2.2 re-prep: interior alpha hardened and luminance scaled to the 0.66 tint reference so long sleeves recolor with the torso and white stain artifacts do not survive tinting."
     },
     {
       "file": "chifon-sleeveless-hombre-front-back.png",

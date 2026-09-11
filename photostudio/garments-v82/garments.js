@@ -205,6 +205,34 @@ if(photoTrimMaskBeforeV82)photoTrimMask=function(garment,view,width,height,part)
   }
   return c;
 };
+const PHOTO_TINT_REF=.66;
+function hardenZipneckPhoto(pixels,lum,w,h){
+  const d=pixels.data,r=2,garment=new Uint8Array(w*h);
+  for(let i=0;i<w*h;i++)garment[i]=d[i*4+3]>10?1:0;
+  for(let y=r;y<h-r;y++)for(let x=r;x<w-r;x++){
+    let ok=1;
+    for(let dy=-r;dy<=r&&ok;dy++)for(let dx=-r;dx<=r;dx++)if(!garment[(y+dy)*w+x+dx])ok=0;
+    if(ok)d[(y*w+x)*4+3]=255;
+  }
+  const samples=[];
+  for(let i=0;i<w*h;i++){
+    const n=i*4;
+    lum[i]=(d[n]*.2126+d[n+1]*.7152+d[n+2]*.0722)/255;
+    if(d[n+3]>20)samples.push(lum[i]);
+  }
+  if(samples.length<100)return;
+  samples.sort((a,b)=>a-b);
+  const med=samples[samples.length>>1],scale=PHOTO_TINT_REF/Math.max(med,1e-4);
+  const needsScale=med<0.58||med>0.70;
+  for(let i=0;i<w*h;i++){
+    const n=i*4;if(!d[n+3])continue;
+    let L=needsScale?lum[i]*scale:lum[i];
+    if(L>0.80)L=0.80+(L-0.80)*0.35;
+    const f=L/Math.max(lum[i],1e-4);
+    d[n]=Math.min(255,d[n]*f);d[n+1]=Math.min(255,d[n+1]*f);d[n+2]=Math.min(255,d[n+2]*f);
+    lum[i]=L;
+  }
+}
 const preparePhotoBeforeV82=typeof preparePhoto==='function'?preparePhoto:null;
 if(preparePhotoBeforeV82)preparePhoto=async function(garment,view){
   const assetKey=photoAssetKey(garment),asset=typeof PHOTO_ASSETS==='object'&&PHOTO_ASSETS[assetKey];
@@ -215,6 +243,8 @@ if(preparePhotoBeforeV82)preparePhoto=async function(garment,view){
       c.width=w;c.height=h;const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(img,...crop,0,0,w,h);
       const pixels=x.getImageData(0,0,w,h),lum=new Float32Array(w*h);
       for(let i=0;i<lum.length;i++){const n=i*4;lum[i]=(pixels.data[n]*.2126+pixels.data[n+1]*.7152+pixels.data[n+2]*.0722)/255}
+      if(garment==='zipneck')hardenZipneckPhoto(pixels,lum,w,h);
+      x.putImageData(pixels,0,0);
       const masks={};for(const part of['neck','cuff','hem'])masks[part]=photoTrimMask(garment,view,w,h,part).getContext('2d').getImageData(0,0,w,h).data;
       return{c,w,h,pixels,lum,masks};
     })();
