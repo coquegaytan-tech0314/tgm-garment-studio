@@ -30,7 +30,7 @@ async function ensureFirebaseStorage(){
       ref:storageMod.ref,
       uploadBytes:storageMod.uploadBytes,
       getDownloadURL:storageMod.getDownloadURL,
-      listAll:storageMod.listAll,
+      list:storageMod.list,
       getBytes:storageMod.getBytes
     };
     return TGM_CLOUD.sdk;
@@ -95,29 +95,39 @@ async function uploadCurrentPedido(){
   await sdk.uploadBytes(storageRefFor(sdk,pedidoJsonPath(orderId)),jsonBlob,{contentType:'application/json',cacheControl:'no-store'});
   return {orderId,uploaded,arts:slots.length};
 }
+async function readCloudPedidoJson(sdk,orderId){
+  const bytes=await readCloudBytes(sdk,pedidoJsonPath(orderId));
+  const parsed=JSON.parse(new TextDecoder().decode(bytes));
+  if(!parsed||typeof parsed!=='object'||Array.isArray(parsed))throw Error('pedido.json inválido');
+  return parsed;
+}
 async function listCloudPedidos(){
   const sdk=await ensureFirebaseStorage();
-  const listed=await sdk.listAll(storageRefFor(sdk,'pedidos'));
-  const orders=[];
-  for(const prefix of listed.prefixes){
-    try{
-      const bytes=await readCloudBytes(sdk,pedidoJsonPath(prefix.name));
-      const parsed=JSON.parse(new TextDecoder().decode(bytes));
-      if(parsed&&typeof parsed==='object')orders.push(parsed);
-    }catch{}
-  }
-  return orders.sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||''));
+  if(typeof sdk.list!=='function')throw Error('Nube: el SDK no puede listar carpetas de pedidos.');
+  return listCloudPedidoMetadata(
+    ()=>collectPedidoPrefixes(options=>sdk.list(storageRefFor(sdk,'pedidos'),options)),
+    id=>readCloudPedidoJson(sdk,id)
+  );
 }
 async function openCloudPedido(raw){
   await loadOrder(raw);
   $('#cloudDialog')?.close();
 }
-function renderCloudList(root,list){
+function renderCloudList(root,result){
+  const list=result&&Array.isArray(result.orders)?result.orders:[];
   root.replaceChildren();
+  const notice=cloudLibraryNotice(result);
+  if(notice){
+    const warn=document.createElement('p');
+    warn.className='cloud-list-error';
+    warn.setAttribute('role','status');
+    warn.textContent=notice;
+    root.append(warn);
+  }
   if(!list.length){
     const empty=document.createElement('p');
     empty.className='empty';
-    empty.textContent='Todavía no hay pedidos en la nube.';
+    empty.textContent=result&&result.failed?'No se pudo mostrar ningún pedido.':'Todavía no hay pedidos en la nube.';
     root.append(empty);
     return;
   }
@@ -127,6 +137,7 @@ function renderCloudList(root,list){
     const info=document.createElement('div'),title=document.createElement('strong'),meta=document.createElement('small'),button=document.createElement('button');
     title.textContent=(order.number?'#'+order.number:'Sin folio')+' · '+(order.client||'Sin cliente');
     meta.textContent=(GARMENTS[order.garment]?.label||'Prenda')+' · '+(order.date||'Sin fecha')+' · '+(order.artworks?.length||0)+' aplicaciones · nube';
+    button.type='button';
     button.textContent='Abrir';
     button.addEventListener('click',()=>busy(button,()=>openCloudPedido(order)));
     info.append(title,meta);
@@ -138,15 +149,27 @@ async function openCloudLibrary(){
   const root=$('#cloudOrders');
   root.replaceChildren();
   const loading=document.createElement('p');
+  loading.className='cloud-loading';
+  loading.setAttribute('role','status');
   loading.textContent='Leyendo pedidos de la nube…';
   root.append(loading);
   $('#cloudDialog').showModal();
   try{
-    renderCloudList(root,await listCloudPedidos());
-    setCloudStatus('Nube: lista de pedidos actualizada.','ok');
+    const result=await listCloudPedidos();
+    renderCloudList(root,result);
+    if(result.failed){
+      setCloudStatus('Nube: '+result.orders.length+' pedidos · '+result.failed+' con error.','error');
+    }else{
+      setCloudStatus(result.orders.length?'Nube: '+result.orders.length+' pedidos listos.':'Nube: no hay pedidos.','ok');
+    }
   }catch(error){
     const message=cloudErrorMessage(error);
-    root.textContent=message;
+    root.replaceChildren();
+    const fail=document.createElement('p');
+    fail.className='empty';
+    fail.setAttribute('role','status');
+    fail.textContent=message;
+    root.append(fail);
     setCloudStatus(message,'error');
     throw Error(message);
   }

@@ -10,7 +10,7 @@ function opaqueBox(canvas){
 (async()=>{
   await run('init()');
   assert.equal(run('VERSION'),8,'Schema version stays 8 so tgm-pedido 1–8 still open');
-  assert.match(require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8'),/ESTUDIO · v8\.2\.3/);
+  assert.match(require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8'),/ESTUDIO · v8\.2\.4/);
   assert.equal(run("Object.keys(GARMENTS).join(',')"),'playera,hoodie,polo,sleeveless,zipneck');
   assert.equal(run("GARMENTS.sleeveless.label"),'Top sin mangas');
   assert.equal(run("GARMENTS.zipneck.label"),'Manga larga con cierre');

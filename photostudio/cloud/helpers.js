@@ -37,6 +37,79 @@ function cloudArtSlots(order){
   }
   return slots;
 }
+const CLOUD_LIST_PAGE_SIZE = 100;
+const CLOUD_LIST_TIMEOUT_MS = 12000;
+const CLOUD_PEDIDO_TIMEOUT_MS = 8000;
+function withTimeout(promise, ms, message){
+  return new Promise((resolve, reject)=>{
+    const timer = setTimeout(()=>reject(Error(message)), ms);
+    Promise.resolve(promise).then(
+      value=>{clearTimeout(timer);resolve(value);},
+      error=>{clearTimeout(timer);reject(error);}
+    );
+  });
+}
+function cloudPedidoIdsFromPrefixes(prefixes){
+  const ids = [];
+  for(const prefix of prefixes || []){
+    const name = typeof prefix === 'string' ? prefix : prefix && prefix.name;
+    if(!name) continue;
+    try { ids.push(safeOrderId(name)); } catch {}
+  }
+  return ids;
+}
+async function collectPedidoPrefixes(listPage){
+  const prefixes = [];
+  let pageToken;
+  do {
+    const page = await listPage({maxResults: CLOUD_LIST_PAGE_SIZE, pageToken});
+    prefixes.push(...(page && page.prefixes || []));
+    pageToken = page && page.nextPageToken;
+  } while(pageToken);
+  return prefixes;
+}
+function summarizeCloudPedidoReads(settled){
+  const orders = [];
+  let failed = 0;
+  for(const item of settled || []){
+    if(item && item.status === 'fulfilled' && item.value && typeof item.value === 'object' && !Array.isArray(item.value)){
+      orders.push(item.value);
+    } else {
+      failed++;
+    }
+  }
+  orders.sort((a, b)=>(b.updatedAt || '').localeCompare(a.updatedAt || ''));
+  return {orders, failed, listed: (settled || []).length};
+}
+function cloudLibraryNotice(summary){
+  const orders = summary && summary.orders || [];
+  const failed = summary && summary.failed || 0;
+  const listed = summary && summary.listed || 0;
+  if(!listed) return '';
+  if(failed && orders.length) return 'Se leyeron '+orders.length+' de '+listed+' pedidos. '+failed+' no se pudieron abrir. Puedes abrir los que sí aparecen.';
+  if(failed) return 'Se encontraron '+listed+' carpetas, pero no se pudo leer ningún pedido.json. Intenta de nuevo.';
+  return '';
+}
+async function listCloudPedidoMetadata(listPrefixes, readPedido, timeouts){
+  const listMs = timeouts && timeouts.list || CLOUD_LIST_TIMEOUT_MS;
+  const readMs = timeouts && timeouts.pedido || CLOUD_PEDIDO_TIMEOUT_MS;
+  const prefixes = await withTimeout(
+    listPrefixes(),
+    listMs,
+    'La lista de pedidos tardó demasiado. Revisa la conexión e intenta de nuevo.'
+  );
+  const ids = cloudPedidoIdsFromPrefixes(prefixes);
+  const settled = await Promise.allSettled(ids.map(id=>withTimeout(
+    readPedido(id),
+    readMs,
+    'Tiempo agotado al leer '+id
+  )));
+  return summarizeCloudPedidoReads(settled);
+}
 if(typeof globalThis!=='undefined'){
-  Object.assign(globalThis,{isCloudArtRef,safeOrderId,safeCloudFileName,pedidoJsonPath,pedidoArtPath,cloudArtSlots,TGM_CLOUD_BUCKET});
+  Object.assign(globalThis,{
+    isCloudArtRef,safeOrderId,safeCloudFileName,pedidoJsonPath,pedidoArtPath,cloudArtSlots,TGM_CLOUD_BUCKET,
+    CLOUD_LIST_PAGE_SIZE,CLOUD_LIST_TIMEOUT_MS,CLOUD_PEDIDO_TIMEOUT_MS,
+    withTimeout,cloudPedidoIdsFromPrefixes,collectPedidoPrefixes,summarizeCloudPedidoReads,cloudLibraryNotice,listCloudPedidoMetadata
+  });
 }
