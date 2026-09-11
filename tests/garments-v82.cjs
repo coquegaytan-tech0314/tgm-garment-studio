@@ -10,7 +10,7 @@ function opaqueBox(canvas){
 (async()=>{
   await run('init()');
   assert.equal(run('VERSION'),8,'Schema version stays 8 so tgm-pedido 1–8 still open');
-  assert.match(require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8'),/ESTUDIO · v8\.2\.2/);
+  assert.match(require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8'),/ESTUDIO · v8\.2\.3/);
   assert.equal(run("Object.keys(GARMENTS).join(',')"),'playera,hoodie,polo,sleeveless,zipneck');
   assert.equal(run("GARMENTS.sleeveless.label"),'Top sin mangas');
   assert.equal(run("GARMENTS.zipneck.label"),'Manga larga con cierre');
@@ -118,6 +118,46 @@ function opaqueBox(canvas){
   const crop=await run("tintedPhoto('sleeveless','front')");
   assert.equal(crop.width,run("PHOTO_BASES.sleevelessMujer.crop.front[2]"));
   assert.notEqual(tank.width,crop.width);
+
+  function silhouetteReadability(canvas){
+    const {width,height}=canvas,data=canvas.getContext('2d').getImageData(0,0,width,height).data;
+    const garment=new Uint8Array(width*height);
+    let count=0,form=0,stain=0,edgeN=0,edgeL=0,inN=0,inL=0,r=0,g=0,b=0;
+    for(let y=0;y<height;y++)for(let x=0;x<width;x++){
+      const i=y*width+x,n=i*4;
+      if(data[n+3]<20)continue;
+      garment[i]=1;count++;
+      const a=data[n+3]/255,cr=data[n]*a+255*(1-a),cg=data[n+1]*a+255*(1-a),cb=data[n+2]*a+255*(1-a);
+      const comp=(cr*.2126+cg*.7152+cb*.0722)/255;
+      if(comp<0.90)form++;
+      if(cr>220&&cg>220&&cb>220)stain++;
+      r+=data[n];g+=data[n+1];b+=data[n+2];
+    }
+    const rad=6;
+    for(let y=rad;y<height-rad;y++)for(let x=rad;x<width-rad;x++){
+      const i=y*width+x;if(!garment[i])continue;
+      let border=0;
+      for(let dy=-rad;dy<=rad&&!border;dy++)for(let dx=-rad;dx<=rad;dx++)if(!garment[(y+dy)*width+x+dx])border=1;
+      const n=i*4,L=(data[n]*.2126+data[n+1]*.7152+data[n+2]*.0722)/255;
+      if(border){edgeN++;edgeL+=L}else{inN++;inL+=L}
+    }
+    return {count,form,formRatio:form/count,stain,edge:edgeL/Math.max(edgeN,1),interior:inL/Math.max(inN,1),r:r/count,g:g/count,b:b/count};
+  }
+  async function sisadaTint(cut,color){
+    run("state=blank();state.garment='sleeveless';photoBaseDefaults()");
+    run(`state.photoCut='${cut}';state.bodyColor='${color}'`);
+    return silhouetteReadability(await run("tintedPhoto('sleeveless','front')"));
+  }
+  const whiteHombre=await sisadaTint('hombre','#F4F3EF');
+  const whiteMujer=await sisadaTint('mujer','#F4F3EF');
+  const navyHombre=await sisadaTint('hombre','#1a2744');
+  const navyMujer=await sisadaTint('mujer','#1a2744');
+  assert(whiteHombre.formRatio>0.18,'White hombre sisada must keep visible folds/outline on white');
+  assert(whiteMujer.formRatio>0.16,'White mujer sisada must keep a readable crop silhouette');
+  assert(whiteHombre.edge<whiteHombre.interior-0.03,'Hombre armhole/hem edges must read darker than the fill');
+  assert(whiteMujer.edge<whiteMujer.interior-0.025,'Mujer armhole/hem edges must read darker than the fill');
+  assert(navyHombre.b>navyHombre.r+18&&navyMujer.b>navyMujer.r+18,'Navy sisada must stay blue, not washed out');
+  assert(navyHombre.stain<400&&navyMujer.stain<400,'Navy sisada must not introduce white stains');
   const playeraPhoto=await run("tintedPhoto('playera','front')");
   assert.equal(playeraPhoto.width,run("PHOTO_BASES.playera.crop.front[2]"));
   assert.notEqual(playeraPhoto.width,photo.width);

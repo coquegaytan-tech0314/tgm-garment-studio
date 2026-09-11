@@ -19,12 +19,12 @@
     {
       "file": "chifon-sleeveless-hombre-front-back.png",
       "id": "sleeveless",
-      "prompt": "Chifón men's sleeveless tank photobase sheet (sisada hombre, default sleeveless). Front-left + back-right ghost mannequin, deep armholes, hip-length hem, mid-gray, no logos. Derived from Koke Chifón men's muscle-tank reference."
+      "prompt": "Chifón men's sleeveless tank photobase sheet (sisada hombre, default sleeveless). Front-left + back-right ghost mannequin, deep armholes, hip-length hem, mid-gray, no logos. Derived from Koke Chifón men's muscle-tank reference. v8.2.3 re-prep: interior alpha hardened and luminance scaled to the 0.66 tint reference; runtime hardenSleevelessPhoto adds armhole/hem/side shading and a light-body contrast boost so #F4F3EF stays readable on the white studio background."
     },
     {
       "file": "chifon-sleeveless-mujer-front-back.png",
       "id": "sleevelessMujer",
-      "prompt": "Chifón women's sleeveless crop photobase sheet (sisada mujer, alternate selectable cut). Front-left + back-right ghost mannequin, cropped waist hem, mid-gray, no brand marks. Derived from Koke Chifón women's crop reference with foreign logos omitted."
+      "prompt": "Chifón women's sleeveless crop photobase sheet (sisada mujer, alternate selectable cut). Front-left + back-right ghost mannequin, cropped waist hem, mid-gray, no brand marks. Derived from Koke Chifón women's crop reference with foreign logos omitted. v8.2.3 re-prep: same 0.66 luminance harden as the men's tank so the flat crop sheet keeps a visible silhouette when Cuerpo is white."
     },
     {
       "file": "pique-polo-front-back.png",
