@@ -8,7 +8,7 @@ const path=require('path');
   assert(!cloudJs.includes('listAll'),'cloud library must not call recursive listAll');
   assert(cloudJs.includes('sdk.list('),'cloud library must paginate with non-recursive list()');
   assert.match(cloudJs,/hydrateCloudPedido\(raw\)/,'opening a pedido must still hydrate art');
-  assert.match(built,/ESTUDIO · v8\.2\.4/);
+  assert.match(built,/MGM · v8\.2\.5/);
   assert.equal(built.includes('listAll'),false,'built app must not ship listAll');
   assert.match(built,/Leyendo pedidos de la nube/);
   assert.equal(run('VERSION'),8,'Schema VERSION stays 8');
