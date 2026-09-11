@@ -53,7 +53,7 @@ function paintPhotoOrbitSheet(canvas,front,back,yaw,pitch,distance){
 class PhotoOrbitRenderer{
   constructor(canvas){
     this.canvas=canvas;this.yaw=.32;this.pitch=.05;this.distance=5.3;this.pan=[0,0];
-    this.spinning=false;this.lastTime=0;this.lost=false;this.meshes=[];this.sheets=[null,null];
+    this.spinning=false;this.lastTime=0;this.lost=false;this.meshes=[];this.sheets=[null,null];this.texturesReady=false;
     this.gl=null;
     try{this.gl=canvas.getContext('webgl',{alpha:true,antialias:true,preserveDrawingBuffer:true,premultipliedAlpha:false})}catch{}
     if(this.gl){this.buildProgram();this.frontTexture=this.createTexture();this.backTexture=this.createTexture();this.whiteTexture=this.createTexture()}
@@ -82,32 +82,47 @@ class PhotoOrbitRenderer{
     g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER,g.LINEAR);g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER,g.LINEAR);
     return t;
   }
+  readSheetPixels(source){
+    const src=source?source._canvas||source:null;if(!src||!src.width)return null;
+    const read=ctx=>{
+      if(!ctx||!ctx.getImageData)return null;
+      const pixels=ctx.getImageData(0,0,src.width,src.height);let opaque=0;
+      const d=pixels.data;for(let i=3;i<d.length;i+=32)if(d[i]>20)opaque++;
+      return opaque>40?pixels:null;
+    };
+    try{const direct=src.getContext&&src.getContext('2d',{willReadFrequently:true});const hit=read(direct);if(hit)return {pixels:hit,w:src.width,h:src.height}}catch{}
+    try{
+      const stage=document.createElement('canvas');stage.width=src.width;stage.height=src.height;
+      const x=stage.getContext('2d',{willReadFrequently:true});x.drawImage(src,0,0);
+      const hit=read(x);if(hit)return {pixels:hit,w:src.width,h:src.height};
+    }catch{}
+    return null;
+  }
   setTexture(texture,source){
     if(!this.gl||!source)return false;
-    const g=this.gl,src=source._canvas||source;
+    const g=this.gl,src=source._canvas||source,pack=this.readSheetPixels(source);
     try{
-      const stage=document.createElement('canvas');stage.width=1024;stage.height=1024;
-      const x=stage.getContext('2d',{willReadFrequently:true});if(!x)return false;
-      x.clearRect(0,0,1024,1024);x.drawImage(src,0,0,1024,1024);
-      const pixels=x.getImageData(0,0,1024,1024);
       g.bindTexture(g.TEXTURE_2D,texture);
       g.pixelStorei(g.UNPACK_FLIP_Y_WEBGL,false);
       g.pixelStorei(g.UNPACK_ALIGNMENT,1);
-      g.texImage2D(g.TEXTURE_2D,0,g.RGBA,pixels.width,pixels.height,0,g.RGBA,g.UNSIGNED_BYTE,pixels.data);
+      if(pack)g.texImage2D(g.TEXTURE_2D,0,g.RGBA,pack.w,pack.h,0,g.RGBA,g.UNSIGNED_BYTE,pack.pixels.data);
+      else g.texImage2D(g.TEXTURE_2D,0,g.RGBA,g.RGBA,g.UNSIGNED_BYTE,src);
       g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_S,g.CLAMP_TO_EDGE);
       g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_T,g.CLAMP_TO_EDGE);
       g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER,g.LINEAR);
       g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER,g.LINEAR);
-      return true;
+      return !!pack;
     }catch{return false}
   }
   setSheets(sheets){
     this.sheets=sheets||[null,null];
     this.uvBox=photoOrbitOpaqueBox(this.sheets[0]);
     this.geometryKey=null;
+    this.texturesReady=false;
     if(this.gl&&!this.lost){
-      this.setTexture(this.frontTexture,this.sheets[0]);
-      this.setTexture(this.backTexture,this.sheets[1]);
+      const frontOk=this.setTexture(this.frontTexture,this.sheets[0]);
+      const backOk=this.setTexture(this.backTexture,this.sheets[1]);
+      this.texturesReady=frontOk||backOk;
       this.rebuild();
     }
     this.render();
@@ -140,7 +155,7 @@ class PhotoOrbitRenderer{
   }
   render(){
     this.syncAngle();
-    if(!this.gl||this.lost||!this.program){paintPhotoOrbitSheet(this.canvas,this.sheets[0],this.sheets[1],this.yaw,this.pitch,this.distance);return}
+    if(!this.gl||this.lost||!this.program||!this.texturesReady){paintPhotoOrbitSheet(this.canvas,this.sheets[0],this.sheets[1],this.yaw,this.pitch,this.distance);return}
     this.rebuild();
     const gl=this.gl,L=this.locations,c=this.camera();
     gl.viewport(0,0,this.canvas.width,this.canvas.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
@@ -192,7 +207,12 @@ function livePhotoSheets(){
   const front=$('#photoFront'),back=$('#photoBack');
   return front&&back?[front,back]:photoOrbitSheets;
 }
-async function afterPhotoSheets(canvases){photoOrbitSheets=canvases;if(photoOrbit)photoOrbit.setSheets(canvases)}
+async function afterPhotoSheets(canvases){
+  photoOrbitSheets=canvases;
+  const front=$('#photoFront'),back=$('#photoBack');
+  const sheets=front&&back&&front.width?[front,back]:canvases;
+  if(photoOrbit)photoOrbit.setSheets(sheets);
+}
 function syncPhotoOrbitUI(){
   const stage=$('#photoStage'),orbit=$('#photoOrbit');if(!stage||!orbit)return;
   const on=ensurePhoto().side==='orbit';
