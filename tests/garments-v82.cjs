@@ -10,7 +10,7 @@ function opaqueBox(canvas){
 (async()=>{
   await run('init()');
   assert.equal(run('VERSION'),8,'Schema version stays 8 so tgm-pedido 1–8 still open');
-  assert.match(require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8'),/ESTUDIO · v8\.2/);
+  assert.match(require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8'),/ESTUDIO · v8\.2\.2/);
   assert.equal(run("Object.keys(GARMENTS).join(',')"),'playera,hoodie,polo,sleeveless,zipneck');
   assert.equal(run("GARMENTS.sleeveless.label"),'Top sin mangas');
   assert.equal(run("GARMENTS.zipneck.label"),'Manga larga con cierre');
@@ -79,6 +79,35 @@ function opaqueBox(canvas){
   const photo=await run("tintedPhoto('zipneck','front')");
   assert.equal(photo.width,run("PHOTO_BASES.zipneck.crop.front[2]"));
   assert.equal(run("PHOTO_BASES.zipneck.label"),'Manga larga con cierre · Chifón');
+  function regionMean(canvas,x0,x1,y0,y1){
+    const {width,height}=canvas,data=canvas.getContext('2d').getImageData(0,0,width,height).data;
+    const X0=Math.floor(x0*width),X1=Math.floor(x1*width),Y0=Math.floor(y0*height),Y1=Math.floor(y1*height);
+    let n=0,r=0,g=0,b=0,stain=0;
+    for(let y=Y0;y<Y1;y++)for(let x=X0;x<X1;x++){
+      const i=(y*width+x)*4;if(data[i+3]<20)continue;
+      n++;r+=data[i];g+=data[i+1];b+=data[i+2];
+      const cr=data[i]*data[i+3]/255+255*(1-data[i+3]/255),cg=data[i+1]*data[i+3]/255+255*(1-data[i+3]/255),cb=data[i+2]*data[i+3]/255+255*(1-data[i+3]/255);
+      if(cr>220&&cg>220&&cb>220)stain++;
+    }
+    return {n,r:r/n,g:g/n,b:b/n,stain};
+  }
+  run("state.bodyColor='#1a2744'");
+  const navy=await run("tintedPhoto('zipneck','front')");
+  const navyBack=await run("tintedPhoto('zipneck','back')");
+  const torso=regionMean(navy,.32,.68,.18,.72),left=regionMean(navy,.00,.18,.08,.95),right=regionMean(navy,.82,1,.08,.95);
+  assert(left.n>20000&&right.n>20000,'Zipneck photobase must keep both long sleeves');
+  assert(Math.abs(left.b-torso.b)<18&&Math.abs(right.b-torso.b)<18,'Sleeves must tint with the torso');
+  assert(torso.b>left.r+20&&left.b>left.r+20,'Navy zipneck sleeves must stay blue, not white');
+  const navyStain=regionMean(navy,.08,.92,.08,.92).stain+regionMean(navyBack,.08,.92,.08,.92).stain;
+  assert(navyStain<400,'Interior white stains must not survive navy tint');
+  run("state.bodyColor='#228b22'");
+  const green=await run("tintedPhoto('zipneck','front')");
+  const greenTorso=regionMean(green,.32,.68,.18,.72),greenSleeve=regionMean(green,.00,.18,.08,.95);
+  assert(greenSleeve.g>100&&Math.abs(greenSleeve.g-greenTorso.g)<25,'Saturated green must recolor sleeves with the torso');
+  run("state.bodyColor='#f3f3ef'");
+  const light=await run("tintedPhoto('zipneck','front')");
+  const lightSleeve=regionMean(light,.00,.18,.08,.95);
+  assert(lightSleeve.n>20000,'Light body color must keep the long-sleeve silhouette');
   run("state=blank();state.garment='sleeveless';photoBaseDefaults()");
   assert.equal(run('state.fabric'),'Chifón Estrella');
   assert.equal(run('state.photoCut'),'hombre');
