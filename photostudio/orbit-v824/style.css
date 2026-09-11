@@ -1,0 +1,6 @@
+/* Acabado 360° sits in the photo pane; keep iPad hit targets large. */
+.photo-stage[data-view=orbit] .photo-stage-title{pointer-events:none}
+.photo-orbit-tools button{min-width:72px}
+@media(max-width:800px){
+  .photo-orbit-angle{right:10px}
+}

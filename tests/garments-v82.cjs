@@ -182,5 +182,42 @@ function opaqueBox(canvas){
   assert.equal(migrated.garment,'polo');
   assert.equal(migrated.version,8);
 
+  assert.equal(run("$$('[data-photo-view]').map(b=>b.dataset.photoView).join(',')"),'front,back,both,orbit');
+  context.orbitOrder=run('blank()');context.orbitOrder.photo.side='orbit';
+  assert.equal((await run('validateOrder(orbitOrder)')).photo.side,'orbit');
+  context.flatOrder=run('blank()');context.flatOrder.photo.side='both';
+  assert.equal((await run('validateOrder(flatOrder)')).photo.side,'both');
+  run("state=blank();state.photo.side='orbit';syncPhotoUI()");
+  assert.equal(run("state.photo.side"),'orbit');
+  assert.equal(run("$('#photoStage').dataset.view"),'orbit');
+  assert.equal(run("$('#photoOrbit').hidden"),false);
+  run("state.photo.side='both';syncPhotoUI()");
+  assert.equal(run("$('#photoStage').dataset.view"),'both');
+  assert.equal(run("$('#photoOrbit').hidden"),true);
+
+  async function orbitPaint(garment,yaw){
+    run(`state=blank();state.garment='${garment}';photoBaseDefaults();state.bodyColor='#1a4f9c';state.photo.side='orbit'`);
+    run("addArt();selected().kind='text';selected().text='TGM';selected().color='#e10600';selected().view='front';selected().width=140");
+    const front=createCanvas(1000,1150),back=createCanvas(1000,1150);context.front=front;context.back=back;
+    await run("renderPhoto(front,'front')");await run("renderPhoto(back,'back')");
+    const dest=createCanvas(800,800);context.dest=dest;context.yaw=yaw;
+    run('paintPhotoOrbitSheet(dest,front,back,yaw,0.05,5.3)');
+    return opaqueBox(dest);
+  }
+  for(const garment of ['playera','hoodie','polo','sleeveless','zipneck']){
+    const frontView=await orbitPaint(garment,0.15);
+    const backView=await orbitPaint(garment,Math.PI);
+    assert(frontView.count>8000,garment+' 360° front yaw must paint the finished sheet');
+    assert(backView.count>8000,garment+' 360° back yaw must paint the reverse sheet');
+    const mapped=run('photoOrbitProjectiveUVs(garmentGeometry(state))');
+    assert(mapped.maxY>mapped.minY&&mapped.maxX>mapped.minX,garment+' orbit UVs need a real mesh bounds');
+    const box=run('photoOrbitOpaqueBox(front)');
+    assert(box.u1-box.u0>0.25&&box.v1-box.v0>0.25,garment+' finished sheet must expose an opaque orbit UV box');
+  }
+  run("state=blank();state.garment='sleeveless';photoBaseDefaults();state.photoCut='mujer';state.photo.side='orbit'");
+  const mujerMesh=run('photoOrbitProjectiveUVs(garmentGeometry(state))');
+  assert(mujerMesh.maxX>mujerMesh.minX,'Sleeveless mujer cut still orbits on the sisada mesh');
+
   console.log('PASS v8.2 sleeveless and zipneck silhouettes, validation and legacy polo/hoodie/playera');
+  console.log('PASS v8.2.4 Acabado 360° orbit for every prenda type');
 })().catch(error=>{console.error(error);process.exitCode=1});

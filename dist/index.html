@@ -24,10 +24,10 @@
 /* A garment inspection surface: generous image area and compact working controls. */
 :root{--blue:#4e59dc;--pale:#eef0ff;--ink:#202634;--paper:#eceef2;--line:#dce0e7}
 .layout{grid-template-columns:370px minmax(0,1fr);gap:18px;padding:18px 24px;max-width:1800px}.tabs{flex-wrap:wrap;justify-content:flex-start;padding:0 10px}.tabs button{font-size:.875rem;flex:1 0 30%;padding:11px 5px}.studio-heading h2{font-size:1.125rem}.studio-heading .subtle{font-size:.875rem}.topbar{background:#20222c}.workspace-head .subtle{font-size:.875rem}.photo-pane{min-width:0;background:#fff}.photo-toolbar{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap}.photo-tools{display:flex;gap:6px}.photo-tools button{font-size:.875rem;min-height:40px;padding:8px 11px}.photo-stage{position:relative;isolation:isolate;overflow:hidden;background:radial-gradient(ellipse at 50% 35%,#fff 0%,#f4f5f7 57%,#e6e9ee 100%)}.photo-stage[data-background=white]{background:#fff}.photo-stage[data-background=dark]{background:radial-gradient(ellipse at 50% 30%,#4c525f,#20232b)}.photo-stage[data-background=transparent]{background-color:#fff;background-image:linear-gradient(45deg,#edf0f3 25%,transparent 25%),linear-gradient(-45deg,#edf0f3 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#edf0f3 75%),linear-gradient(-45deg,transparent 75%,#edf0f3 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}
-.photo-stage-title{position:absolute;top:22px;left:24px;z-index:2;pointer-events:none;display:grid;gap:5px;color:#4c5466}.photo-stage-title span{font-size:.75rem;letter-spacing:.13em}.photo-stage-title b{font-size:.875rem;font-weight:500}.photo-stage[data-background=dark] .photo-stage-title{color:#e7e9f0}.photo-pair{display:flex;justify-content:center;align-items:center;min-height:570px;padding:16px 20px 42px;gap:10px}.photo-figure{margin:0;min-width:0;display:flex;align-items:center;flex-direction:column;width:100%;max-width:570px}.photo-figure canvas{display:block;width:100%;height:auto;aspect-ratio:800/920;touch-action:none;outline-offset:-4px}.photo-figure canvas.editable{cursor:move}.photo-figure canvas.dragging{cursor:grabbing}.photo-figure figcaption{font-size:.75rem;letter-spacing:.14em;color:#737b8a;text-align:center;margin-top:-24px;pointer-events:none}.photo-stage[data-background=dark] figcaption{color:#d5dbe7}.photo-stage[data-view=front] [data-side=back],.photo-stage[data-view=back] [data-side=front]{display:none}.photo-stage[data-view=both] .photo-figure{width:50%}.photo-stage[data-view=both] .photo-pair{padding-top:58px}.photo-origin{position:absolute;bottom:14px;left:24px;right:24px;text-align:center;font-size:.75rem;color:#667082}.photo-stage[data-background=dark] .photo-origin{color:#d5dbe7}.photo-bottom{padding:12px 16px;display:flex;align-items:center;gap:16px;justify-content:space-between;border-top:1px solid var(--line);font-size:.8125rem;color:var(--muted)}.photo-bottom button{font-size:.8125rem;min-height:36px;padding:7px 10px;flex-shrink:0}.photo-mismatch{margin:0;padding:13px 17px;background:#fff7e8;border-top:1px solid #ebd4a5;color:#805719;font-size:.875rem}.photo-mismatch p{margin:0 0 9px}.photo-mismatch button{font-size:.8125rem;padding:7px 10px;min-height:36px;background:#fffdf8}.detail-presets{display:flex;flex-wrap:wrap;gap:7px}.detail-presets button{font-size:.875rem;padding:8px 10px}.photo-detail-dialog{max-width:1060px;width:94vw;max-height:94vh;padding:0;overflow:hidden;border:1px solid #cdd3df;border-radius:14px}.photo-detail-dialog::backdrop{background:#131826ad;backdrop-filter:blur(5px)}.detail-header{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:18px 22px;border-bottom:1px solid var(--line)}.detail-header .help{margin:6px 0 0}.detail-bar{padding:8px 18px;display:flex;align-items:center;justify-content:center;gap:8px;background:#fff;border-bottom:1px solid var(--line)}.detail-bar select{width:auto;min-width:130px}.detail-bar button{min-width:42px;padding:8px 12px}.detail-bar output{width:64px;text-align:center;font-size:.875rem}#detailCanvas{display:block;width:100%;height:min(62vh,680px);background:#eff1f4;touch-action:none;cursor:grab;outline-offset:-5px}.detail-note{font-size:.8125rem;padding:12px 20px;margin:0;color:var(--muted);background:#fff}.preview-bottom .badge{font-size:.75rem}#proWorkspace[data-mode=photo] .model-pane,#proWorkspace[data-mode=photo] .flat-pane{display:none}#proWorkspace:not([data-mode=photo]) .photo-pane{display:none}.export-buttons{grid-template-columns:repeat(3,1fr)}#exportAngle{display:none}.photo-pane .segmented button{min-height:40px;font-size:.875rem}.studio-heading>.segmented{flex-wrap:wrap}.studio-heading>.segmented button{font-size:.8125rem}.preview-column{position:static}.photo-pane [hidden],#panel-photo [hidden]{display:none!important}.photo-tools #photoEdit{background:#4e59dc;color:#fff;border-color:#4e59dc}
-@media(min-width:1450px){.photo-pair{min-height:640px}.photo-figure{max-width:610px}}
-@media(max-width:1200px){.layout{grid-template-columns:330px minmax(0,1fr);padding:14px;gap:14px}.photo-pair{min-height:500px;padding-left:0;padding-right:0}.photo-stage-title{left:16px;top:16px}.photo-stage[data-view=both] .photo-pair{min-height:380px}.studio-heading{flex-wrap:wrap}.photo-toolbar{padding:10px}.photo-stage-title span{font-size:.75rem}}
-@media(max-width:800px){.layout{display:flex;flex-direction:column;padding:10px}.preview-column{order:0}.editor{order:1;width:100%}.photo-pair{min-height:410px}.photo-figure{max-width:490px}.photo-stage[data-view=both] .photo-pair{min-height:320px}.photo-bottom{flex-wrap:wrap;gap:8px}.photo-origin{font-size:.75rem}.studio-heading>.segmented{width:100%;display:flex}.studio-heading>.segmented button{flex:1}.photo-stage-title b{font-size:.8125rem}.detail-header{padding:13px}.detail-header h2{font-size:1rem}.detail-header .help{font-size:.75rem}.detail-note{font-size:.75rem}.photo-toolbar{justify-content:center}.photo-stage-title{top:12px}.photo-pair{padding-top:35px}.export-buttons{grid-template-columns:1fr 1fr}.export-buttons .pdf-button{grid-column:1/-1}}
+.photo-stage-title{position:absolute;top:22px;left:24px;z-index:2;pointer-events:none;display:grid;gap:5px;color:#4c5466}.photo-stage-title span{font-size:.75rem;letter-spacing:.13em}.photo-stage-title b{font-size:.875rem;font-weight:500}.photo-stage[data-background=dark] .photo-stage-title{color:#e7e9f0}.photo-pair{display:flex;justify-content:center;align-items:center;min-height:570px;padding:16px 20px 42px;gap:10px}.photo-figure{margin:0;min-width:0;display:flex;align-items:center;flex-direction:column;width:100%;max-width:570px}.photo-figure canvas{display:block;width:100%;height:auto;aspect-ratio:800/920;touch-action:none;outline-offset:-4px}.photo-figure canvas.editable{cursor:move}.photo-figure canvas.dragging{cursor:grabbing}.photo-figure figcaption{font-size:.75rem;letter-spacing:.14em;color:#737b8a;text-align:center;margin-top:-24px;pointer-events:none}.photo-stage[data-background=dark] figcaption{color:#d5dbe7}.photo-stage[data-view=front] [data-side=back],.photo-stage[data-view=back] [data-side=front]{display:none}.photo-stage[data-view=both] .photo-figure{width:50%}.photo-stage[data-view=both] .photo-pair{padding-top:58px}.photo-stage[data-view=orbit] .photo-pair{display:none}.photo-orbit{display:none;position:relative;min-height:570px;height:min(72vh,720px);touch-action:none;-webkit-user-select:none;user-select:none;cursor:grab}.photo-stage[data-view=orbit] .photo-orbit{display:block}.photo-orbit.orbiting{cursor:grabbing}.photo-orbit canvas{display:block;position:absolute;inset:0;width:100%;height:100%;touch-action:none;outline-offset:-4px;-webkit-user-select:none;user-select:none}#photoOrbitGL{opacity:0;pointer-events:none}.photo-orbit[data-mode=gl] #photoOrbitGL{opacity:1;pointer-events:none}.photo-orbit[data-mode=gl] #photoOrbitCanvas{opacity:0}.photo-orbit-tools{position:absolute;top:16px;right:16px;z-index:3;display:flex;gap:6px}.photo-orbit-tools button{min-height:36px;padding:7px 10px;font-size:.8125rem;background:#ffffffd8}.photo-orbit-tools button[aria-pressed=true]{background:var(--pale);color:var(--blue);border-color:var(--blue)}.photo-orbit-hint{position:absolute;left:16px;bottom:14px;z-index:2;font-size:.75rem;color:#667082;pointer-events:none;background:#ffffffa8;padding:4px 8px;border-radius:4px}.photo-orbit-angle{position:absolute;right:16px;bottom:14px;z-index:2;font-size:.75rem;color:#617087;background:#ffffffa8;padding:4px 7px;border-radius:4px;pointer-events:none}.photo-stage[data-background=dark] .photo-orbit-hint,.photo-stage[data-background=dark] .photo-orbit-angle{color:#d5dbe7;background:#20232ba8}.photo-pane .segmented{flex-wrap:wrap}.photo-origin{position:absolute;bottom:14px;left:24px;right:24px;text-align:center;font-size:.75rem;color:#667082}.photo-stage[data-background=dark] .photo-origin{color:#d5dbe7}.photo-bottom{padding:12px 16px;display:flex;align-items:center;gap:16px;justify-content:space-between;border-top:1px solid var(--line);font-size:.8125rem;color:var(--muted)}.photo-bottom button{font-size:.8125rem;min-height:36px;padding:7px 10px;flex-shrink:0}.photo-mismatch{margin:0;padding:13px 17px;background:#fff7e8;border-top:1px solid #ebd4a5;color:#805719;font-size:.875rem}.photo-mismatch p{margin:0 0 9px}.photo-mismatch button{font-size:.8125rem;padding:7px 10px;min-height:36px;background:#fffdf8}.detail-presets{display:flex;flex-wrap:wrap;gap:7px}.detail-presets button{font-size:.875rem;padding:8px 10px}.photo-detail-dialog{max-width:1060px;width:94vw;max-height:94vh;padding:0;overflow:hidden;border:1px solid #cdd3df;border-radius:14px}.photo-detail-dialog::backdrop{background:#131826ad;backdrop-filter:blur(5px)}.detail-header{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:18px 22px;border-bottom:1px solid var(--line)}.detail-header .help{margin:6px 0 0}.detail-bar{padding:8px 18px;display:flex;align-items:center;justify-content:center;gap:8px;background:#fff;border-bottom:1px solid var(--line)}.detail-bar select{width:auto;min-width:130px}.detail-bar button{min-width:42px;padding:8px 12px}.detail-bar output{width:64px;text-align:center;font-size:.875rem}#detailCanvas{display:block;width:100%;height:min(62vh,680px);background:#eff1f4;touch-action:none;cursor:grab;outline-offset:-5px}.detail-note{font-size:.8125rem;padding:12px 20px;margin:0;color:var(--muted);background:#fff}.preview-bottom .badge{font-size:.75rem}#proWorkspace[data-mode=photo] .model-pane,#proWorkspace[data-mode=photo] .flat-pane{display:none}#proWorkspace:not([data-mode=photo]) .photo-pane{display:none}.export-buttons{grid-template-columns:repeat(3,1fr)}#exportAngle{display:none}.photo-pane .segmented button{min-height:40px;font-size:.875rem}.studio-heading>.segmented{flex-wrap:wrap}.studio-heading>.segmented button{font-size:.8125rem}.preview-column{position:static}.photo-pane [hidden],#panel-photo [hidden]{display:none!important}.photo-tools #photoEdit{background:#4e59dc;color:#fff;border-color:#4e59dc}
+@media(min-width:1450px){.photo-pair{min-height:640px}.photo-figure{max-width:610px}.photo-orbit{min-height:640px;height:min(74vh,760px)}}
+@media(max-width:1200px){.layout{grid-template-columns:330px minmax(0,1fr);padding:14px;gap:14px}.photo-pair{min-height:500px;padding-left:0;padding-right:0}.photo-stage-title{left:16px;top:16px}.photo-stage[data-view=both] .photo-pair{min-height:380px}.photo-orbit{min-height:500px;height:min(68vh,620px)}.studio-heading{flex-wrap:wrap}.photo-toolbar{padding:10px}.photo-stage-title span{font-size:.75rem}}
+@media(max-width:800px){.layout{display:flex;flex-direction:column;padding:10px}.preview-column{order:0}.editor{order:1;width:100%}.photo-pair{min-height:410px}.photo-figure{max-width:490px}.photo-stage[data-view=both] .photo-pair{min-height:320px}.photo-orbit{min-height:420px;height:min(64vh,520px)}.photo-orbit-tools{top:12px;right:10px}.photo-orbit-hint{left:10px;right:auto;max-width:58%}.photo-bottom{flex-wrap:wrap;gap:8px}.photo-origin{font-size:.75rem}.studio-heading>.segmented{width:100%;display:flex}.studio-heading>.segmented button{flex:1}.photo-pane .segmented button{flex:1 1 auto;min-width:72px;font-size:.8125rem;padding:8px 8px}.photo-stage-title b{font-size:.8125rem}.detail-header{padding:13px}.detail-header h2{font-size:1rem}.detail-header .help{font-size:.75rem}.detail-note{font-size:.75rem}.photo-toolbar{justify-content:center}.photo-stage-title{top:12px}.photo-pair{padding-top:35px}.export-buttons{grid-template-columns:1fr 1fr}.export-buttons .pdf-button{grid-column:1/-1}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 @media print{.photo-detail-dialog,.photo-pane,.photo-mismatch{display:none!important}}
 .logo-add,.logo-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.logo-add .primary{flex:1}.logo-actions button{flex:1;font-size:.8125rem}.logo-proof{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.logo-proof figure{margin:0;min-width:0}.logo-proof figcaption{font-size:.75rem;color:var(--muted);margin-top:5px}.checker{background-color:#f8f9fc;background-image:conic-gradient(#e3e6ec 25%,transparent 0 50%,#e3e6ec 0 75%,transparent 0);background-size:16px 16px;border:1px solid var(--line);border-radius:8px;height:112px;padding:10px;display:flex;align-items:center;justify-content:center}.checker img{max-width:100%;max-height:100%;object-fit:contain}.checker img:not([src]){display:none}.logo-prep{border:1px solid var(--line);border-radius:9px;padding:12px;margin:16px 0;background:#fbfcfe}.logo-prep summary{font-size:.875rem;font-weight:650;cursor:pointer;padding:3px 0}.logo-prep[open]>summary{margin-bottom:12px}.technique-advice{font-size:.8125rem;border-left:3px solid #5865d9;padding:10px 12px;background:#eef1fd;margin-bottom:16px;line-height:1.55}.technique-advice[data-level=review]{background:#fff6e8;border-color:#b87722;color:#714b18}.technique-advice p{margin:0 0 6px}.technique-advice p:last-child{margin:0}.ficha-tools{display:grid;gap:8px;margin:16px 0}.measurement-scroll{overflow:auto;max-width:100%}.measure-table{border-collapse:collapse;font-size:.8125rem;width:100%;min-width:540px}.measure-table th,.measure-table td{padding:6px;border-bottom:1px solid var(--line);text-align:left}.measure-table th:first-child{min-width:145px}.measure-table input{min-width:64px!important;padding:7px!important}.ficha-dialog{width:min(1120px,96vw);max-width:96vw;padding:0;background:#e9edf4;border:0;border-radius:14px;max-height:94vh}.ficha-dialog-head{background:white;padding:18px 22px;display:flex;gap:20px;align-items:center;justify-content:space-between}.ficha-dialog-head p{margin:4px 0 0;font-size:.875rem;color:var(--muted)}.ficha-dialog-actions{position:sticky;top:0;background:#fff;display:flex;gap:8px;flex-wrap:wrap;padding:10px 22px;border-bottom:1px solid var(--line);z-index:2}.ficha-pages{padding:24px;display:grid;justify-items:center;gap:24px}.ficha-pages img{width:100%;max-width:794px;height:auto;box-shadow:0 4px 20px #22324c22;background:white}.ficha-pages .loading{padding:32px}.composition-fields{padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:16px 0}.art-item span{overflow:hidden;text-overflow:ellipsis}.tabs{display:grid!important;grid-template-columns:repeat(3,1fr)!important}.tabs button[data-tab=ficha]{grid-column:1/-1;background:#f0f2fd;font-weight:700}.export-card .pdf-button{color:#fff}.logo-add button,.ficha-tools button{min-height:44px}@media(max-width:700px){.ficha-pages{padding:10px;gap:12px}.ficha-dialog-head{padding:14px;align-items:flex-start}.ficha-dialog-actions{padding:10px}.ficha-dialog-actions button{flex:1}.logo-actions button{min-width:110px}}@media print{.ficha-dialog{display:none!important}}
@@ -68,6 +68,12 @@
 #photoCutField{margin:8px 0 14px}
 .photo-cut-picker{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
 .photo-cut-picker button[aria-pressed="true"]{border-color:var(--blue);background:var(--pale);color:var(--blue)}
+/* Acabado 360° sits in the photo pane; keep iPad hit targets large. */
+.photo-stage[data-view=orbit] .photo-stage-title{pointer-events:none}
+.photo-orbit-tools button{min-width:72px}
+@media(max-width:800px){
+  .photo-orbit-angle{right:10px}
+}
 </style>
 </head>
 <body>
@@ -256,7 +262,7 @@
   </div>
   <div class="divider"></div><h3>Revisar de cerca</h3>
   <div class="detail-presets"><button data-detail="neck">Cuello y costuras</button><button data-detail="fabric">Tela y aplicación</button><button data-detail="hem">Puño y dobladillo</button></div>
-  <p class="note">Las bases generadas representan una sola confección por tipo de prenda. Puedes revisar otras opciones en 2D o cargar un render que corresponda a la confección elegida.</p>
+  <p class="note">Las bases generadas representan una sola confección por tipo de prenda. Puedes revisar otras opciones en 2D o cargar un render que corresponda a la confección elegida. En la vista 360° gira el acabado terminado; Frente, Espalda y Comparar siguen siendo las láminas planas.</p>
 </div>
 <div id="panel-ficha" class="tab-panel" role="tabpanel" aria-labelledby="tab-ficha" hidden>
   <h3>Ficha de referencia</h3><p class="subtle">Para cotización y desarrollo de muestra</p>
@@ -297,6 +303,7 @@
       <button data-photo-view="front" aria-pressed="true">Frente</button>
       <button data-photo-view="back" aria-pressed="false">Espalda</button>
       <button data-photo-view="both" aria-pressed="false">Comparar</button>
+      <button data-photo-view="orbit">360°</button>
     </div>
     <div class="photo-tools"><button id="photoSleeves">Editar mangas</button><button id="photoEdit">Colocar logo</button><button id="photoDetail">Ver detalle</button></div>
   </div>
@@ -305,6 +312,16 @@
     <div class="photo-pair" id="photoPair">
       <figure class="photo-figure" data-side="front"><canvas id="photoFront" width="1000" height="1150" tabindex="0" aria-label="Frente de la prenda; en Logos, arrastra la aplicación o usa las flechas para moverla."></canvas><figcaption>FRENTE</figcaption></figure>
       <figure class="photo-figure" data-side="back"><canvas id="photoBack" width="1000" height="1150" tabindex="0" aria-label="Espalda de la prenda; en Logos, arrastra la aplicación o usa las flechas para moverla."></canvas><figcaption>ESPALDA</figcaption></figure>
+    </div>
+    <div class="photo-orbit" id="photoOrbit" hidden>
+      <canvas id="photoOrbitGL" width="1000" height="1000" aria-hidden="true"></canvas>
+      <canvas id="photoOrbitCanvas" width="1000" height="1000" tabindex="0" aria-label="Acabado en 360 grados. Arrastra para girar. Pellizco o rueda para zoom. Flechas para orbitar y tecla Inicio para centrar."></canvas>
+      <div class="photo-orbit-tools">
+        <button type="button" id="photoOrbitSpin" aria-pressed="false">Girar</button>
+        <button type="button" id="photoOrbitFit">Centrar</button>
+      </div>
+      <span class="photo-orbit-hint">Arrastra para girar · pellizco para zoom</span>
+      <span class="photo-orbit-angle" id="photoOrbitAngle">Giro 24°</span>
     </div>
     <span class="photo-origin" id="photoOrigin">Base generada · apariencia aproximada</span>
   </div>
@@ -377,12 +394,12 @@ async function photoDrawApplications(ctx,view,scale){const src=await preparePhot
 function photoBackground(ctx,width,height,kind){if(kind==='transparent')return;const gradient=ctx.createRadialGradient(width*.5,height*.32,10,width*.5,height*.5,height*.8);gradient.addColorStop(0,kind==='dark'?'#484e5a':'#ffffff');gradient.addColorStop(1,kind==='dark'?'#20232b':kind==='white'?'#ffffff':'#e8ecf1');ctx.fillStyle=gradient;ctx.fillRect(0,0,width,height)}
 async function renderPhoto(canvas,view,{edit=false,background=false,stamp=false}={}){const p=ensurePhoto(),ctx=canvas.getContext('2d'),scale=canvas.width/W;ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);if(background)photoBackground(ctx,canvas.width,canvas.height,p.source==='final'?'white':p.background);if(p.source==='final'){const item=p.final[view];if(item){const img=await getImage(item.image),s=Math.min(canvas.width*.94/img.naturalWidth,canvas.height*.87/img.naturalHeight);ctx.drawImage(img,(canvas.width-img.naturalWidth*s)/2,(canvas.height*.90-img.naturalHeight*s)/2,img.naturalWidth*s,img.naturalHeight*s)}else{ctx.fillStyle='#657089';ctx.textAlign='center';ctx.font='24px Arial';ctx.fillText('Carga el render de '+(view==='front'?'frente':'espalda'),canvas.width/2,canvas.height/2)}}else{const garment=state.garment,rect=photoRect(garment,view),image=await tintedPhoto(garment,view);ctx.save();ctx.scale(scale,scale);ctx.drawImage(image,rect.x,rect.y,rect.w,rect.h);drawPoloAccents(ctx,rect,view);await photoDrawApplications(ctx,view,scale);if(edit&&selected()?.view===view){const a=photoPose(selected()),g=await artGeometry(a);ctx.translate(a.x,a.y);ctx.rotate(a.rotation*Math.PI/180);ctx.strokeStyle='#5163e5';ctx.lineWidth=1.8;ctx.setLineDash([6,4]);ctx.strokeRect(-g.width/2-7,-g.height/2-7,g.width+14,g.height+14);ctx.setLineDash([]);ctx.fillStyle='white';for(const [sx,sy]of [[-1,-1],[1,-1],[-1,1],[1,1]]){ctx.fillRect(sx*(g.width/2+7)-3,sy*(g.height/2+7)-3,6,6);ctx.strokeRect(sx*(g.width/2+7)-3,sy*(g.height/2+7)-3,6,6)}}ctx.restore()}if(stamp){ctx.save();ctx.setTransform(1,0,0,1,0,0);const dark=p.source==='generated'&&p.background==='dark';ctx.fillStyle=dark?'#eef0f7':'#2b3549';ctx.textAlign='center';ctx.font='600 '+Math.round(canvas.width*.0145)+'px Arial';ctx.fillText(GARMENTS[state.garment].label.toUpperCase()+' · '+(view==='front'?'FRENTE':'ESPALDA'),canvas.width/2,canvas.height*.938);ctx.font=Math.round(canvas.width*.011)+'px Arial';ctx.fillStyle=dark?'#c3cbdb':'#647085';ctx.fillText(p.source==='final'?'Referencia de acabado · confirmar con muestra física':'Base generada · textura, color, caída y aplicación aproximados',canvas.width/2,canvas.height*.963);ctx.restore()}return canvas}
 function syncPhotoUI(){if(!$('#photoStage'))return;const p=ensurePhoto();$('#photoStage').dataset.view=p.side;$('#photoStage').dataset.background=p.source==='final'?'white':p.background;$('#photoBaseName').textContent=PHOTO_BASES[state.garment].label;$('#photoOrigin').textContent=p.source==='final'?'Render cargado · revisar correspondencia con el pedido':'Base generada · apariencia aproximada';$('#photoSource').value=p.source;$('#photoGeneratedControls').hidden=p.source!=='generated';$('#photoFinalControls').hidden=p.source!=='final';$$('[data-photo]').forEach(el=>{const v=p[el.dataset.photo];if(el.type==='checkbox')el.checked=v;else el.value=v});$('#photoExposureValue').textContent=(p.exposure>0?'+':'')+p.exposure;$('#photoReliefValue').textContent=p.relief+' %';$('#photoThreadValue').textContent=p.thread+' %';$$('[data-photo-view]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.photoView===p.side));for(const view of ['front','back']){const item=p.final[view];$('#photoFinal'+(view==='front'?'Front':'Back')+'Info').textContent=item?item.width+' × '+item.height+' px · '+(item.signature===visualSignature()?'corresponde a esta versión':'requiere actualizar'):'PNG o JPG · hasta 10 MB'}const issues=photoIssues();$('#photoMismatch').hidden=!issues.length;$('#photoMismatchText').textContent=issues.join(' ');$('#photoUseBase').hidden=p.source!=='generated';$('#photoStatus').textContent=issues.length?'Revisar la referencia antes de exportar':p.source==='final'?'Imágenes cargadas para esta versión del diseño':'Colores y diseños editables · frente y espalda';$('#photoEdit').disabled=p.source==='final';for(const view of ['front','back'])$('#photo'+(view==='front'?'Front':'Back')).classList.toggle('editable',currentTab==='art'&&p.source==='generated')}
-function schedulePhoto(){syncPhotoUI();cancelAnimationFrame(photoFrame);const ticket=++photoTicket;photoFrame=requestAnimationFrame(async()=>{try{const canvases=[];for(const view of ['front','back']){const c=document.createElement('canvas');c.width=1000;c.height=1150;await renderPhoto(c,view,{edit:currentTab==='art'});canvases.push(c)}if(ticket!==photoTicket)return;for(const [i,id]of ['#photoFront','#photoBack'].entries()){const target=$(id),x=target.getContext('2d');x.clearRect(0,0,target.width,target.height);x.drawImage(canvases[i],0,0,target.width,target.height)}updateSleevePreview(canvases);if($('#photoDetailDialog').open)await refreshPhotoDetail()}catch(e){if(ticket===photoTicket){$('#photoStatus').textContent='No se pudo preparar la referencia.';toast(e.message)}}})}
+function schedulePhoto(){syncPhotoUI();cancelAnimationFrame(photoFrame);const ticket=++photoTicket;photoFrame=requestAnimationFrame(async()=>{try{const canvases=[];for(const view of ['front','back']){const c=document.createElement('canvas');c.width=1000;c.height=1150;await renderPhoto(c,view,{edit:currentTab==='art'});canvases.push(c)}if(ticket!==photoTicket)return;for(const [i,id]of ['#photoFront','#photoBack'].entries()){const target=$(id),x=target.getContext('2d');x.clearRect(0,0,target.width,target.height);x.drawImage(canvases[i],0,0,target.width,target.height)}if(typeof afterPhotoSheets==='function')await afterPhotoSheets(canvases);updateSleevePreview(canvases);if($('#photoDetailDialog').open)await refreshPhotoDetail()}catch(e){if(ticket===photoTicket){$('#photoStatus').textContent='No se pudo preparar la referencia.';toast(e.message)}}})}
 async function exportPhoto(view){assertPhotoReady([view]);const c=document.createElement('canvas');c.width=2000;c.height=2300;return renderPhoto(c,view,{background:true,stamp:true})}
 function photoPointer(canvas,e){const r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H}}
 function setupPhotoDrag(canvas,view){let drag=null,activePointer=null;canvas.addEventListener('pointerdown',async e=>{if(currentTab!=='art'||ensurePhoto().source!=='generated')return;activePointer=e.pointerId;const point=photoPointer(canvas,e);canvas.focus();canvas.setPointerCapture(e.pointerId);for(const a of state.artworks.filter(a=>a.view===view).reverse()){if(fullSublimation(a))continue;const pose=photoPose(a),g=await artGeometry(pose);if(activePointer!==e.pointerId)return;const r=-a.rotation*Math.PI/180,dx=point.x-pose.x,dy=point.y-pose.y;if(Math.abs(dx*Math.cos(r)-dy*Math.sin(r))<=g.width/2+12&&Math.abs(dx*Math.sin(r)+dy*Math.cos(r))<=g.height/2+12){selectedArt=a.id;drag={id:a.id,dx,dy};canvas.classList.add('dragging');updateArtList();syncArt();schedulePhoto();break}}});canvas.addEventListener('pointermove',e=>{if(!drag||activePointer!==e.pointerId)return;const a=state.artworks.find(v=>v.id===drag.id);if(!a)return;const point=photoPointer(canvas,e);photoPutPosition(a,point.x-drag.dx,point.y-drag.dy);syncArt();changed()});const end=()=>{activePointer=null;drag=null;canvas.classList.remove('dragging')};for(const event of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(event,end);canvas.addEventListener('keydown',e=>{const a=selected();if(currentTab!=='art'||!a||fullSublimation(a)||a.view!==view||ensurePhoto().source!=='generated')return;const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(!d)return;e.preventDefault();const amount=e.shiftKey?10:2;a.x=clamp(a.x+d[0]*amount,0,W);a.y=clamp(a.y+d[1]*amount,0,H);syncArt();changed()})}
 async function readFinalRender(file){if(file.size>10*1024*1024)throw Error('El render excede 10 MB.');const bytes=new Uint8Array(await file.arrayBuffer());const png=bytes.length>24&&bytes[0]===137&&bytes[1]===80&&bytes[2]===78&&bytes[3]===71,jpeg=bytes.length>4&&bytes[0]===255&&bytes[1]===216&&bytes[2]===255;if(!png&&!jpeg)throw Error('Carga un PNG o JPG válido.');const src=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(Error('No se pudo leer el render.'));r.readAsDataURL(file)}),img=await getImage(src);if(img.naturalWidth*img.naturalHeight>25000000||img.naturalWidth<200||img.naturalHeight<200)throw Error('Usa un render de al menos 200 × 200 px y máximo 25 megapíxeles.');const c=document.createElement('canvas'),ratio=Math.min(1,3000/Math.max(img.naturalWidth,img.naturalHeight));c.width=Math.round(img.naturalWidth*ratio);c.height=Math.round(img.naturalHeight*ratio);c.getContext('2d').drawImage(img,0,0,c.width,c.height);const image=c.toDataURL('image/png');if(image.length>14000000)throw Error('La imagen convertida es demasiado pesada; exporta un PNG más pequeño.');return {image,width:c.width,height:c.height}}
-async function validatePhoto(raw){if(raw===undefined)return {...PHOTO_DEFAULTS,final:{front:null,back:null}};if(!raw||typeof raw!=='object')throw Error('Ajustes de acabado inválidos.');const out={};for(const [key,values]of Object.entries({source:['generated','final'],side:['front','back','both'],background:['studio','white','dark','transparent']}))out[key]=oneOf(raw[key],values,key);for(const [key,min,max]of [['exposure',-20,20],['relief',50,130],['thread',0,100]])out[key]=numeric(raw[key],min,max,key);out.fabricPrint=boolean(raw.fabricPrint,'adaptación a pliegues');out.final={front:null,back:null};for(const view of ['front','back']){const item=raw.final?.[view];if(item==null)continue;if(typeof item!=='object')throw Error('Render inválido.');const image=safeString(item.image,14000000,'render');if(typeof isCloudArtRef==='function'&&isCloudArtRef(image)){const img=await getImage(image);out.final[view]={image,width:img.naturalWidth,height:img.naturalHeight,signature:safeString(item.signature,16,'versión del render')};continue;}if(!/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(image))throw Error('Formato de render inválido.');const header=atob(image.split(',')[1].slice(0,44)),width=((header.charCodeAt(16)<<24)>>>0)+(header.charCodeAt(17)<<16)+(header.charCodeAt(18)<<8)+header.charCodeAt(19),height=((header.charCodeAt(20)<<24)>>>0)+(header.charCodeAt(21)<<16)+(header.charCodeAt(22)<<8)+header.charCodeAt(23);if(header.slice(1,4)!=='PNG'||width<200||height<200||width>3000||height>3000)throw Error('Dimensiones de render inválidas.');const img=await getImage(image);if(img.naturalWidth!==width||img.naturalHeight!==height)throw Error('Render dañado.');const signature=safeString(item.signature,16,'versión del render');if(!/^[a-f0-9]{16}$/.test(signature))throw Error('Versión de render inválida.');out.final[view]={image,width,height,signature}}return out}
+async function validatePhoto(raw){if(raw===undefined)return {...PHOTO_DEFAULTS,final:{front:null,back:null}};if(!raw||typeof raw!=='object')throw Error('Ajustes de acabado inválidos.');const out={};for(const [key,values]of Object.entries({source:['generated','final'],side:['front','back','both','orbit'],background:['studio','white','dark','transparent']}))out[key]=oneOf(raw[key],values,key);for(const [key,min,max]of [['exposure',-20,20],['relief',50,130],['thread',0,100]])out[key]=numeric(raw[key],min,max,key);out.fabricPrint=boolean(raw.fabricPrint,'adaptación a pliegues');out.final={front:null,back:null};for(const view of ['front','back']){const item=raw.final?.[view];if(item==null)continue;if(typeof item!=='object')throw Error('Render inválido.');const image=safeString(item.image,14000000,'render');if(typeof isCloudArtRef==='function'&&isCloudArtRef(image)){const img=await getImage(image);out.final[view]={image,width:img.naturalWidth,height:img.naturalHeight,signature:safeString(item.signature,16,'versión del render')};continue;}if(!/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(image))throw Error('Formato de render inválido.');const header=atob(image.split(',')[1].slice(0,44)),width=((header.charCodeAt(16)<<24)>>>0)+(header.charCodeAt(17)<<16)+(header.charCodeAt(18)<<8)+header.charCodeAt(19),height=((header.charCodeAt(20)<<24)>>>0)+(header.charCodeAt(21)<<16)+(header.charCodeAt(22)<<8)+header.charCodeAt(23);if(header.slice(1,4)!=='PNG'||width<200||height<200||width>3000||height>3000)throw Error('Dimensiones de render inválidas.');const img=await getImage(image);if(img.naturalWidth!==width||img.naturalHeight!==height)throw Error('Render dañado.');const signature=safeString(item.signature,16,'versión del render');if(!/^[a-f0-9]{16}$/.test(signature))throw Error('Versión de render inválida.');out.final[view]={image,width,height,signature}}return out}
 async function refreshPhotoDetail(){const ticket=photoDetail.ticket=(photoDetail.ticket||0)+1,view=photoDetail.view,c=document.createElement('canvas');c.width=2000;c.height=2300;await renderPhoto(c,view);if(ticket!==photoDetail.ticket||view!==photoDetail.view)return;photoDetail.canvas=c;paintPhotoDetail()}
 function paintPhotoDetail(){const c=$('#detailCanvas'),r=c.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);if(r.width>0&&r.height>0){const w=Math.round(r.width*dpr),h=Math.round(r.height*dpr);if(c.width!==w)c.width=w;if(c.height!==h)c.height=h}const x=c.getContext('2d');x.setTransform(1,0,0,1,0,0);x.fillStyle='#edf0f4';x.fillRect(0,0,c.width,c.height);if(!photoDetail.canvas)return;const base=Math.min(c.width/W,c.height/H),s=base*photoDetail.zoom;x.drawImage(photoDetail.canvas,c.width/2-photoDetail.x*s,c.height/2-photoDetail.y*s,W*s,H*s);$('#detailZoom').textContent=Math.round(photoDetail.zoom*100)+' %'}
 async function openPhotoDetail(preset){photoDetail.view=ensurePhoto().side==='back'?'back':'front';photoDetail.zoom=preset?2.5:1;photoDetail.x=400;photoDetail.y=preset==='neck'?230:preset==='fabric'?430:preset==='hem'?735:460;$('#detailView').value=photoDetail.view;$('#photoDetailDialog').showModal();await refreshPhotoDetail()}
@@ -2090,6 +2107,253 @@ if(initPhotoBeforeChifon)initPhoto=function(){
     populate();changed();
   }));
 };
+
+/* Acabado 360°: map finished Frente/Espalda sheets onto the parametric mesh.
+   Camera orbit matches Boceto 3D. Without WebGL, a touch turntable still works. */
+const PHOTO_ORBIT_SOLIDS=new Set(['mannequin','metal','button','cord']);
+const PHOTO_ORBIT_VERTEX=`attribute vec3 aPosition;attribute vec3 aNormal;attribute vec2 aUv;uniform mat4 uMVP;varying vec3 vPosition;varying vec3 vNormal;varying vec2 vUv;void main(){vPosition=aPosition;vNormal=aNormal;vUv=aUv;gl_Position=uMVP*vec4(aPosition,1.0);}`;
+const PHOTO_ORBIT_FRAGMENT=`precision highp float;varying vec3 vPosition;varying vec3 vNormal;varying vec2 vUv;uniform sampler2D uFront;uniform sampler2D uBack;uniform vec3 uColor;uniform vec3 uEye;uniform vec3 uLight;uniform float uTextured;void main(){vec3 n=normalize(vNormal);if(!gl_FrontFacing)n=-n;vec4 frontT=texture2D(uFront,vUv);vec4 backT=texture2D(uBack,vec2(1.0-vUv.x,vUv.y));float face=smoothstep(-0.18,0.18,normalize(vNormal).z);vec4 tex=mix(backT,frontT,face);vec3 base=mix(uColor,tex.rgb,uTextured*clamp(tex.a*1.35,0.0,1.0));vec3 light=normalize(uLight);vec3 view=normalize(uEye-vPosition);float key=max(dot(n,light),0.0);float fill=max(dot(n,normalize(vec3(-1.0,.45,-.7))),0.0);float rim=pow(1.0-max(dot(n,view),0.0),3.0);float ao=.93+.07*clamp(vPosition.y+.7,0.0,1.0);vec3 rgb=(base*(.76+key*.20+fill*.08)+base*rim*.04)*ao;gl_FragColor=vec4(clamp(rgb,0.0,1.0),1.0);}`;
+function photoOrbitGeomKey(){return JSON.stringify([state.garment,state.neck,state.cuff,state.hem,state.contrast,state.hood,state.pro.fit,state.pro.length,state.pro.sleeve,state.pro.folds,state.pro.mannequin,state.photoCut||'hombre'])}
+function photoOrbitOpaqueBox(source){
+  const src=source?source._canvas||source:null;
+  if(!src||!src.width)return {u0:.08,u1:.92,v0:.08,v1:.90};
+  try{
+    const c=document.createElement('canvas');c.width=src.width;c.height=src.height;
+    const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(src,0,0);
+    const {width,height}=c,data=x.getImageData(0,0,width,height).data;
+    let minX=width,minY=height,maxX=0,maxY=0;
+    for(let y=0;y<height;y+=3)for(let x0=0;x0<width;x0+=3){if(data[(y*width+x0)*4+3]>18){minX=Math.min(minX,x0);maxX=Math.max(maxX,x0);minY=Math.min(minY,y);maxY=Math.max(maxY,y)}}
+    if(maxX<=minX||maxY<=minY)return {u0:.08,u1:.92,v0:.08,v1:.90};
+    const px=Math.max(2,(maxX-minX)*.02),py=Math.max(2,(maxY-minY)*.02);
+    return {u0:Math.max(0,(minX-px)/width),u1:Math.min(1,(maxX+px)/width),v0:Math.max(0,(minY-py)/height),v1:Math.min(1,(maxY+py)/height)};
+  }catch{return {u0:.08,u1:.92,v0:.08,v1:.90}}
+}
+function photoOrbitProjectiveUVs(meshes,uvBox){
+  let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+  for(const m of meshes){
+    if(PHOTO_ORBIT_SOLIDS.has(m.material))continue;
+    for(let i=0;i<m.positions.length;i+=3){minX=Math.min(minX,m.positions[i]);maxX=Math.max(maxX,m.positions[i]);minY=Math.min(minY,m.positions[i+1]);maxY=Math.max(maxY,m.positions[i+1])}
+  }
+  const padX=(maxX-minX)*.02,padY=(maxY-minY)*.02;
+  minX-=padX;maxX+=padX;minY-=padY;maxY+=padY;
+  const box=uvBox||{u0:.08,u1:.92,v0:.08,v1:.90},spanX=maxX-minX||1,spanY=maxY-minY||1;
+  for(const m of meshes){
+    if(PHOTO_ORBIT_SOLIDS.has(m.material))continue;
+    for(let i=0,u=0;i<m.positions.length;i+=3,u+=2){
+      m.uvs[u]=box.u0+(m.positions[i]-minX)/spanX*(box.u1-box.u0);
+      m.uvs[u+1]=box.v0+(maxY-m.positions[i+1])/spanY*(box.v1-box.v0);
+    }
+  }
+  return {minY,maxY,minX,maxX};
+}
+function paintPhotoOrbitSheet(canvas,front,back,yaw,pitch,distance){
+  const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;
+  ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,w,h);
+  const facing=Math.cos(yaw),sheet=facing>=0?front:back;if(!sheet)return canvas;
+  const squash=Math.max(.16,Math.abs(facing)),zoom=clamp(5.6/Math.max(distance||5.3,3.2),.72,1.35);
+  const maxW=w*.78*zoom,maxH=h*.86*zoom,s=Math.min(maxW/sheet.width,maxH/sheet.height)*squash;
+  const dw=sheet.width*s,dh=sheet.height*s*(1-Math.sin(Math.abs(pitch||0))*.08);
+  const dx=(w-dw)/2+Math.sin(yaw)*w*.012,dy=(h-dh)/2-(pitch||0)*h*.12;
+  ctx.save();
+  ctx.shadowColor='#23314a28';ctx.shadowBlur=28;ctx.shadowOffsetY=h*.018;
+  ctx.drawImage(sheet,dx,dy,dw,dh);
+  ctx.restore();
+  return canvas;
+}
+class PhotoOrbitRenderer{
+  constructor(stage,flat,glCanvas){
+    this.stage=stage;this.canvas=flat;this.glCanvas=glCanvas;this.yaw=.32;this.pitch=.05;this.distance=5.3;this.pan=[0,0];
+    this.spinning=false;this.lastTime=0;this.lost=false;this.meshes=[];this.sheets=[null,null];this.texturesReady=false;
+    this.gl=null;
+    try{this.gl=glCanvas&&glCanvas.getContext('webgl',{alpha:true,antialias:true,preserveDrawingBuffer:true,premultipliedAlpha:false})}catch{}
+    if(this.gl){this.buildProgram();this.frontTexture=this.createTexture();this.backTexture=this.createTexture();this.whiteTexture=this.createTexture()}
+    this.configureInput();
+    this.resizeObserver=new ResizeObserver(()=>this.resize());
+    this.resizeObserver.observe(stage);
+    if(glCanvas){
+      glCanvas.addEventListener('webglcontextlost',e=>{e.preventDefault();this.lost=true;this.texturesReady=false;this.spinning=false;this.syncMode();this.render()});
+      glCanvas.addEventListener('webglcontextrestored',()=>{this.lost=false;if(this.gl){this.buildProgram();this.frontTexture=this.createTexture();this.backTexture=this.createTexture();this.whiteTexture=this.createTexture();this.geometryKey=null;this.meshes=[];if(this.sheets[0])this.setSheets(this.sheets)}});
+    }
+    this.resize();
+  }
+  buildProgram(){
+    const g=this.gl;if(!g)return;
+    const shader=(type,source)=>{const s=g.createShader(type);g.shaderSource(s,source);g.compileShader(s);if(!g.getShaderParameter(s,g.COMPILE_STATUS))throw Error('No se pudo iniciar el 360° de acabado.');return s};
+    const vs=shader(g.VERTEX_SHADER,PHOTO_ORBIT_VERTEX),fs=shader(g.FRAGMENT_SHADER,PHOTO_ORBIT_FRAGMENT),program=g.createProgram();
+    g.attachShader(program,vs);g.attachShader(program,fs);g.linkProgram(program);g.deleteShader(vs);g.deleteShader(fs);
+    if(!g.getProgramParameter(program,g.LINK_STATUS))throw Error('El 360° de acabado no pudo iniciarse.');
+    this.program=program;this.locations={};
+    for(const name of['aPosition','aNormal','aUv'])this.locations[name]=g.getAttribLocation(program,name);
+    for(const name of['uMVP','uFront','uBack','uColor','uEye','uLight','uTextured'])this.locations[name]=g.getUniformLocation(program,name);
+    g.enable(g.DEPTH_TEST);g.depthFunc(g.LEQUAL);g.disable(g.CULL_FACE);
+  }
+  createTexture(){
+    const g=this.gl,t=g.createTexture();g.bindTexture(g.TEXTURE_2D,t);
+    g.texImage2D(g.TEXTURE_2D,0,g.RGBA,1,1,0,g.RGBA,g.UNSIGNED_BYTE,new Uint8Array([255,255,255,255]));
+    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_S,g.CLAMP_TO_EDGE);g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_T,g.CLAMP_TO_EDGE);
+    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER,g.LINEAR);g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER,g.LINEAR);
+    return t;
+  }
+  readSheetPixels(source){
+    const src=source?source._canvas||source:null;if(!src||!src.width)return null;
+    const read=ctx=>{
+      if(!ctx||!ctx.getImageData)return null;
+      const pixels=ctx.getImageData(0,0,src.width,src.height);let opaque=0;
+      const d=pixels.data;for(let i=3;i<d.length;i+=32)if(d[i]>20)opaque++;
+      return opaque>40?pixels:null;
+    };
+    try{const direct=src.getContext&&src.getContext('2d',{willReadFrequently:true});const hit=read(direct);if(hit)return {pixels:hit,w:src.width,h:src.height}}catch{}
+    try{
+      const stage=document.createElement('canvas');stage.width=src.width;stage.height=src.height;
+      const x=stage.getContext('2d',{willReadFrequently:true});x.drawImage(src,0,0);
+      const hit=read(x);if(hit)return {pixels:hit,w:src.width,h:src.height};
+    }catch{}
+    return null;
+  }
+  setTexture(texture,source){
+    if(!this.gl||!source)return false;
+    const g=this.gl,src=source._canvas||source,pack=this.readSheetPixels(source);
+    try{
+      g.bindTexture(g.TEXTURE_2D,texture);
+      g.pixelStorei(g.UNPACK_FLIP_Y_WEBGL,false);
+      g.pixelStorei(g.UNPACK_ALIGNMENT,1);
+      if(pack)g.texImage2D(g.TEXTURE_2D,0,g.RGBA,pack.w,pack.h,0,g.RGBA,g.UNSIGNED_BYTE,pack.pixels.data);
+      else g.texImage2D(g.TEXTURE_2D,0,g.RGBA,g.RGBA,g.UNSIGNED_BYTE,src);
+      g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_S,g.CLAMP_TO_EDGE);
+      g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_T,g.CLAMP_TO_EDGE);
+      g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER,g.LINEAR);
+      g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER,g.LINEAR);
+      return !!pack;
+    }catch{return false}
+  }
+  setSheets(sheets){
+    this.sheets=sheets||[null,null];
+    this.uvBox=photoOrbitOpaqueBox(this.sheets[0]);
+    this.geometryKey=null;
+    this.texturesReady=false;
+    if(this.gl&&!this.lost){
+      const frontOk=this.setTexture(this.frontTexture,this.sheets[0]);
+      const backOk=this.setTexture(this.backTexture,this.sheets[1]);
+      this.texturesReady=frontOk||backOk;
+      this.rebuild();
+    }
+    this.render();
+  }
+  rebuild(){
+    if(!this.gl||this.lost)return;
+    const key=photoOrbitGeomKey()+'|'+JSON.stringify(this.uvBox||null);
+    if(key===this.geometryKey&&this.meshes.length)return;
+    this.geometryKey=key;
+    const gl=this.gl;for(const m of this.meshes)for(const b of[m.pos,m.normal,m.uv,m.index])if(b)gl.deleteBuffer(b);
+    const data=garmentGeometry(state);const box=photoOrbitProjectiveUVs(data,this.uvBox);
+    this.centerY=(box.minY+box.maxY)/2;this.frameScale=Math.max(1,(box.maxY-box.minY)/2.35,(box.maxX-box.minX)/2.25);
+    this.meshes=data.map(mesh=>{
+      const buffer=(values,type,target)=>{const b=gl.createBuffer();gl.bindBuffer(target,b);gl.bufferData(target,new type(values),gl.STATIC_DRAW);return b};
+      return {...mesh,pos:buffer(mesh.positions,Float32Array,gl.ARRAY_BUFFER),normal:buffer(mesh.normals,Float32Array,gl.ARRAY_BUFFER),uv:buffer(mesh.uvs,Float32Array,gl.ARRAY_BUFFER),index:buffer(mesh.indices,Uint16Array,gl.ELEMENT_ARRAY_BUFFER)};
+    });
+  }
+  resize(){
+    const rect=this.stage.getBoundingClientRect();if(!rect.width||!rect.height){this.render();return}
+    const dpr=Math.min(window.devicePixelRatio||1,2);
+    const w=Math.max(2,Math.round(rect.width*dpr)),h=Math.max(2,Math.round(rect.height*dpr));
+    for(const c of[this.canvas,this.glCanvas]){if(!c)continue;if(c.width!==w)c.width=w;if(c.height!==h)c.height=h}
+    this.render();
+  }
+  camera(width=(this.glCanvas||this.canvas).width,height=(this.glCanvas||this.canvas).height){
+    const focus=this.centerY??.15,dist=this.distance*(this.frameScale||1)*Math.max(1,.85/Math.max(width/Math.max(height,1),.4));
+    const target=[this.pan[0],focus+this.pan[1],0],eye=[target[0]+Math.sin(this.yaw)*Math.cos(this.pitch)*dist,target[1]+Math.sin(this.pitch)*dist,target[2]+Math.cos(this.yaw)*Math.cos(this.pitch)*dist];
+    const projection=perspective4(37*Math.PI/180,Math.max(width,1)/Math.max(height,1),.1,50),view=lookAt4(eye,target);
+    return {eye,mvp:multiply4(projection,view)};
+  }
+  syncMode(){if(this.stage)this.stage.dataset.mode=this.gl&&!this.lost&&this.texturesReady?'gl':'flat'}
+  render(){
+    this.syncAngle();this.syncMode();
+    paintPhotoOrbitSheet(this.canvas,this.sheets[0],this.sheets[1],this.yaw,this.pitch,this.distance);
+    if(!this.gl||this.lost||!this.program||!this.texturesReady)return;
+    this.rebuild();
+    const gl=this.gl,L=this.locations,c=this.camera();
+    gl.viewport(0,0,this.glCanvas.width,this.glCanvas.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+    gl.useProgram(this.program);gl.uniformMatrix4fv(L.uMVP,false,c.mvp);gl.uniform3fv(L.uEye,c.eye);
+    gl.uniform3fv(L.uLight,[-2,3,4]);gl.uniform1i(L.uFront,0);gl.uniform1i(L.uBack,1);
+    gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.frontTexture);
+    gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,this.backTexture);
+    for(const m of this.meshes){
+      for(const [attr,b,size]of[['aPosition',m.pos,3],['aNormal',m.normal,3],['aUv',m.uv,2]]){gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.enableVertexAttribArray(L[attr]);gl.vertexAttribPointer(L[attr],size,gl.FLOAT,false,0,0)}
+      const textured=!PHOTO_ORBIT_SOLIDS.has(m.material);
+      let color=state.bodyColor;
+      if(m.material==='contrast')color=state.contrastColor;
+      if(m.material==='cord')color='#dfdfd8';
+      if(m.material==='button')color='#e0e1df';
+      if(m.material==='metal')color='#959fa5';
+      if(m.material==='mannequin')color='#858b92';
+      gl.uniform3fv(L.uColor,parseColor(color).map(v=>v/255));
+      gl.uniform1f(L.uTextured,textured?1:0);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,m.index);
+      gl.drawElements(gl.TRIANGLES,m.indices.length,gl.UNSIGNED_SHORT,0);
+    }
+  }
+  preset(view){
+    const values={front:0,back:Math.PI,left:Math.PI/2,right:-Math.PI/2,perspective:.32};
+    this.yaw=values[view]??.32;this.pitch=view==='perspective'?.05:0;this.pan=[0,0];this.distance=5.3;this.render();
+  }
+  syncAngle(){const el=$('#photoOrbitAngle');if(el)el.textContent='Giro '+Math.round(((this.yaw*180/Math.PI)%360+360)%360)+'°'}
+  configureInput(){
+    const surface=this.stage,pointers=new Map();let last=null,pinch=null;
+    surface.addEventListener('pointerdown',e=>{this.canvas.focus();pointers.set(e.pointerId,[e.clientX,e.clientY]);surface.setPointerCapture(e.pointerId);last=[e.clientX,e.clientY];if(pointers.size===2){const a=[...pointers.values()];pinch=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1])}surface.classList.add('orbiting')});
+    surface.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,[e.clientX,e.clientY]);if(pointers.size===2){const a=[...pointers.values()],distance=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]);if(pinch&&distance)this.distance=clamp(this.distance*pinch/distance,3.2,10);pinch=distance}else if(last){const dx=e.clientX-last[0],dy=e.clientY-last[1];if(e.shiftKey||e.buttons===2){this.pan[0]-=dx*.003;this.pan[1]+=dy*.003}else{this.yaw-=dx*.008;this.pitch=clamp(this.pitch+dy*.006,-.85,.85)}}last=[e.clientX,e.clientY];this.render()});
+    const finish=e=>{pointers.delete(e.pointerId);pinch=null;last=null;surface.classList.remove('orbiting')};
+    surface.addEventListener('pointerup',finish);surface.addEventListener('pointercancel',finish);surface.addEventListener('lostpointercapture',finish);
+    surface.addEventListener('contextmenu',e=>e.preventDefault());
+    surface.addEventListener('wheel',e=>{e.preventDefault();this.distance=clamp(this.distance*Math.exp(e.deltaY*.001),3.2,10);this.render()},{passive:false});
+    this.canvas.addEventListener('keydown',e=>{const action={ArrowLeft:()=>this.yaw-=.12,ArrowRight:()=>this.yaw+=.12,ArrowUp:()=>this.pitch=clamp(this.pitch+.1,-.85,.85),ArrowDown:()=>this.pitch=clamp(this.pitch-.1,-.85,.85),'+':()=>this.distance=Math.max(3.2,this.distance-.3),'=':()=>this.distance=Math.max(3.2,this.distance-.3),'-':()=>this.distance=Math.min(10,this.distance+.3),Home:()=>this.preset('perspective')}[e.key];if(action){e.preventDefault();action();this.render()}});
+  }
+  toggleSpin(){
+    this.spinning=!this.spinning;
+    const btn=$('#photoOrbitSpin');if(btn)btn.setAttribute('aria-pressed',this.spinning);
+    const tick=time=>{if(!this.spinning)return;if(!document.hidden){this.yaw+=(Math.min(time-(this.lastTime||time),40))*.00028;this.render()}this.lastTime=time;requestAnimationFrame(tick)};
+    if(this.spinning){this.lastTime=0;requestAnimationFrame(tick)}
+  }
+  stopSpin(){if(!this.spinning)return;this.spinning=false;const btn=$('#photoOrbitSpin');if(btn)btn.setAttribute('aria-pressed','false')}
+}
+let photoOrbit=null,photoOrbitSheets=null,photoOrbitReady=false;
+function livePhotoSheets(){
+  if(photoOrbitSheets?.[0]&&photoOrbitSheets?.[1])return photoOrbitSheets;
+  const front=$('#photoFront'),back=$('#photoBack');
+  return front&&back?[front,back]:photoOrbitSheets;
+}
+async function afterPhotoSheets(canvases){
+  photoOrbitSheets=canvases;
+  const front=$('#photoFront'),back=$('#photoBack');
+  const sheets=front&&back&&front.width?[front,back]:canvases;
+  if(photoOrbit)photoOrbit.setSheets(sheets);
+}
+function syncPhotoOrbitUI(){
+  const stage=$('#photoStage'),orbit=$('#photoOrbit');if(!stage||!orbit)return;
+  const on=ensurePhoto().side==='orbit';
+  orbit.hidden=!on;
+  if(on){
+    const issues=photoIssues();
+    $('#photoOrigin').textContent=ensurePhoto().source==='final'?'Render cargado · gira el acabado terminado':'Acabado 360° · color, tela y logos de la prenda terminada';
+    if(!issues.length)$('#photoStatus').textContent='Arrastra para girar el acabado · Frente y Comparar siguen disponibles';
+    if(photoOrbit){
+      if(!photoOrbit.sheets[0]){const sheets=livePhotoSheets();if(sheets)photoOrbit.setSheets(sheets)}
+      photoOrbit.resize();
+    }
+  }else if(photoOrbit)photoOrbit.stopSpin();
+}
+function initPhotoOrbit(){
+  if(photoOrbitReady||!$('#photoOrbitCanvas'))return;
+  photoOrbitReady=true;
+  photoOrbit=new PhotoOrbitRenderer($('#photoOrbit'),$('#photoOrbitCanvas'),$('#photoOrbitGL'));
+  if(photoOrbitSheets)photoOrbit.setSheets(photoOrbitSheets);
+  $('#photoOrbitSpin').addEventListener('click',()=>photoOrbit?.toggleSpin());
+  $('#photoOrbitFit').addEventListener('click',()=>photoOrbit?.preset('perspective'));
+  syncPhotoOrbitUI();
+}
+const syncPhotoUIBeforeOrbit=syncPhotoUI;
+syncPhotoUI=function(){syncPhotoUIBeforeOrbit();syncPhotoOrbitUI()};
+const initPhotoBeforeOrbit=initPhoto;
+initPhoto=function(){initPhotoBeforeOrbit();initPhotoOrbit()};
 
 init().catch(e=>toast('No se pudo iniciar el estudio: '+e.message));
 </script>
