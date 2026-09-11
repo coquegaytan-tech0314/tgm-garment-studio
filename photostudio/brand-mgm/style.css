@@ -34,11 +34,11 @@ input[type=range],input[type=checkbox]{accent-color:var(--gaytan)}
 .upload-label:hover{background:var(--pale);border-color:var(--gaytan)}
 .toast{background:var(--navy)}
 
-.topbar{background:#fff;color:var(--ink);padding:12px 24px;border-bottom:3px solid var(--gaytan);box-shadow:0 1px 0 #0000000d}
-.brand{align-items:center;gap:16px;min-width:0}
-.brand-logo{display:block;height:58px;width:auto;flex-shrink:0}
+.topbar{background:#fff;color:var(--ink);padding:14px 24px;border-bottom:3px solid var(--gaytan);box-shadow:0 1px 0 #0000000d}
+.brand{align-items:center;gap:14px;min-width:0}
+.brand-logo{display:block;height:52px;width:52px;object-fit:contain;flex-shrink:0}
 .brand-copy{min-width:0}
-.brand-copy strong,.brand-product{display:block;font-size:1.55rem;letter-spacing:.04em;line-height:1;color:var(--ink);font-weight:800}
+.brand-copy strong,.brand-product{display:block;font-size:1.7rem;letter-spacing:.08em;line-height:.95;color:var(--ink);font-weight:800}
 .brand-subtitle,.brand span{display:block;color:#5a5854;font-size:.78rem;letter-spacing:.02em;margin-top:5px;max-width:36rem}
 .pro-version{letter-spacing:.06em;font-size:.68rem;color:var(--gaytan-wine);background:var(--pale);border:1px solid #f3c4cb;padding:4px 8px;border-radius:999px;margin-left:8px;white-space:nowrap}
 .internal{color:var(--navy);border-color:#c5cde0;letter-spacing:.08em;background:#f5f7fb}
@@ -83,15 +83,16 @@ dialog .dialog-actions{background:#faf8f5}
 .sleeve-location{color:var(--gaytan-wine)}
 #saveStatus[data-error=true]{color:var(--gaytan-deep)}
 
+.print-logo{height:28px;width:auto;margin-right:8px;vertical-align:middle}
 @media(max-width:1100px){
-  .brand-logo{height:50px}
-  .brand-copy strong,.brand-product{font-size:1.3rem}
+  .brand-logo{height:46px;width:46px}
+  .brand-copy strong,.brand-product{font-size:1.4rem}
 }
 @media(max-width:760px){
   .topbar{padding:10px 12px;align-items:flex-start}
   .brand{gap:10px}
-  .brand-logo{height:44px}
-  .brand-copy strong,.brand-product{font-size:1.15rem}
+  .brand-logo{height:40px;width:40px}
+  .brand-copy strong,.brand-product{font-size:1.2rem}
   .brand-subtitle,.brand span{font-size:.7rem}
   .internal{display:inline-flex}
   .pro-version{margin-left:0;margin-top:4px}

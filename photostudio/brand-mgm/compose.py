@@ -11,7 +11,7 @@ ICONS = '''
 <symbol id="i-swatch" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10.2" stroke-dasharray="1.5 1.7"/><rect x="6.6" y="8.2" width="10.8" height="7.6" rx="1.1"/><path d="M8.5 8.2v7.6M10.6 8.2v7.6M12.7 8.2v7.6M14.8 8.2v7.6M16.9 8.2v7.6"/></symbol>
 '''
 
-HEADER = '''<header class="topbar"><div class="brand"><img class="brand-logo" alt="Tejidos Gaytán" width="148" height="141" src="{logo}"><div class="brand-copy"><strong class="brand-product">MGM</strong><span class="brand-subtitle">Acabados · Estudio de acabado de prendas · Tejidos Gaytán</span></div><b class="pro-version">MGM · v{version}</b></div><span class="internal">Uso interno</span></header>'''
+HEADER = '''<header class="topbar"><div class="brand"><img class="brand-logo" alt="Tejidos Gaytán" width="56" height="56" src="{logo}"><div class="brand-copy"><strong class="brand-product">MGM</strong><span class="brand-subtitle">Acabados · Estudio de acabado de prendas · Tejidos Gaytán</span></div><b class="pro-version">MGM · v{version}</b></div><span class="internal">Uso interno</span></header>'''
 
 
 def _data_uri(path):
@@ -21,7 +21,8 @@ def _data_uri(path):
 def extend(html, root):
     source = Path(root) / 'brand-mgm'
     assets = Path(root) / 'assets' / 'brand'
-    logo = _data_uri(assets / 'gaytan-logo.png')
+    logo = _data_uri(assets / 'gaytan-mark.png')
+    lockup = _data_uri(assets / 'gaytan-logo.png')
     favicon = _data_uri(assets / 'favicon.png')
 
     def once(before, after):
@@ -42,7 +43,7 @@ def extend(html, root):
          'content="MGM · Estudio de acabado de prendas · Tejidos Gaytán. Configurador interno de acabados. Funciona sin conexión."')
     once('content="#142337"', 'content="#FF2E4D"')
     once('<b>TGM</b> / Estudio de materiales', '<b>MGM</b> / Estudio de materiales')
-    once('<strong>TEJIDOS GAYTÁN DE MOROLEÓN</strong>', '<strong>MGM · TEJIDOS GAYTÁN</strong>')
+    once('<strong>TEJIDOS GAYTÁN DE MOROLEÓN</strong>', f'<img class="print-logo" alt="" src="{lockup}"><strong>MGM · TEJIDOS GAYTÁN</strong>')
     once('<span>ACABADO DE PRENDA</span>', '<span>MGM · ACABADO</span>')
     html = html.replace("x.fillText('TEJIDOS GAYTÁN DE MOROLEÓN',margin,87)", "x.fillText('MGM · TEJIDOS GAYTÁN',margin,87)")
     html = html.replace("x.fillText('TEJIDOS GAYTÁN DE MOROLEÓN',68,65)", "x.fillText('MGM · TEJIDOS GAYTÁN',68,65)")
