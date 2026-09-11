@@ -40,8 +40,16 @@
 #cloudStatus[data-ok=true]{color:var(--success)}
 .local-footer{flex-wrap:wrap}
 .cloud-footer{display:flex;flex-direction:column;gap:2px;min-width:0}
+#cloudDialog{width:min(640px,96vw);max-height:90vh}
+#cloudDialog .saved-orders{max-height:min(60vh,520px);overflow:auto;-webkit-overflow-scrolling:touch}
+#cloudDialog .saved-row button{min-height:44px;min-width:88px;touch-action:manipulation}
+#cloudDialog .dialog-actions button{min-height:44px;touch-action:manipulation}
+#cloudDialog .cloud-list-error,#cloudDialog .cloud-loading{font-size:.875rem;margin:0 0 10px}
+#cloudDialog .cloud-list-error{color:#ac3030}
 @media(max-width:760px){
-  .workspace-head .actions #cloudUpload,.workspace-head .actions #cloudOpen{flex:1}
+  .workspace-head .actions #cloudUpload,.workspace-head .actions #cloudOpen{flex:1;min-height:44px;touch-action:manipulation}
+  #cloudDialog .saved-row{flex-wrap:wrap}
+  #cloudDialog .saved-row button{flex:1}
 }
 .pricing-card{margin-top:24px;padding-top:20px;border-top:1px solid var(--line,#dce1ea)}
 .pricing-card .row{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:12px}
@@ -76,7 +84,7 @@
 <symbol id="i-zoom" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></symbol>
 <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
 </defs></svg>
-<header class="topbar"><div class="brand"><div class="monogram">TGM</div><div><strong>TEJIDOS GAYTÁN DE MOROLEÓN</strong><span>Estudio de prendas <b class="pro-version">ESTUDIO · v8.2.3</b></span></div></div><span class="internal">Uso interno</span></header>
+<header class="topbar"><div class="brand"><div class="monogram">TGM</div><div><strong>TEJIDOS GAYTÁN DE MOROLEÓN</strong><span>Estudio de prendas <b class="pro-version">ESTUDIO · v8.2.4</b></span></div></div><span class="internal">Uso interno</span></header>
 <section class="workspace-head"><div><h1 id="workspaceTitle">Nuevo pedido</h1><p class="subtle">Configura la prenda y revisa su acabado antes de compartirla.</p><p class="subtle save-message" id="cloudStatus" role="status">Nube: en espera</p></div><div class="actions"><button id="newOrder"><svg class="icon"><use href="#i-plus"/></svg>Nuevo</button><button id="openOrders"><svg class="icon"><use href="#i-folder"/></svg>Abrir</button><button id="projectButton"><svg class="icon"><use href="#i-folder"/></svg>Proyecto completo</button><button id="downloadJson"><svg class="icon"><use href="#i-download"/></svg>JSON</button><button id="saveOrder" class="primary"><svg class="icon"><use href="#i-save"/></svg>Guardar pedido</button><button id="cloudUpload">Subir a la nube</button><button id="cloudOpen">Abrir desde la nube</button></div></section>
 <div id="projectBanner" class="project-banner" hidden><div><span class="small-label">Proyecto activo</span><strong id="projectBannerName"></strong><span id="projectBannerVariant"></span></div><button id="projectBannerOpen">Ver proyecto</button></div>
 
@@ -307,11 +315,11 @@
 <div class="model-toolbar"><div class="camera-buttons" aria-label="Vistas de cámara"><button data-camera="front">Frente</button><button data-camera="back">Espalda</button><button data-camera="left">Izquierda</button><button data-camera="right">Derecha</button><button data-camera="perspective">Perspectiva</button></div><div class="viewport-actions"><button id="spin3d" aria-pressed="false">Girar 360°</button><button id="fit3d" aria-label="Centrar y encuadrar la prenda">Centrar</button></div></div>
 <div class="stage3d" id="studioStage" data-background="light"><div class="ground-shadow"></div><div class="stage-label"><b>TGM</b> / Estudio de materiales</div><canvas id="webglCanvas" width="1000" height="1000" tabindex="0" aria-label="Prenda 3D. Arrastra para girar. Rueda o pellizco para zoom. Flechas para girar y tecla Inicio para centrar."></canvas><div class="axis-key">3D · referencia visual</div><span id="cameraLabel" class="camera-label">Giro 24°</span></div>
 <div class="studio-hint"><span>Arrastra para girar · rueda / pellizco para zoom</span><button id="edit2d">Colocar diseños en 2D</button></div></section><section class="flat-pane" aria-label="Distribución gráfica de frente y espalda"><div class="preview-bar"><div><h2>Distribución 2D</h2><p class="subtle" id="previewName">Playera · sin cantidad</p></div><div style="display:flex;gap:8px;align-items:center"><div class="segmented" aria-label="Estilo de la vista 2D"><button data-render="realistic" aria-pressed="true">Sombreado</button><button data-render="flat" aria-pressed="false">Plano</button></div><button id="zoomPreview" aria-label="Ampliar vista"><svg class="icon"><use href="#i-zoom"/></svg></button></div></div><div class="studio"><figure class="garment-view"><div class="canvas-wrap"><canvas id="frontCanvas" width="800" height="920" role="img" aria-label="Vista frontal de la prenda"></canvas></div><figcaption><span class="view-dash"></span>Frente<span class="view-dash"></span></figcaption></figure><figure class="garment-view"><div class="canvas-wrap"><canvas id="backCanvas" width="800" height="920" role="img" aria-label="Vista posterior de la prenda"></canvas></div><figcaption><span class="view-dash"></span>Espalda<span class="view-dash"></span></figcaption></figure></div><p class="flat-note">Distribución gráfica de referencia. No es un patrón de corte.</p></section></div><div class="preview-bottom"><span><strong id="summaryColor">#255AD9</strong> · <span id="summaryFabric">Tela por definir</span></span><span class="badge">Referencia visual</span></div></div>
-<section class="export-card" aria-label="Archivos para el cliente"><div class="export-top"><div><h2>Listo para compartir</h2><p class="subtle">Exporta la vista de acabado, sin datos internos.</p></div><button id="printOrder" style="color:white;background:transparent;border-color:#5b6c81">Imprimir</button></div><div class="export-buttons"><button id="exportAngle"><svg class="icon"><use href="#i-image"/></svg>PNG vista 3D</button><button id="exportFront"><svg class="icon"><use href="#i-image"/></svg>PNG frente</button><button id="exportBack"><svg class="icon"><use href="#i-image"/></svg>PNG espalda</button><button id="exportPdf" class="pdf-button"><svg class="icon"><use href="#i-download"/></svg>PDF · 1 página</button></div><div class="caption-row"><p id="captionPreview">así se vería terminada tu playera. quedo pendiente de tus comentarios.</p><button id="copyCaption"><svg class="icon"><use href="#i-copy"/></svg>Copiar mensaje</button></div></section><div id="exportFallback" class="note" role="status" hidden>Archivo listo. Si la descarga no inició, toca este enlace: <a id="lastExportLink">Descargar archivo</a></div><footer class="local-footer"><span class="save-message" id="saveStatus" role="status">Borrador local</span><span>Borrador local · nube opcional · v8.2.3</span></footer></section></main>
+<section class="export-card" aria-label="Archivos para el cliente"><div class="export-top"><div><h2>Listo para compartir</h2><p class="subtle">Exporta la vista de acabado, sin datos internos.</p></div><button id="printOrder" style="color:white;background:transparent;border-color:#5b6c81">Imprimir</button></div><div class="export-buttons"><button id="exportAngle"><svg class="icon"><use href="#i-image"/></svg>PNG vista 3D</button><button id="exportFront"><svg class="icon"><use href="#i-image"/></svg>PNG frente</button><button id="exportBack"><svg class="icon"><use href="#i-image"/></svg>PNG espalda</button><button id="exportPdf" class="pdf-button"><svg class="icon"><use href="#i-download"/></svg>PDF · 1 página</button></div><div class="caption-row"><p id="captionPreview">así se vería terminada tu playera. quedo pendiente de tus comentarios.</p><button id="copyCaption"><svg class="icon"><use href="#i-copy"/></svg>Copiar mensaje</button></div></section><div id="exportFallback" class="note" role="status" hidden>Archivo listo. Si la descarga no inició, toca este enlace: <a id="lastExportLink">Descargar archivo</a></div><footer class="local-footer"><span class="save-message" id="saveStatus" role="status">Borrador local</span><span>Borrador local · nube opcional · v8.2.4</span></footer></section></main>
 <dialog id="projectDialog" class="project-dialog" aria-labelledby="projectTitle"><div class="dialog-body"><div class="project-dialog-head"><div><h2 id="projectTitle">Proyecto completo</h2><p class="help">Agrupa varias prendas sin perder la compatibilidad con pedidos individuales anteriores.</p></div></div><input id="projectImport" class="hidden-input" type="file" accept=".json,application/json"><label class="upload-label" for="projectImport"><svg class="icon"><use href="#i-folder"/></svg>Importar proyecto JSON</label><div class="field project-search"><label for="projectSearch">Filtrar prendas</label><input id="projectSearch" type="search" placeholder="Ej. Polo, Hoodie, Top, Cierre"></div><p id="projectSummary" class="project-summary"></p><div id="projectOrders" class="project-orders"></div></div><div class="dialog-actions"><button id="downloadProject" disabled>Descargar proyecto JSON</button><button data-close>Cerrar</button></div></dialog>
 
 <dialog id="ordersDialog" aria-labelledby="ordersTitle"><div class="dialog-body"><h2 id="ordersTitle">Abrir pedido</h2><input id="importJson" class="hidden-input" type="file" accept=".json,application/json"><label class="upload-label" for="importJson"><svg class="icon"><use href="#i-folder"/></svg>Importar archivo JSON</label><p class="help">Pedidos guardados en este navegador. Para compartirlos, usa Subir a la nube.</p><div id="savedOrders" class="saved-orders"></div></div><div class="dialog-actions"><button data-close>Cerrar</button></div></dialog>
-<dialog id="cloudDialog" aria-labelledby="cloudTitle"><div class="dialog-body"><h2 id="cloudTitle">Abrir desde la nube</h2><p class="help">Pedidos compartidos en Firebase Storage. El borrador de este navegador no se borra.</p><div id="cloudOrders" class="saved-orders"></div></div><div class="dialog-actions"><button data-close>Cerrar</button></div></dialog>
+<dialog id="cloudDialog" aria-labelledby="cloudTitle"><div class="dialog-body"><h2 id="cloudTitle">Abrir desde la nube</h2><p class="help">Pedidos compartidos en Firebase Storage. El borrador de este navegador no se borra. La lista lee solo pedido.json; el arte se descarga al abrir.</p><div id="cloudOrders" class="saved-orders"></div></div><div class="dialog-actions"><button type="button" data-close>Cerrar</button></div></dialog>
 <dialog id="newDialog" aria-labelledby="newTitle"><div class="dialog-body"><h2 id="newTitle">Comenzar un pedido nuevo</h2><p>Guarda el pedido actual para conservarlo en este navegador o descarga su JSON.</p></div><div class="dialog-actions"><button data-close>Cancelar</button><button id="newWithoutSaving">Nuevo sin guardar</button><button class="primary" id="saveAndNew">Guardar y crear</button></div></dialog>
 <dialog id="captionDialog" aria-labelledby="captionTitle"><div class="dialog-body"><h2 id="captionTitle">Mensaje para el cliente</h2><p class="help">Selecciona y copia el mensaje para compartirlo junto al render.</p><label class="sr-only" for="captionFallback">Mensaje</label><textarea id="captionFallback" class="caption-text" readonly></textarea></div><div class="dialog-actions"><button data-close>Cerrar</button><button id="selectCaption" class="primary">Seleccionar mensaje</button></div></dialog>
 <dialog id="photoDetailDialog" class="photo-detail-dialog" aria-labelledby="photoDetailTitle">
@@ -1021,6 +1029,12 @@ function pedidoArtPath(orderId,artworkId,fileName){
   const artId=String(artworkId||'arte').replace(/[^a-zA-Z0-9._-]+/g,'-').slice(0,80)||'arte';
   return 'pedidos/'+safeOrderId(orderId)+'/art/'+artId+'-'+safeCloudFileName(fileName);
 }
+function cloudArtMime(pathOrUrl){
+  const value=String(pathOrUrl||'').toLowerCase();
+  if(value.includes('.svg'))return 'image/svg+xml';
+  if(value.includes('.jpg')||value.includes('.jpeg'))return 'image/jpeg';
+  return 'image/png';
+}
 function cloudArtSlots(order){
   const slots=[];
   for(const art of order.artworks||[]){
@@ -1036,8 +1050,81 @@ function cloudArtSlots(order){
   }
   return slots;
 }
+const CLOUD_LIST_PAGE_SIZE = 100;
+const CLOUD_LIST_TIMEOUT_MS = 12000;
+const CLOUD_PEDIDO_TIMEOUT_MS = 8000;
+function withTimeout(promise, ms, message){
+  return new Promise((resolve, reject)=>{
+    const timer = setTimeout(()=>reject(Error(message)), ms);
+    Promise.resolve(promise).then(
+      value=>{clearTimeout(timer);resolve(value);},
+      error=>{clearTimeout(timer);reject(error);}
+    );
+  });
+}
+function cloudPedidoIdsFromPrefixes(prefixes){
+  const ids = [];
+  for(const prefix of prefixes || []){
+    const name = typeof prefix === 'string' ? prefix : prefix && prefix.name;
+    if(!name) continue;
+    try { ids.push(safeOrderId(name)); } catch {}
+  }
+  return ids;
+}
+async function collectPedidoPrefixes(listPage){
+  const prefixes = [];
+  let pageToken;
+  do {
+    const page = await listPage({maxResults: CLOUD_LIST_PAGE_SIZE, pageToken});
+    prefixes.push(...(page && page.prefixes || []));
+    pageToken = page && page.nextPageToken;
+  } while(pageToken);
+  return prefixes;
+}
+function summarizeCloudPedidoReads(settled){
+  const orders = [];
+  let failed = 0;
+  for(const item of settled || []){
+    if(item && item.status === 'fulfilled' && item.value && typeof item.value === 'object' && !Array.isArray(item.value)){
+      orders.push(item.value);
+    } else {
+      failed++;
+    }
+  }
+  orders.sort((a, b)=>(b.updatedAt || '').localeCompare(a.updatedAt || ''));
+  return {orders, failed, listed: (settled || []).length};
+}
+function cloudLibraryNotice(summary){
+  const orders = summary && summary.orders || [];
+  const failed = summary && summary.failed || 0;
+  const listed = summary && summary.listed || 0;
+  if(!listed) return '';
+  if(failed && orders.length) return 'Se leyeron '+orders.length+' de '+listed+' pedidos. '+failed+' no se pudieron abrir. Puedes abrir los que sí aparecen.';
+  if(failed) return 'Se encontraron '+listed+' carpetas, pero no se pudo leer ningún pedido.json. Intenta de nuevo.';
+  return '';
+}
+async function listCloudPedidoMetadata(listPrefixes, readPedido, timeouts){
+  const listMs = timeouts && timeouts.list || CLOUD_LIST_TIMEOUT_MS;
+  const readMs = timeouts && timeouts.pedido || CLOUD_PEDIDO_TIMEOUT_MS;
+  const prefixes = await withTimeout(
+    listPrefixes(),
+    listMs,
+    'La lista de pedidos tardó demasiado. Revisa la conexión e intenta de nuevo.'
+  );
+  const ids = cloudPedidoIdsFromPrefixes(prefixes);
+  const settled = await Promise.allSettled(ids.map(id=>withTimeout(
+    readPedido(id),
+    readMs,
+    'Tiempo agotado al leer '+id
+  )));
+  return summarizeCloudPedidoReads(settled);
+}
 if(typeof globalThis!=='undefined'){
-  Object.assign(globalThis,{isCloudArtRef,safeOrderId,safeCloudFileName,pedidoJsonPath,pedidoArtPath,cloudArtSlots,TGM_CLOUD_BUCKET});
+  Object.assign(globalThis,{
+    isCloudArtRef,safeOrderId,safeCloudFileName,pedidoJsonPath,pedidoArtPath,cloudArtMime,cloudArtSlots,TGM_CLOUD_BUCKET,
+    CLOUD_LIST_PAGE_SIZE,CLOUD_LIST_TIMEOUT_MS,CLOUD_PEDIDO_TIMEOUT_MS,
+    withTimeout,cloudPedidoIdsFromPrefixes,collectPedidoPrefixes,summarizeCloudPedidoReads,cloudLibraryNotice,listCloudPedidoMetadata
+  });
 }
 
 /* Firebase Storage sync for shared pedidos. Local IndexedDB/localStorage stays the offline draft. */
@@ -1072,7 +1159,7 @@ async function ensureFirebaseStorage(){
       ref:storageMod.ref,
       uploadBytes:storageMod.uploadBytes,
       getDownloadURL:storageMod.getDownloadURL,
-      listAll:storageMod.listAll,
+      list:storageMod.list,
       getBytes:storageMod.getBytes
     };
     return TGM_CLOUD.sdk;
@@ -1106,8 +1193,15 @@ async function hydrateCloudPedido(raw){
     const current=slot.object[slot.key];
     if(!isCloudArtRef(current))continue;
     const bytes=await readCloudBytes(sdk,current);
-    const mime=current.includes('.svg')?'image/svg+xml':current.includes('.jpg')||current.includes('.jpeg')?'image/jpeg':'image/png';
-    slot.object[slot.key]=await blobToDataUrl(new Blob([bytes],{type:mime}));
+    const mime=cloudArtMime(current);
+    const dataUrl=await blobToDataUrl(new Blob([bytes],{type:mime}));
+    if(slot.key==='image'&&mime==='image/jpeg'&&typeof normalizeLogo==='function'){
+      slot.object[slot.key]=await normalizeLogo(dataUrl,'jpeg');
+    }else if(slot.key==='image'&&mime==='image/svg+xml'&&typeof normalizeLogo==='function'){
+      slot.object[slot.key]=await normalizeLogo(dataUrl,'svg');
+    }else{
+      slot.object[slot.key]=dataUrl;
+    }
   }
   return order;
 }
@@ -1137,29 +1231,39 @@ async function uploadCurrentPedido(){
   await sdk.uploadBytes(storageRefFor(sdk,pedidoJsonPath(orderId)),jsonBlob,{contentType:'application/json',cacheControl:'no-store'});
   return {orderId,uploaded,arts:slots.length};
 }
+async function readCloudPedidoJson(sdk,orderId){
+  const bytes=await readCloudBytes(sdk,pedidoJsonPath(orderId));
+  const parsed=JSON.parse(new TextDecoder().decode(bytes));
+  if(!parsed||typeof parsed!=='object'||Array.isArray(parsed))throw Error('pedido.json inválido');
+  return parsed;
+}
 async function listCloudPedidos(){
   const sdk=await ensureFirebaseStorage();
-  const listed=await sdk.listAll(storageRefFor(sdk,'pedidos'));
-  const orders=[];
-  for(const prefix of listed.prefixes){
-    try{
-      const bytes=await readCloudBytes(sdk,pedidoJsonPath(prefix.name));
-      const parsed=JSON.parse(new TextDecoder().decode(bytes));
-      if(parsed&&typeof parsed==='object')orders.push(parsed);
-    }catch{}
-  }
-  return orders.sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||''));
+  if(typeof sdk.list!=='function')throw Error('Nube: el SDK no puede listar carpetas de pedidos.');
+  return listCloudPedidoMetadata(
+    ()=>collectPedidoPrefixes(options=>sdk.list(storageRefFor(sdk,'pedidos'),options)),
+    id=>readCloudPedidoJson(sdk,id)
+  );
 }
 async function openCloudPedido(raw){
   await loadOrder(raw);
   $('#cloudDialog')?.close();
 }
-function renderCloudList(root,list){
+function renderCloudList(root,result){
+  const list=result&&Array.isArray(result.orders)?result.orders:[];
   root.replaceChildren();
+  const notice=cloudLibraryNotice(result);
+  if(notice){
+    const warn=document.createElement('p');
+    warn.className='cloud-list-error';
+    warn.setAttribute('role','status');
+    warn.textContent=notice;
+    root.append(warn);
+  }
   if(!list.length){
     const empty=document.createElement('p');
     empty.className='empty';
-    empty.textContent='Todavía no hay pedidos en la nube.';
+    empty.textContent=result&&result.failed?'No se pudo mostrar ningún pedido.':'Todavía no hay pedidos en la nube.';
     root.append(empty);
     return;
   }
@@ -1169,6 +1273,7 @@ function renderCloudList(root,list){
     const info=document.createElement('div'),title=document.createElement('strong'),meta=document.createElement('small'),button=document.createElement('button');
     title.textContent=(order.number?'#'+order.number:'Sin folio')+' · '+(order.client||'Sin cliente');
     meta.textContent=(GARMENTS[order.garment]?.label||'Prenda')+' · '+(order.date||'Sin fecha')+' · '+(order.artworks?.length||0)+' aplicaciones · nube';
+    button.type='button';
     button.textContent='Abrir';
     button.addEventListener('click',()=>busy(button,()=>openCloudPedido(order)));
     info.append(title,meta);
@@ -1180,15 +1285,27 @@ async function openCloudLibrary(){
   const root=$('#cloudOrders');
   root.replaceChildren();
   const loading=document.createElement('p');
+  loading.className='cloud-loading';
+  loading.setAttribute('role','status');
   loading.textContent='Leyendo pedidos de la nube…';
   root.append(loading);
   $('#cloudDialog').showModal();
   try{
-    renderCloudList(root,await listCloudPedidos());
-    setCloudStatus('Nube: lista de pedidos actualizada.','ok');
+    const result=await listCloudPedidos();
+    renderCloudList(root,result);
+    if(result.failed){
+      setCloudStatus('Nube: '+result.orders.length+' pedidos · '+result.failed+' con error.','error');
+    }else{
+      setCloudStatus(result.orders.length?'Nube: '+result.orders.length+' pedidos listos.':'Nube: no hay pedidos.','ok');
+    }
   }catch(error){
     const message=cloudErrorMessage(error);
-    root.textContent=message;
+    root.replaceChildren();
+    const fail=document.createElement('p');
+    fail.className='empty';
+    fail.setAttribute('role','status');
+    fail.textContent=message;
+    root.append(fail);
     setCloudStatus(message,'error');
     throw Error(message);
   }
