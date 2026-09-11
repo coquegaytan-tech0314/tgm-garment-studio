@@ -1,0 +1,99 @@
+/* MGM finishing studio · Tejidos Gaytán chrome. UI only; schema/ids stay tgm-*. */
+:root{
+  --gaytan:#FF2E4D;
+  --gaytan-deep:#c7001e;
+  --gaytan-wine:#a10c22;
+  --navy:#012169;
+  --navy-mid:#003087;
+  --ink:#1c1c1c;
+  --muted:#5c5c5c;
+  --line:#e3dfd8;
+  --surface:#fff;
+  --paper:#f4f3f0;
+  --blue:#FF2E4D;
+  --pale:#fff1f3;
+  --success:#21614d;
+  --cream:#EAD7BA;
+}
+html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+body{background:var(--paper);color:var(--ink)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible,.hidden-input:focus-visible+label{outline-color:#ff8a9a}
+.icon{stroke-width:1.55}
+.primary{background:var(--gaytan);border-color:var(--gaytan);color:#fff}
+.primary:hover{background:var(--gaytan-deep);border-color:var(--gaytan-deep);color:#fff}
+.tabs{background:#fff}
+.tabs button[aria-selected=true]{color:var(--gaytan);border-bottom-color:var(--gaytan);font-weight:700}
+.garment-picker button[aria-pressed=true],.zone-grid button[aria-pressed=true],.art-item[aria-pressed=true],.photo-cut-picker button[aria-pressed=true],.viewport-actions button[aria-pressed=true]{border-color:var(--gaytan);background:var(--pale);color:var(--gaytan)}
+.segmented button[aria-pressed=true]{background:var(--navy);color:#fff}
+input[type=range],input[type=checkbox]{accent-color:var(--gaytan)}
+.badge{background:var(--pale);color:var(--gaytan-wine)}
+.note{background:#f7f4ee;color:#4a453c}
+.empty{border-style:dashed;border-color:#f0b3bc;background:#fff;position:relative;padding-top:36px}
+.empty::before{content:"";display:block;width:28px;height:28px;margin:0 auto 10px;border:1.5px dashed var(--gaytan);border-radius:50%}
+.upload-label{border-color:#f0b3bc;background:#fff8f9}
+.upload-label:hover{background:var(--pale);border-color:var(--gaytan)}
+.toast{background:var(--navy)}
+
+.topbar{background:#fff;color:var(--ink);padding:14px 24px;border-bottom:3px solid var(--gaytan);box-shadow:0 1px 0 #0000000d}
+.brand{align-items:center;gap:14px;min-width:0}
+.brand-logo{display:block;height:52px;width:52px;object-fit:contain;flex-shrink:0}
+.brand-copy{min-width:0}
+.brand-copy strong,.brand-product{display:block;font-size:1.7rem;letter-spacing:.08em;line-height:.95;color:var(--ink);font-weight:800}
+.brand-subtitle,.brand span{display:block;color:#5a5854;font-size:.78rem;letter-spacing:.02em;margin-top:5px;max-width:36rem}
+.pro-version{letter-spacing:.06em;font-size:.68rem;color:var(--gaytan-wine);background:var(--pale);border:1px solid #f3c4cb;padding:4px 8px;border-radius:999px;margin-left:8px;white-space:nowrap}
+.internal{color:var(--navy);border-color:#c5cde0;letter-spacing:.08em;background:#f5f7fb}
+.workspace-head{background:#fff}
+.workspace-head .subtle{color:#5a5854}
+.workspace-head .actions .primary{box-shadow:0 1px 0 #a10c221a}
+#panel-photo h3{display:flex;align-items:center;gap:8px}
+#panel-photo h3 .icon,#photoOpenSettings .icon,#cloudOpen .icon{color:var(--gaytan);width:20px;height:20px}
+#photoOpenSettings,#cloudOpen{gap:8px}
+
+.photo-pane{background:#fff}
+.photo-stage{background:radial-gradient(ellipse at 50% 35%,#fff 0%,#f3f4f6 58%,#e7e9ed 100%)}
+.photo-stage-title{color:#4a4f5a}
+.photo-stage-title span{color:var(--gaytan-wine);font-weight:700}
+.photo-tools #photoEdit{background:var(--gaytan);color:#fff;border-color:var(--gaytan)}
+.photo-tools #photoEdit:hover{background:var(--gaytan-deep);border-color:var(--gaytan-deep)}
+.photo-bottom button,.photo-mismatch button{border-color:#e0d7cf}
+.studio-heading h2{letter-spacing:-.03em}
+.stage-label b{color:var(--gaytan-wine)}
+
+.export-card{background:var(--navy);color:#fff}
+.export-card .subtle{color:#d5dbe8}
+.export-buttons button{background:#16357a;border-color:#3d5aa0;color:#fff}
+.export-buttons button:hover{background:#1d4496}
+.export-buttons .pdf-button{background:var(--gaytan);border-color:var(--gaytan);color:#fff}
+.export-buttons .pdf-button:hover{background:var(--gaytan-deep);border-color:var(--gaytan-deep);color:#fff}
+.caption-row{border-top-color:#2a4788}
+.caption-row button{border-color:#6d84b5}
+
+#cloudStatus[data-error=true]{color:var(--gaytan-deep)}
+#cloudStatus[data-ok=true]{color:var(--success)}
+dialog{border-color:#e6d9d4;box-shadow:0 24px 80px #01216922}
+dialog::backdrop{background:#1c1c1ccc}
+dialog .dialog-actions{background:#faf8f5}
+.project-banner{background:#fff7f8;border-color:#f3c4cb}
+.project-card[data-active=true]{border-color:var(--gaytan);background:var(--pale)}
+.price-total{background:#fff7f8;color:#3a151b}
+.technique-advice{border-left-color:var(--gaytan);background:#fff7f8}
+.tabs button[data-tab=ficha]{background:#fff7f8}
+.sleeve-switch button[aria-pressed=true]{background:var(--gaytan);border-color:var(--gaytan);color:#fff}
+.sleeve-shortcut{background:#fff7f8;border-color:#f3c4cb}
+.sleeve-location{color:var(--gaytan-wine)}
+#saveStatus[data-error=true]{color:var(--gaytan-deep)}
+
+.print-logo{height:28px;width:auto;margin-right:8px;vertical-align:middle}
+@media(max-width:1100px){
+  .brand-logo{height:46px;width:46px}
+  .brand-copy strong,.brand-product{font-size:1.4rem}
+}
+@media(max-width:760px){
+  .topbar{padding:10px 12px;align-items:flex-start}
+  .brand{gap:10px}
+  .brand-logo{height:40px;width:40px}
+  .brand-copy strong,.brand-product{font-size:1.2rem}
+  .brand-subtitle,.brand span{font-size:.7rem}
+  .internal{display:inline-flex}
+  .pro-version{margin-left:0;margin-top:4px}
+}

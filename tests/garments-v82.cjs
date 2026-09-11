@@ -10,7 +10,12 @@ function opaqueBox(canvas){
 (async()=>{
   await run('init()');
   assert.equal(run('VERSION'),8,'Schema version stays 8 so tgm-pedido 1–8 still open');
-  assert.match(require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8'),/ESTUDIO · v8\.2\.4/);
+  const built=require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8');
+  assert.match(built,/MGM · v8\.2\.5/);
+  assert.match(built,/class="brand-logo"/);
+  assert.match(built,/#FF2E4D/);
+  assert.match(built,/SCHEMA='tgm-pedido'/);
+  assert.match(run('KEY'),/^tgm-estudio-/);
   assert.equal(run("Object.keys(GARMENTS).join(',')"),'playera,hoodie,polo,sleeveless,zipneck');
   assert.equal(run("GARMENTS.sleeveless.label"),'Top sin mangas');
   assert.equal(run("GARMENTS.zipneck.label"),'Manga larga con cierre');
