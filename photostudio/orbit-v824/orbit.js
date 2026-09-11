@@ -2,22 +2,36 @@
    Camera orbit matches Boceto 3D. Without WebGL, a touch turntable still works. */
 const PHOTO_ORBIT_SOLIDS=new Set(['mannequin','metal','button','cord']);
 const PHOTO_ORBIT_VERTEX=`attribute vec3 aPosition;attribute vec3 aNormal;attribute vec2 aUv;uniform mat4 uMVP;varying vec3 vPosition;varying vec3 vNormal;varying vec2 vUv;void main(){vPosition=aPosition;vNormal=aNormal;vUv=aUv;gl_Position=uMVP*vec4(aPosition,1.0);}`;
-const PHOTO_ORBIT_FRAGMENT=`precision highp float;varying vec3 vPosition;varying vec3 vNormal;varying vec2 vUv;uniform sampler2D uFront;uniform sampler2D uBack;uniform vec3 uColor;uniform vec3 uEye;uniform vec3 uLight;uniform float uTextured;void main(){vec3 n=normalize(vNormal);if(!gl_FrontFacing)n=-n;vec4 frontT=texture2D(uFront,vUv);vec4 backT=texture2D(uBack,vec2(1.0-vUv.x,vUv.y));float face=smoothstep(-0.2,0.2,normalize(vNormal).z);vec4 tex=mix(backT,frontT,face);vec3 base=uTextured>0.5?tex.rgb:uColor;if(uTextured>0.5&&tex.a<0.08)discard;vec3 light=normalize(uLight);vec3 view=normalize(uEye-vPosition);float key=max(dot(n,light),0.0);float fill=max(dot(n,normalize(vec3(-1.0,.45,-.7))),0.0);float rim=pow(1.0-max(dot(n,view),0.0),3.0);float ao=.93+.07*clamp(vPosition.y+.7,0.0,1.0);vec3 rgb=(base*(.70+key*.24+fill*.10)+base*rim*.05)*ao;gl_FragColor=vec4(clamp(rgb,0.0,1.0),1.0);}`;
+const PHOTO_ORBIT_FRAGMENT=`precision highp float;varying vec3 vPosition;varying vec3 vNormal;varying vec2 vUv;uniform sampler2D uFront;uniform sampler2D uBack;uniform vec3 uColor;uniform vec3 uEye;uniform vec3 uLight;uniform float uTextured;void main(){vec3 n=normalize(vNormal);if(!gl_FrontFacing)n=-n;vec4 frontT=texture2D(uFront,vUv);vec4 backT=texture2D(uBack,vec2(1.0-vUv.x,vUv.y));float face=smoothstep(-0.18,0.18,normalize(vNormal).z);vec4 tex=mix(backT,frontT,face);vec3 base=mix(uColor,tex.rgb,uTextured*clamp(tex.a*1.35,0.0,1.0));vec3 light=normalize(uLight);vec3 view=normalize(uEye-vPosition);float key=max(dot(n,light),0.0);float fill=max(dot(n,normalize(vec3(-1.0,.45,-.7))),0.0);float rim=pow(1.0-max(dot(n,view),0.0),3.0);float ao=.93+.07*clamp(vPosition.y+.7,0.0,1.0);vec3 rgb=(base*(.76+key*.20+fill*.08)+base*rim*.04)*ao;gl_FragColor=vec4(clamp(rgb,0.0,1.0),1.0);}`;
 function photoOrbitGeomKey(){return JSON.stringify([state.garment,state.neck,state.cuff,state.hem,state.contrast,state.hood,state.pro.fit,state.pro.length,state.pro.sleeve,state.pro.folds,state.pro.mannequin,state.photoCut||'hombre'])}
-function photoOrbitProjectiveUVs(meshes){
+function photoOrbitOpaqueBox(source){
+  const src=source?source._canvas||source:null;
+  if(!src||!src.width)return {u0:.08,u1:.92,v0:.08,v1:.90};
+  try{
+    const c=document.createElement('canvas');c.width=src.width;c.height=src.height;
+    const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(src,0,0);
+    const {width,height}=c,data=x.getImageData(0,0,width,height).data;
+    let minX=width,minY=height,maxX=0,maxY=0;
+    for(let y=0;y<height;y+=3)for(let x0=0;x0<width;x0+=3){if(data[(y*width+x0)*4+3]>18){minX=Math.min(minX,x0);maxX=Math.max(maxX,x0);minY=Math.min(minY,y);maxY=Math.max(maxY,y)}}
+    if(maxX<=minX||maxY<=minY)return {u0:.08,u1:.92,v0:.08,v1:.90};
+    const px=Math.max(2,(maxX-minX)*.02),py=Math.max(2,(maxY-minY)*.02);
+    return {u0:Math.max(0,(minX-px)/width),u1:Math.min(1,(maxX+px)/width),v0:Math.max(0,(minY-py)/height),v1:Math.min(1,(maxY+py)/height)};
+  }catch{return {u0:.08,u1:.92,v0:.08,v1:.90}}
+}
+function photoOrbitProjectiveUVs(meshes,uvBox){
   let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
   for(const m of meshes){
     if(PHOTO_ORBIT_SOLIDS.has(m.material))continue;
     for(let i=0;i<m.positions.length;i+=3){minX=Math.min(minX,m.positions[i]);maxX=Math.max(maxX,m.positions[i]);minY=Math.min(minY,m.positions[i+1]);maxY=Math.max(maxY,m.positions[i+1])}
   }
-  const padX=(maxX-minX)*.03,padY=(maxY-minY)*.03;
+  const padX=(maxX-minX)*.02,padY=(maxY-minY)*.02;
   minX-=padX;maxX+=padX;minY-=padY;maxY+=padY;
-  const u0=.07,u1=.93,v0=.07,v1=.90,spanX=maxX-minX||1,spanY=maxY-minY||1;
+  const box=uvBox||{u0:.08,u1:.92,v0:.08,v1:.90},spanX=maxX-minX||1,spanY=maxY-minY||1;
   for(const m of meshes){
     if(PHOTO_ORBIT_SOLIDS.has(m.material))continue;
     for(let i=0,u=0;i<m.positions.length;i+=3,u+=2){
-      m.uvs[u]=u0+(m.positions[i]-minX)/spanX*(u1-u0);
-      m.uvs[u+1]=v0+(maxY-m.positions[i+1])/spanY*(v1-v0);
+      m.uvs[u]=box.u0+(m.positions[i]-minX)/spanX*(box.u1-box.u0);
+      m.uvs[u+1]=box.v0+(maxY-m.positions[i+1])/spanY*(box.v1-box.v0);
     }
   }
   return {minY,maxY,minX,maxX};
@@ -68,18 +82,43 @@ class PhotoOrbitRenderer{
     g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER,g.LINEAR);g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER,g.LINEAR);
     return t;
   }
-  setTexture(texture,canvas){if(!this.gl||!canvas)return;const g=this.gl;g.bindTexture(g.TEXTURE_2D,texture);g.pixelStorei(g.UNPACK_FLIP_Y_WEBGL,false);g.texImage2D(g.TEXTURE_2D,0,g.RGBA,g.RGBA,g.UNSIGNED_BYTE,canvas._canvas||canvas)}
+  setTexture(texture,source){
+    if(!this.gl||!source)return false;
+    const g=this.gl,src=source._canvas||source;
+    try{
+      const stage=document.createElement('canvas');stage.width=1024;stage.height=1024;
+      const x=stage.getContext('2d',{willReadFrequently:true});if(!x)return false;
+      x.clearRect(0,0,1024,1024);x.drawImage(src,0,0,1024,1024);
+      const pixels=x.getImageData(0,0,1024,1024);
+      g.bindTexture(g.TEXTURE_2D,texture);
+      g.pixelStorei(g.UNPACK_FLIP_Y_WEBGL,false);
+      g.pixelStorei(g.UNPACK_ALIGNMENT,1);
+      g.texImage2D(g.TEXTURE_2D,0,g.RGBA,pixels.width,pixels.height,0,g.RGBA,g.UNSIGNED_BYTE,pixels.data);
+      g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_S,g.CLAMP_TO_EDGE);
+      g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_T,g.CLAMP_TO_EDGE);
+      g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER,g.LINEAR);
+      g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER,g.LINEAR);
+      return true;
+    }catch{return false}
+  }
   setSheets(sheets){
-    this.sheets=sheets;
-    if(this.gl&&!this.lost){this.setTexture(this.frontTexture,sheets[0]);this.setTexture(this.backTexture,sheets[1]);this.rebuild()}
+    this.sheets=sheets||[null,null];
+    this.uvBox=photoOrbitOpaqueBox(this.sheets[0]);
+    this.geometryKey=null;
+    if(this.gl&&!this.lost){
+      this.setTexture(this.frontTexture,this.sheets[0]);
+      this.setTexture(this.backTexture,this.sheets[1]);
+      this.rebuild();
+    }
     this.render();
   }
   rebuild(){
     if(!this.gl||this.lost)return;
-    const key=photoOrbitGeomKey();if(key===this.geometryKey&&this.meshes.length)return;
+    const key=photoOrbitGeomKey()+'|'+JSON.stringify(this.uvBox||null);
+    if(key===this.geometryKey&&this.meshes.length)return;
     this.geometryKey=key;
-    const gl=this.gl;for(const m of this.meshes)for(const b of[m.pos,m.normal,m.uv,m.index])gl.deleteBuffer(b);
-    const data=garmentGeometry(state);const box=photoOrbitProjectiveUVs(data);
+    const gl=this.gl;for(const m of this.meshes)for(const b of[m.pos,m.normal,m.uv,m.index])if(b)gl.deleteBuffer(b);
+    const data=garmentGeometry(state);const box=photoOrbitProjectiveUVs(data,this.uvBox);
     this.centerY=(box.minY+box.maxY)/2;this.frameScale=Math.max(1,(box.maxY-box.minY)/2.35,(box.maxX-box.minX)/2.25);
     this.meshes=data.map(mesh=>{
       const buffer=(values,type,target)=>{const b=gl.createBuffer();gl.bindBuffer(target,b);gl.bufferData(target,new type(values),gl.STATIC_DRAW);return b};
@@ -102,7 +141,7 @@ class PhotoOrbitRenderer{
   render(){
     this.syncAngle();
     if(!this.gl||this.lost||!this.program){paintPhotoOrbitSheet(this.canvas,this.sheets[0],this.sheets[1],this.yaw,this.pitch,this.distance);return}
-    if(!this.meshes.length)this.rebuild();
+    this.rebuild();
     const gl=this.gl,L=this.locations,c=this.camera();
     gl.viewport(0,0,this.canvas.width,this.canvas.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
     gl.useProgram(this.program);gl.uniformMatrix4fv(L.uMVP,false,c.mvp);gl.uniform3fv(L.uEye,c.eye);
@@ -148,6 +187,11 @@ class PhotoOrbitRenderer{
   stopSpin(){if(!this.spinning)return;this.spinning=false;const btn=$('#photoOrbitSpin');if(btn)btn.setAttribute('aria-pressed','false')}
 }
 let photoOrbit=null,photoOrbitSheets=null,photoOrbitReady=false;
+function livePhotoSheets(){
+  if(photoOrbitSheets?.[0]&&photoOrbitSheets?.[1])return photoOrbitSheets;
+  const front=$('#photoFront'),back=$('#photoBack');
+  return front&&back?[front,back]:photoOrbitSheets;
+}
 async function afterPhotoSheets(canvases){photoOrbitSheets=canvases;if(photoOrbit)photoOrbit.setSheets(canvases)}
 function syncPhotoOrbitUI(){
   const stage=$('#photoStage'),orbit=$('#photoOrbit');if(!stage||!orbit)return;
@@ -157,7 +201,10 @@ function syncPhotoOrbitUI(){
     const issues=photoIssues();
     $('#photoOrigin').textContent=ensurePhoto().source==='final'?'Render cargado · gira el acabado terminado':'Acabado 360° · color, tela y logos de la prenda terminada';
     if(!issues.length)$('#photoStatus').textContent='Arrastra para girar el acabado · Frente y Comparar siguen disponibles';
-    if(photoOrbit){photoOrbit.resize();photoOrbit.render()}
+    if(photoOrbit){
+      if(!photoOrbit.sheets[0]){const sheets=livePhotoSheets();if(sheets)photoOrbit.setSheets(sheets)}
+      photoOrbit.resize();
+    }
   }else if(photoOrbit)photoOrbit.stopSpin();
 }
 function initPhotoOrbit(){

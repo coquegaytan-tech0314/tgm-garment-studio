@@ -211,6 +211,8 @@ function opaqueBox(canvas){
     assert(backView.count>8000,garment+' 360° back yaw must paint the reverse sheet');
     const mapped=run('photoOrbitProjectiveUVs(garmentGeometry(state))');
     assert(mapped.maxY>mapped.minY&&mapped.maxX>mapped.minX,garment+' orbit UVs need a real mesh bounds');
+    const box=run('photoOrbitOpaqueBox(front)');
+    assert(box.u1-box.u0>0.25&&box.v1-box.v0>0.25,garment+' finished sheet must expose an opaque orbit UV box');
   }
   run("state=blank();state.garment='sleeveless';photoBaseDefaults();state.photoCut='mujer';state.photo.side='orbit'");
   const mujerMesh=run('photoOrbitProjectiveUVs(garmentGeometry(state))');
