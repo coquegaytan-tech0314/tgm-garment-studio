@@ -4,6 +4,7 @@
       <button data-photo-view="front" aria-pressed="true">Frente</button>
       <button data-photo-view="back" aria-pressed="false">Espalda</button>
       <button data-photo-view="both" aria-pressed="false">Comparar</button>
+      <button data-photo-view="orbit">360°</button>
     </div>
     <div class="photo-tools"><button id="photoEdit">Colocar diseño</button><button id="photoDetail">Ver detalle</button></div>
   </div>
@@ -12,6 +13,15 @@
     <div class="photo-pair" id="photoPair">
       <figure class="photo-figure" data-side="front"><canvas id="photoFront" width="1000" height="1150" tabindex="0" aria-label="Frente de la prenda; en Diseños, arrastra la aplicación o usa las flechas para moverla."></canvas><figcaption>FRENTE</figcaption></figure>
       <figure class="photo-figure" data-side="back"><canvas id="photoBack" width="1000" height="1150" tabindex="0" aria-label="Espalda de la prenda; en Diseños, arrastra la aplicación o usa las flechas para moverla."></canvas><figcaption>ESPALDA</figcaption></figure>
+    </div>
+    <div class="photo-orbit" id="photoOrbit" hidden>
+      <canvas id="photoOrbitCanvas" width="1000" height="1000" tabindex="0" aria-label="Acabado en 360 grados. Arrastra para girar. Pellizco o rueda para zoom. Flechas para orbitar y tecla Inicio para centrar."></canvas>
+      <div class="photo-orbit-tools">
+        <button type="button" id="photoOrbitSpin" aria-pressed="false">Girar</button>
+        <button type="button" id="photoOrbitFit">Centrar</button>
+      </div>
+      <span class="photo-orbit-hint">Arrastra para girar · pellizco para zoom</span>
+      <span class="photo-orbit-angle" id="photoOrbitAngle">Giro 24°</span>
     </div>
     <span class="photo-origin" id="photoOrigin">Base generada · apariencia aproximada</span>
   </div>
