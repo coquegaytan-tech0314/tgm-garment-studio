@@ -1029,6 +1029,12 @@ function pedidoArtPath(orderId,artworkId,fileName){
   const artId=String(artworkId||'arte').replace(/[^a-zA-Z0-9._-]+/g,'-').slice(0,80)||'arte';
   return 'pedidos/'+safeOrderId(orderId)+'/art/'+artId+'-'+safeCloudFileName(fileName);
 }
+function cloudArtMime(pathOrUrl){
+  const value=String(pathOrUrl||'').toLowerCase();
+  if(value.includes('.svg'))return 'image/svg+xml';
+  if(value.includes('.jpg')||value.includes('.jpeg'))return 'image/jpeg';
+  return 'image/png';
+}
 function cloudArtSlots(order){
   const slots=[];
   for(const art of order.artworks||[]){
@@ -1115,7 +1121,7 @@ async function listCloudPedidoMetadata(listPrefixes, readPedido, timeouts){
 }
 if(typeof globalThis!=='undefined'){
   Object.assign(globalThis,{
-    isCloudArtRef,safeOrderId,safeCloudFileName,pedidoJsonPath,pedidoArtPath,cloudArtSlots,TGM_CLOUD_BUCKET,
+    isCloudArtRef,safeOrderId,safeCloudFileName,pedidoJsonPath,pedidoArtPath,cloudArtMime,cloudArtSlots,TGM_CLOUD_BUCKET,
     CLOUD_LIST_PAGE_SIZE,CLOUD_LIST_TIMEOUT_MS,CLOUD_PEDIDO_TIMEOUT_MS,
     withTimeout,cloudPedidoIdsFromPrefixes,collectPedidoPrefixes,summarizeCloudPedidoReads,cloudLibraryNotice,listCloudPedidoMetadata
   });
@@ -1187,8 +1193,15 @@ async function hydrateCloudPedido(raw){
     const current=slot.object[slot.key];
     if(!isCloudArtRef(current))continue;
     const bytes=await readCloudBytes(sdk,current);
-    const mime=current.includes('.svg')?'image/svg+xml':current.includes('.jpg')||current.includes('.jpeg')?'image/jpeg':'image/png';
-    slot.object[slot.key]=await blobToDataUrl(new Blob([bytes],{type:mime}));
+    const mime=cloudArtMime(current);
+    const dataUrl=await blobToDataUrl(new Blob([bytes],{type:mime}));
+    if(slot.key==='image'&&mime==='image/jpeg'&&typeof normalizeLogo==='function'){
+      slot.object[slot.key]=await normalizeLogo(dataUrl,'jpeg');
+    }else if(slot.key==='image'&&mime==='image/svg+xml'&&typeof normalizeLogo==='function'){
+      slot.object[slot.key]=await normalizeLogo(dataUrl,'svg');
+    }else{
+      slot.object[slot.key]=dataUrl;
+    }
   }
   return order;
 }

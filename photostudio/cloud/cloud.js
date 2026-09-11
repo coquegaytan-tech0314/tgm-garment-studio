@@ -64,8 +64,15 @@ async function hydrateCloudPedido(raw){
     const current=slot.object[slot.key];
     if(!isCloudArtRef(current))continue;
     const bytes=await readCloudBytes(sdk,current);
-    const mime=current.includes('.svg')?'image/svg+xml':current.includes('.jpg')||current.includes('.jpeg')?'image/jpeg':'image/png';
-    slot.object[slot.key]=await blobToDataUrl(new Blob([bytes],{type:mime}));
+    const mime=cloudArtMime(current);
+    const dataUrl=await blobToDataUrl(new Blob([bytes],{type:mime}));
+    if(slot.key==='image'&&mime==='image/jpeg'&&typeof normalizeLogo==='function'){
+      slot.object[slot.key]=await normalizeLogo(dataUrl,'jpeg');
+    }else if(slot.key==='image'&&mime==='image/svg+xml'&&typeof normalizeLogo==='function'){
+      slot.object[slot.key]=await normalizeLogo(dataUrl,'svg');
+    }else{
+      slot.object[slot.key]=dataUrl;
+    }
   }
   return order;
 }

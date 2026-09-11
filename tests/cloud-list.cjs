@@ -49,14 +49,16 @@ const path=require('path');
   assert.equal(context.byteCalls.length,2);
 
   const root=$('#cloudOrders');
-  const texts=root.children.map(c=>c.textContent).join('\n');
-  assert(!texts.includes('Leyendo pedidos de la nube'),'dialog must leave the loading state');
-  assert.match(texts,/Se leyeron 1 de 2 pedidos/);
-  assert.match(texts,/#CR - POLO BLANCO · CUMBRES - RHINOS/);
-  assert(!texts.includes('#CR - HOODIE'),'failed pedido.json stays out of the visible rows');
+  assert.equal(root.children.some(c=>c.className==='cloud-loading'),false,'dialog must leave the loading state');
+  const notice=root.children.find(c=>c.className==='cloud-list-error');
+  assert.match(notice.textContent,/Se leyeron 1 de 2 pedidos/);
+  const rows=root.children.filter(c=>c.className==='saved-row');
+  assert.equal(rows.length,1,'failed pedido.json stays out of the visible rows');
+  const title=rows[0].children[0].children[0];
+  assert.equal(title.textContent,'#CR - POLO BLANCO · CUMBRES - RHINOS');
   assert.match($('#cloudStatus').textContent,/1 pedidos · 1 con error/);
 
-  const openBtn=root.children.find(c=>c.className==='saved-row').children.find(c=>c.tagName==='BUTTON');
+  const openBtn=rows[0].children.find(c=>c.tagName==='BUTTON');
   assert.equal(openBtn.textContent,'Abrir');
   await run('openCloudPedido(pedidos["folio-cr1"])');
   assert.equal($('#cloudDialog').open,false);

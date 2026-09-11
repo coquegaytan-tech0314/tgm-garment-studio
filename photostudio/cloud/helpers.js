@@ -22,6 +22,12 @@ function pedidoArtPath(orderId,artworkId,fileName){
   const artId=String(artworkId||'arte').replace(/[^a-zA-Z0-9._-]+/g,'-').slice(0,80)||'arte';
   return 'pedidos/'+safeOrderId(orderId)+'/art/'+artId+'-'+safeCloudFileName(fileName);
 }
+function cloudArtMime(pathOrUrl){
+  const value=String(pathOrUrl||'').toLowerCase();
+  if(value.includes('.svg'))return 'image/svg+xml';
+  if(value.includes('.jpg')||value.includes('.jpeg'))return 'image/jpeg';
+  return 'image/png';
+}
 function cloudArtSlots(order){
   const slots=[];
   for(const art of order.artworks||[]){
@@ -108,7 +114,7 @@ async function listCloudPedidoMetadata(listPrefixes, readPedido, timeouts){
 }
 if(typeof globalThis!=='undefined'){
   Object.assign(globalThis,{
-    isCloudArtRef,safeOrderId,safeCloudFileName,pedidoJsonPath,pedidoArtPath,cloudArtSlots,TGM_CLOUD_BUCKET,
+    isCloudArtRef,safeOrderId,safeCloudFileName,pedidoJsonPath,pedidoArtPath,cloudArtMime,cloudArtSlots,TGM_CLOUD_BUCKET,
     CLOUD_LIST_PAGE_SIZE,CLOUD_LIST_TIMEOUT_MS,CLOUD_PEDIDO_TIMEOUT_MS,
     withTimeout,cloudPedidoIdsFromPrefixes,collectPedidoPrefixes,summarizeCloudPedidoReads,cloudLibraryNotice,listCloudPedidoMetadata
   });

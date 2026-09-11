@@ -11,7 +11,7 @@ ctx.globalThis = ctx;
 runInContext(readFileSync(join(here, 'helpers.js'), 'utf8'), ctx);
 
 const {
-  isCloudArtRef, safeOrderId, safeCloudFileName, pedidoJsonPath, pedidoArtPath, cloudArtSlots,
+  isCloudArtRef, safeOrderId, safeCloudFileName, pedidoJsonPath, pedidoArtPath, cloudArtMime, cloudArtSlots,
   CLOUD_LIST_PAGE_SIZE, withTimeout, cloudPedidoIdsFromPrefixes, collectPedidoPrefixes,
   summarizeCloudPedidoReads, cloudLibraryNotice, listCloudPedidoMetadata
 } = ctx;
@@ -23,6 +23,10 @@ assert.equal(isCloudArtRef('https://example.com/x.png'), false, 'ignore other ho
 assert.equal(safeCloudFileName('Logo Cliente #2.PNG'), 'Logo-Cliente-2.PNG', 'safe file name');
 assert.equal(pedidoJsonPath('order-123'), 'pedidos/order-123/pedido.json', 'pedido path');
 assert.equal(pedidoArtPath('order-123', 'art-1', 'marca.png'), 'pedidos/order-123/art/art-1-marca.png', 'art path');
+assert.equal(cloudArtMime('pedidos/x/art/a-logo.JPG'), 'image/jpeg');
+assert.equal(cloudArtMime('https://example/o/pedidos%2Fx%2Fa.JPEG?alt=media'), 'image/jpeg');
+assert.equal(cloudArtMime('pedidos/x/art/mark.SVG'), 'image/svg+xml');
+assert.equal(cloudArtMime('pedidos/x/art/mark.png'), 'image/png');
 try { safeOrderId('../x'); throw new Error('accepted bad id'); } catch (e) { if (e.message === 'accepted bad id') throw e; }
 
 const slots = cloudArtSlots({
@@ -32,12 +36,13 @@ const slots = cloudArtSlots({
 });
 assert.equal(slots.length, 4, 'collect artwork, original, final render, image attachment');
 
+function host(value){return JSON.parse(JSON.stringify(value))}
 assert.equal(CLOUD_LIST_PAGE_SIZE, 100);
 assert.deepEqual(
-  cloudPedidoIdsFromPrefixes([{ name: 'order-aaa' }, { name: '../nope' }, { name: 'order-bbb' }, { name: 'x' }]),
+  host(cloudPedidoIdsFromPrefixes([{ name: 'order-aaa' }, { name: '../nope' }, { name: 'order-bbb' }, { name: 'x' }])),
   ['order-aaa', 'order-bbb']
 );
-assert.deepEqual(cloudPedidoIdsFromPrefixes(['folder-one']), ['folder-one']);
+assert.deepEqual(host(cloudPedidoIdsFromPrefixes(['folder-one'])), ['folder-one']);
 
 const summary = summarizeCloudPedidoReads([
   { status: 'fulfilled', value: { number: 'CR', client: 'CUMBRES - RHINOS', updatedAt: '2026-02-02T00:00:00.000Z' } },
@@ -71,7 +76,7 @@ test('collectPedidoPrefixes paginates folder names only', async () => {
   });
   assert.equal(calls.length, 2);
   assert.equal(calls[0].maxResults, 100);
-  assert.deepEqual(prefixes.map(p => p.name), ['page-aa', 'page-bb']);
+  assert.deepEqual(host(prefixes.map(p => p.name)), ['page-aa', 'page-bb']);
 });
 
 test('listCloudPedidoMetadata fetches pedido.json in parallel and keeps partial results', async () => {
@@ -91,7 +96,7 @@ test('listCloudPedidoMetadata fetches pedido.json in parallel and keeps partial 
     }),
     { list: 200, pedido: 200 }
   );
-  assert.deepEqual(started.sort(), ['folio-bad', 'folio-one', 'folio-two']);
+  assert.deepEqual(host(started).sort(), ['folio-bad', 'folio-one', 'folio-two']);
   assert.ok(maxInFlight >= 2, 'pedido.json reads must overlap');
   assert.equal(result.orders.length, 2);
   assert.equal(result.failed, 1);
