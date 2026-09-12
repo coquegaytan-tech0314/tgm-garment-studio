@@ -11,7 +11,7 @@ function opaqueBox(canvas){
   await run('init()');
   assert.equal(run('VERSION'),8,'Schema version stays 8 so tgm-pedido 1–8 still open');
   const built=require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8');
-  assert.match(built,/MGM · v8\.2\.5/);
+  assert.match(built,/MGM · v8\.2\.6/);
   assert.match(built,/class="brand-logo"/);
   assert.match(built,/#FF2E4D/);
   assert.match(built,/SCHEMA='tgm-pedido'/);
@@ -200,29 +200,51 @@ function opaqueBox(canvas){
   assert.equal(run("$('#photoStage').dataset.view"),'both');
   assert.equal(run("$('#photoOrbit').hidden"),true);
 
-  async function orbitPaint(garment,yaw){
+  function colorHits(canvas,r0,g0,b0,tol=48){
+    const {width,height}=canvas,data=canvas.getContext('2d').getImageData(0,0,width,height).data;
+    let n=0;
+    for(let i=0;i<data.length;i+=4){
+      if(data[i+3]<40)continue;
+      if(Math.abs(data[i]-r0)<tol&&Math.abs(data[i+1]-g0)<tol&&Math.abs(data[i+2]-b0)<tol)n++;
+    }
+    return n;
+  }
+  async function orbitSheets(garment){
     run(`state=blank();state.garment='${garment}';photoBaseDefaults();state.bodyColor='#1a4f9c';state.photo.side='orbit'`);
     run("addArt();selected().kind='text';selected().text='TGM';selected().color='#e10600';selected().view='front';selected().width=140");
+    run("addArt();selected().kind='text';selected().text='BACK';selected().color='#12a35a';selected().view='back';selected().width=140");
     const front=createCanvas(1000,1150),back=createCanvas(1000,1150);context.front=front;context.back=back;
     await run("renderPhoto(front,'front')");await run("renderPhoto(back,'back')");
-    const dest=createCanvas(800,800);context.dest=dest;context.yaw=yaw;
+    return {front,back};
+  }
+  function orbitPaint(sheets,yaw){
+    const dest=createCanvas(800,800);context.dest=dest;context.front=sheets.front;context.back=sheets.back;context.yaw=yaw;
     run('paintPhotoOrbitSheet(dest,front,back,yaw,0.05,5.3)');
-    return opaqueBox(dest);
+    return {box:opaqueBox(dest),red:colorHits(dest,225,6,0),green:colorHits(dest,18,163,90)};
   }
   for(const garment of ['playera','hoodie','polo','sleeveless','zipneck']){
-    const frontView=await orbitPaint(garment,0.15);
-    const backView=await orbitPaint(garment,Math.PI);
-    assert(frontView.count>8000,garment+' 360° front yaw must paint the finished sheet');
-    assert(backView.count>8000,garment+' 360° back yaw must paint the reverse sheet');
+    const sheets=await orbitSheets(garment);
+    const frontView=orbitPaint(sheets,0.15);
+    const backView=orbitPaint(sheets,Math.PI);
+    const sideView=orbitPaint(sheets,Math.PI/2);
+    assert(frontView.box.count>8000,garment+' 360° front yaw must paint the finished sheet');
+    assert(backView.box.count>8000,garment+' 360° back yaw must paint the reverse sheet');
+    assert(sideView.box.count>5000,garment+' 360° side yaw must keep a garment volume, not a card-flip sliver');
+    assert(frontView.red>80,garment+' front logo must stay readable while facing the camera');
+    assert(backView.green>40,garment+' back mark must stay readable at 180°');
+    assert(sideView.red>10&&sideView.green>10,garment+' front↔back transition must show both finished sheets');
     const mapped=run('photoOrbitProjectiveUVs(garmentGeometry(state))');
-    assert(mapped.maxY>mapped.minY&&mapped.maxX>mapped.minX,garment+' orbit UVs need a real mesh bounds');
+    assert(mapped.maxY>mapped.minY&&mapped.maxX>mapped.minX,garment+' mesh bounds stay available');
     const box=run('photoOrbitOpaqueBox(front)');
-    assert(box.u1-box.u0>0.25&&box.v1-box.v0>0.25,garment+' finished sheet must expose an opaque orbit UV box');
+    assert(box.u1-box.u0>0.25&&box.v1-box.v0>0.25,garment+' finished sheet must expose an opaque orbit crop box');
   }
   run("state=blank();state.garment='sleeveless';photoBaseDefaults();state.photoCut='mujer';state.photo.side='orbit'");
   const mujerMesh=run('photoOrbitProjectiveUVs(garmentGeometry(state))');
-  assert(mujerMesh.maxX>mujerMesh.minX,'Sleeveless mujer cut still orbits on the sisada mesh');
+  assert(mujerMesh.maxX>mujerMesh.minX,'Sleeveless mujer cut still has orbit bounds');
+  run("state.photo.side='both';syncPhotoUI()");
+  assert.equal(run("$('#photoStage').dataset.view"),'both');
+  assert.equal(run("$('#photoOrbit').hidden"),true);
 
   console.log('PASS v8.2 sleeveless and zipneck silhouettes, validation and legacy polo/hoodie/playera');
-  console.log('PASS v8.2.4 Acabado 360° orbit for every prenda type');
+  console.log('PASS v8.2.6 Acabado 360° photoreal turntable for every prenda type');
 })().catch(error=>{console.error(error);process.exitCode=1});

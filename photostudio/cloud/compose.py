@@ -1,4 +1,5 @@
 from pathlib import Path
+import subprocess
 
 CSP = (
     "default-src 'none'; "
@@ -69,8 +70,14 @@ def extend(html, root):
         "if(['png','jpg','jpeg'].includes(out.extension))await normalizeLogo(out.data,out.extension==='png'?'png':'jpeg');return out}",
         "if(['png','jpg','jpeg'].includes(out.extension)&&!(typeof isCloudArtRef==='function'&&isCloudArtRef(out.data)))await normalizeLogo(out.data,out.extension==='png'?'png':'jpeg');return out}"
     )
+    snap = source / 'snapshot.json'
+    try:
+        subprocess.run(['node', str(source / 'snapshot.mjs')], check=True, cwd=str(source.parent.parent))
+    except Exception as error:
+        print('cloud snapshot skipped:', error)
+    snapshot_js = 'const CLOUD_PEDIDO_SNAPSHOT=' + (snap.read_text() if snap.exists() else '[]') + ';\n'
     once(
         "init().catch(e=>toast",
-        (source / 'firebase-config.js').read_text() + '\n' + (source / 'helpers.js').read_text() + '\n' + (source / 'cloud.js').read_text() + "\ninit().catch(e=>toast"
+        snapshot_js + (source / 'firebase-config.js').read_text() + '\n' + (source / 'helpers.js').read_text() + '\n' + (source / 'cloud.js').read_text() + "\ninit().catch(e=>toast"
     )
     return html

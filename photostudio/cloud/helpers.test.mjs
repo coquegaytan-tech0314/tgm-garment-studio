@@ -43,6 +43,15 @@ assert.deepEqual(
   ['order-aaa', 'order-bbb']
 );
 assert.deepEqual(host(cloudPedidoIdsFromPrefixes(['folder-one'])), ['folder-one']);
+assert.deepEqual(
+  host(cloudPedidoIdsFromPrefixes([
+    { fullPath: 'pedidos/folio-cr1/' },
+    { name: 'pedidos/folio-cr2' },
+    'pedidos/folio-cr1/',
+    { name: 'cr-v8-cierre_corto_blanco' }
+  ])),
+  ['folio-cr1', 'folio-cr2', 'cr-v8-cierre_corto_blanco']
+);
 
 const summary = summarizeCloudPedidoReads([
   { status: 'fulfilled', value: { number: 'CR', client: 'CUMBRES - RHINOS', updatedAt: '2026-02-02T00:00:00.000Z' } },
@@ -55,6 +64,10 @@ assert.equal(summary.failed, 2);
 assert.equal(summary.orders[0].number, 'AA');
 assert.match(cloudLibraryNotice(summary), /Se leyeron 2 de 4 pedidos/);
 assert.match(cloudLibraryNotice({ orders: [], failed: 3, listed: 3 }), /no se pudo leer ningún pedido\.json/);
+assert.match(
+  cloudLibraryNotice({ orders: [], failed: 3, listed: 3, errors: ['Failed to fetch'] }),
+  /bloqueó la descarga \(CORS\)/
+);
 assert.equal(cloudLibraryNotice({ orders: [{ id: 'ok' }], failed: 0, listed: 1 }), '');
 
 test('withTimeout rejects a hanging promise', async () => {

@@ -1,0 +1,14 @@
+[
+  {
+    "origin": [
+      "https://tgm-garment-studio.web.app",
+      "https://tgm-garment-studio.firebaseapp.com",
+      "http://localhost:4173",
+      "http://localhost:5000",
+      "*"
+    ],
+    "method": ["GET", "HEAD"],
+    "responseHeader": ["Content-Type", "Content-Disposition"],
+    "maxAgeSeconds": 3600
+  }
+]

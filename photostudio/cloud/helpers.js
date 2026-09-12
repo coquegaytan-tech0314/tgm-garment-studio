@@ -44,8 +44,9 @@ function cloudArtSlots(order){
   return slots;
 }
 const CLOUD_LIST_PAGE_SIZE = 100;
-const CLOUD_LIST_TIMEOUT_MS = 12000;
-const CLOUD_PEDIDO_TIMEOUT_MS = 8000;
+const CLOUD_LIST_TIMEOUT_MS = 15000;
+const CLOUD_PEDIDO_TIMEOUT_MS = 20000;
+const CLOUD_PEDIDO_CONCURRENCY = 4;
 function withTimeout(promise, ms, message){
   return new Promise((resolve, reject)=>{
     const timer = setTimeout(()=>reject(Error(message)), ms);
@@ -55,12 +56,22 @@ function withTimeout(promise, ms, message){
     );
   });
 }
+function cloudPedidoIdFromPrefix(prefix){
+  if(prefix==null)return null;
+  let name=typeof prefix==='string'?prefix:(prefix.fullPath||prefix.name||'');
+  name=String(name).replace(/^gs:\/\/[^/]+\//,'').replace(/\/+$/,'').replace(/^\/+/,'');
+  const parts=name.split('/').filter(Boolean);
+  if(parts[0]==='pedidos')parts.shift();
+  const id=parts[0]||'';
+  try{return safeOrderId(id)}catch{return null}
+}
 function cloudPedidoIdsFromPrefixes(prefixes){
-  const ids = [];
+  const ids=[],seen=new Set();
   for(const prefix of prefixes || []){
-    const name = typeof prefix === 'string' ? prefix : prefix && prefix.name;
-    if(!name) continue;
-    try { ids.push(safeOrderId(name)); } catch {}
+    const id=cloudPedidoIdFromPrefix(prefix);
+    if(!id||seen.has(id))continue;
+    seen.add(id);
+    ids.push(id);
   }
   return ids;
 }
@@ -74,48 +85,98 @@ async function collectPedidoPrefixes(listPage){
   } while(pageToken);
   return prefixes;
 }
+async function mapPool(items, limit, worker){
+  const list=items||[];
+  const out=new Array(list.length);
+  let next=0;
+  const width=Math.max(1, Math.min(limit||1, list.length||1));
+  async function pump(){
+    while(next<list.length){
+      const i=next++;
+      out[i]=await worker(list[i], i);
+    }
+  }
+  await Promise.all(Array.from({length:Math.min(width, Math.max(list.length,1))}, pump));
+  return out;
+}
 function summarizeCloudPedidoReads(settled){
   const orders = [];
+  const errors = [];
   let failed = 0;
   for(const item of settled || []){
     if(item && item.status === 'fulfilled' && item.value && typeof item.value === 'object' && !Array.isArray(item.value)){
       orders.push(item.value);
     } else {
       failed++;
+      const reason=item && item.reason;
+      if(reason)errors.push(String(reason.message||reason));
     }
   }
   orders.sort((a, b)=>(b.updatedAt || '').localeCompare(a.updatedAt || ''));
-  return {orders, failed, listed: (settled || []).length};
+  return {orders, failed, listed: (settled || []).length, errors};
+}
+function cloudReadHint(errors){
+  const text=(errors||[]).join(' ');
+  if(/CORS|blocked|Failed to fetch|Load failed|NetworkError/i.test(text))return ' El navegador bloqueó la descarga (CORS).';
+  if(/Tiempo agotado|tardó/i.test(text))return ' La lectura tardó demasiado.';
+  if(/unauthorized|permission|storage\/unauthorized/i.test(text))return ' Storage rechazó el acceso.';
+  if(/404|not found|object-not-found/i.test(text))return ' No se encontró pedido.json en esas carpetas.';
+  return errors && errors[0] ? ' '+errors[0].slice(0,140) : '';
 }
 function cloudLibraryNotice(summary){
   const orders = summary && summary.orders || [];
   const failed = summary && summary.failed || 0;
   const listed = summary && summary.listed || 0;
+  const hint=cloudReadHint(summary && summary.errors);
   if(!listed) return '';
-  if(failed && orders.length) return 'Se leyeron '+orders.length+' de '+listed+' pedidos. '+failed+' no se pudieron abrir. Puedes abrir los que sí aparecen.';
-  if(failed) return 'Se encontraron '+listed+' carpetas, pero no se pudo leer ningún pedido.json. Intenta de nuevo.';
+  if(failed && orders.length) return 'Se leyeron '+orders.length+' de '+listed+' pedidos. '+failed+' no se pudieron abrir. Puedes abrir los que sí aparecen.'+hint;
+  if(failed) return 'Se encontraron '+listed+' carpetas, pero no se pudo leer ningún pedido.json.'+hint+' Intenta de nuevo.';
   return '';
 }
 async function listCloudPedidoMetadata(listPrefixes, readPedido, timeouts){
   const listMs = timeouts && timeouts.list || CLOUD_LIST_TIMEOUT_MS;
   const readMs = timeouts && timeouts.pedido || CLOUD_PEDIDO_TIMEOUT_MS;
+  const concurrency = timeouts && timeouts.concurrency || CLOUD_PEDIDO_CONCURRENCY;
   const prefixes = await withTimeout(
     listPrefixes(),
     listMs,
     'La lista de pedidos tardó demasiado. Revisa la conexión e intenta de nuevo.'
   );
   const ids = cloudPedidoIdsFromPrefixes(prefixes);
-  const settled = await Promise.allSettled(ids.map(id=>withTimeout(
-    readPedido(id),
-    readMs,
-    'Tiempo agotado al leer '+id
-  )));
+  const settled = await mapPool(ids, concurrency, async id=>{
+    try{
+      const value=await withTimeout(readPedido(id), readMs, 'Tiempo agotado al leer '+id);
+      return {status:'fulfilled', value};
+    }catch(reason){
+      return {status:'rejected', reason};
+    }
+  });
   return summarizeCloudPedidoReads(settled);
+}
+function firebaseMediaUrl(path, token){
+  const clean=String(path||'').replace(/^\/+/, '');
+  const url='https://firebasestorage.googleapis.com/v0/b/'+TGM_CLOUD_BUCKET+'/o/'+encodeURIComponent(clean)+'?alt=media';
+  return token?url+'&token='+encodeURIComponent(token):url;
+}
+function storageObjectPath(pathOrUrl){
+  if(typeof pathOrUrl!=='string'||!pathOrUrl)return '';
+  if(pathOrUrl.startsWith('gs://')){
+    const rest=pathOrUrl.replace(/^gs:\/\/[^/]+\//,'');
+    return rest;
+  }
+  if(pathOrUrl.startsWith('https://')){
+    const encoded=pathOrUrl.match(/\/o\/([^?]+)/);
+    if(encoded)try{return decodeURIComponent(encoded[1])}catch{return ''}
+    const direct=pathOrUrl.match(/tgm-garment-studio\.firebasestorage\.app\/(.+?)(?:\?|$)/);
+    if(direct)return decodeURIComponent(direct[1]);
+  }
+  return pathOrUrl.replace(/^\/+/, '');
 }
 if(typeof globalThis!=='undefined'){
   Object.assign(globalThis,{
     isCloudArtRef,safeOrderId,safeCloudFileName,pedidoJsonPath,pedidoArtPath,cloudArtMime,cloudArtSlots,TGM_CLOUD_BUCKET,
-    CLOUD_LIST_PAGE_SIZE,CLOUD_LIST_TIMEOUT_MS,CLOUD_PEDIDO_TIMEOUT_MS,
-    withTimeout,cloudPedidoIdsFromPrefixes,collectPedidoPrefixes,summarizeCloudPedidoReads,cloudLibraryNotice,listCloudPedidoMetadata
+    CLOUD_LIST_PAGE_SIZE,CLOUD_LIST_TIMEOUT_MS,CLOUD_PEDIDO_TIMEOUT_MS,CLOUD_PEDIDO_CONCURRENCY,
+    withTimeout,cloudPedidoIdFromPrefix,cloudPedidoIdsFromPrefixes,collectPedidoPrefixes,mapPool,
+    summarizeCloudPedidoReads,cloudReadHint,cloudLibraryNotice,listCloudPedidoMetadata,firebaseMediaUrl,storageObjectPath
   });
 }
