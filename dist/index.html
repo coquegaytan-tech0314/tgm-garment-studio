@@ -2553,7 +2553,7 @@ initPhoto=function(){initPhotoBeforeOrbit();initPhotoOrbit()};
 
 /* Acabado Frente/Espalda: pick and drag estampados on the generated photobase. */
 photoCanPlaceArt=function(){return ensurePhoto().source==='generated'}
-photoShowsArtChrome=function(){return photoCanPlaceArt()}
+photoShowsArtChrome=function(){return photoCanPlaceArt()&&ensurePhoto().side!=='orbit'}
 function enterAcabadoPlaceMode(){
   setWorkspace('photo',false);
   const p=ensurePhoto();

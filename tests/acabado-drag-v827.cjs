@@ -79,6 +79,7 @@ function almost(actual,expected,tol,label){
 
   const xBeforeOrbit=run('selected().x');
   run("state.photo.side='orbit';syncPhotoUI()");
+  assert.equal(run('photoShowsArtChrome()'),false,'360° must not bake selection chrome into orbit sheets');
   assert.equal(run("$('#photoStage').dataset.view"),'orbit');
   assert.equal(run("$('#photoOrbit').hidden"),false);
   context.performance={now:()=>Date.now()};
