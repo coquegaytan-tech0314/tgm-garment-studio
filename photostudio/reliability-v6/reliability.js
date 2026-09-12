@@ -84,7 +84,7 @@ schedulePhoto=function(){
         photoPending=false;const ticket=photoTicket,canvases=[];
         for(const view of ['front','back']){
           const c=document.createElement('canvas');c.width=1000;c.height=1150;
-          await renderPhoto(c,view,{edit:currentTab==='art'});canvases.push(c);
+          await renderPhoto(c,view,{edit:photoShowsArtChrome()});canvases.push(c);
           if(ticket!==photoTicket)break;
         }
         if(ticket!==photoTicket)continue;

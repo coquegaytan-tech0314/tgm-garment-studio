@@ -1,0 +1,5 @@
+.photo-figure canvas.editable{cursor:default}
+.photo-figure canvas.editable.over-art{cursor:grab}
+.photo-figure canvas.dragging,.photo-figure canvas.editable.dragging{cursor:grabbing}
+.photo-stage.placing .photo-figure canvas.editable{touch-action:none}
+.photo-tools #photoEdit[aria-pressed=true]{box-shadow:0 0 0 2px #fff,0 0 0 3px var(--gaytan,#FF2E4D)}
