@@ -95,22 +95,24 @@ async function readCloudBytes(sdk,pathOrUrl){
   }catch(error){fail('media',error)}
   throw Error(errors.filter(Boolean).pop()||'No se pudo leer el archivo de la nube.');
 }
+function isPreviewArtSlot(slot){
+  return slot&&slot.key==='image';
+}
 async function hydrateCloudPedido(raw){
   if(!raw||typeof raw!=='object')return raw;
-  const slots=cloudArtSlots(raw).filter(slot=>isCloudArtRef(slot.object[slot.key]));
+  const slots=cloudArtSlots(raw).filter(slot=>isPreviewArtSlot(slot)&&isCloudArtRef(slot.object[slot.key]));
   if(!slots.length)return raw;
   const sdk=await ensureFirebaseStorage();
   const order=clone(raw);
-  const hydrated=cloudArtSlots(order);
-  for(const slot of hydrated){
+  for(const slot of cloudArtSlots(order)){
     const current=slot.object[slot.key];
-    if(!isCloudArtRef(current))continue;
+    if(!isPreviewArtSlot(slot)||!isCloudArtRef(current))continue;
     const bytes=await readCloudBytes(sdk,current);
     const mime=cloudArtMime(current);
     const dataUrl=await blobToDataUrl(new Blob([bytes],{type:mime}));
-    if(slot.key==='image'&&mime==='image/jpeg'&&typeof normalizeLogo==='function'){
+    if(mime==='image/jpeg'&&typeof normalizeLogo==='function'){
       slot.object[slot.key]=await normalizeLogo(dataUrl,'jpeg');
-    }else if(slot.key==='image'&&mime==='image/svg+xml'&&typeof normalizeLogo==='function'){
+    }else if(mime==='image/svg+xml'&&typeof normalizeLogo==='function'){
       slot.object[slot.key]=await normalizeLogo(dataUrl,'svg');
     }else{
       slot.object[slot.key]=dataUrl;
@@ -153,10 +155,14 @@ async function readCloudPedidoJson(sdk,orderId){
 async function listCloudPedidos(){
   const sdk=await ensureFirebaseStorage();
   if(typeof sdk.list!=='function')throw Error('Nube: el SDK no puede listar carpetas de pedidos.');
-  return listCloudPedidoMetadata(
+  const live=await listCloudPedidoMetadata(
     ()=>collectPedidoPrefixes(options=>sdk.list(storageRefFor(sdk,'pedidos'),options)),
     id=>readCloudPedidoJson(sdk,id)
   );
+  if(live.orders.length)return live;
+  const snap=typeof CLOUD_PEDIDO_SNAPSHOT!=='undefined'&&Array.isArray(CLOUD_PEDIDO_SNAPSHOT)?CLOUD_PEDIDO_SNAPSHOT:[];
+  if(snap.length)return {orders:snap.slice(),failed:0,listed:snap.length,errors:live.errors||[]};
+  return live;
 }
 async function openCloudPedido(raw){
   await loadOrder(raw);

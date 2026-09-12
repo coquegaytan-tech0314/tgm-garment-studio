@@ -11,6 +11,9 @@ const path=require('path');
   assert.match(built,/MGM · v8\.2\.6/);
   assert.equal(built.includes('listAll'),false,'built app must not ship listAll');
   assert.match(built,/Leyendo pedidos de la nube/);
+  assert.match(built,/CLOUD_PEDIDO_SNAPSHOT/);
+  assert.match(built,/CR - POLO BLANCO/);
+  assert.match(built,/CUMBRES - RHINOS/);
   assert.equal(run('VERSION'),8,'Schema VERSION stays 8');
 
   await run('init()');
@@ -78,6 +81,24 @@ const path=require('path');
   assert.equal($('#cloudDialog').open,false);
   assert.equal(run('state.number'),'CR - POLO BLANCO');
   assert.equal(run('state.client'),'CUMBRES - RHINOS');
+
+  const beforeHydrate=context.byteCalls.length;
+  context.snapLike=Object.assign(run('blank()'),{
+    id:'folio-snap',number:'CR - POLO SNAP',client:'CUMBRES - RHINOS',garment:'polo',neck:'polo',
+    artworks:[{id:'art-1',view:'front',zone:'chest',x:.5,y:.42,scale:.22,image:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',logo:{original:{data:'https://firebasestorage.googleapis.com/v0/b/tgm-garment-studio.firebasestorage.app/o/pedidos%2Ffolio-snap%2Foriginal.png?alt=media',name:'logo.png',type:'png'}}}]
+  });
+  await run('hydrateCloudPedido(snapLike)');
+  assert.equal(context.byteCalls.length,beforeHydrate,'opening must not block on original/attachment cloud refs');
+
+  context.sdk.getBytes=async(ref)=>{context.byteCalls.push(ref);throw Error('Failed to fetch');};
+  delete context.sdk.getDownloadURL;
+  delete context.fetch;
+  await run('openCloudLibrary()');
+  const snapRows=$('#cloudOrders').children.filter(c=>c.className==='saved-row');
+  assert(snapRows.length>=12,'same-origin snapshot must list CUMBRES–RHINOS when live media reads fail');
+  const snapTitles=snapRows.map(r=>r.children[0].children[0].textContent).join(' | ');
+  assert.match(snapTitles,/CUMBRES - RHINOS/);
+  assert.match(snapTitles,/CR - POLO BLANCO/);
 
   console.log('PASS cloud library lists pedido.json in parallel without listAll');
 })().catch(error=>{console.error(error);process.exitCode=1});

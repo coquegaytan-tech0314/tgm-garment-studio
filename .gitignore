@@ -26,6 +26,9 @@ Thumbs.db
 *-pedido-completo.json
 *-pedido.json
 
+# Generated cloud library snapshot (embedded into dist/index.html at build)
+photostudio/cloud/snapshot.json
+
 # Local packaging output; dist/index.html is intentionally versioned
 *.zip
 *.bundle
