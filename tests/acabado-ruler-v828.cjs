@@ -88,5 +88,10 @@ function almost(actual,expected,tol,label){
   await run("renderPhoto(chrome,'front',{edit:photoShowsArtChrome()})");
   assert.equal(chrome.width,800);
 
+  run("state=blank();state.garment='playera';photoBaseDefaults();state.client='CUMBRES - RHINOS';state.number='RHINOS-REGLA';addArt();selected().kind='text';selected().text='RHINOS';selected().color='#111111';selected().width=140;rememberArtworkPlacement(selected())");
+  const pages=await run('referenceCanvases()');
+  assert(pages.length>=2,'ficha includes an aplicación page');
+  assert.match(run('placementFichaText(selected())'),/Desde el cuello: .+ cm \/ .+ in/);
+
   console.log('PASS v8.2.8 Acabado dual-unit placement rulers and ficha measures');
 })().catch(error=>{console.error(error);process.exitCode=1});

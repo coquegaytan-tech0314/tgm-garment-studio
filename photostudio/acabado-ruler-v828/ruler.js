@@ -22,15 +22,21 @@ function placementFrame(view){
   const left=r.x+r.w*g.leftU,right=r.x+r.w*g.rightU,neck=r.y+r.h*g.neckV,hem=r.y+r.h*g.hemV;
   return {left,right,neck,hem,center:(left+right)/2,cmPerX:g.chestCm/Math.max(1,right-left),cmPerY:g.lengthCm/Math.max(1,hem-neck),chestCm:g.chestCm,lengthCm:g.lengthCm};
 }
-function estimatePlacementGeom(a){
-  const pose=photoPose(a);
-  const height=a.kind==='text'?pose.width*.32:pose.width*.62;
-  return {pose,width:pose.width,height};
+function estimatePlacementHeight(a,pose){
+  if(a._placeH>0)return a._placeH;
+  if(a.kind!=='text')return pose.width*.62;
+  try{
+    const c=document.createElement('canvas').getContext('2d');
+    c.font='700 100px '+fontFamily(a);
+    const height=pose.width*100/Math.max(c.measureText(a.text||' ').width,100)*1.1;
+    return height*Math.min(1,680/height);
+  }catch{return pose.width*.32}
 }
 function placementBox(a,geom){
   const pose=geom?.pose||photoPose(a);
   const width=geom?.width??pose.width;
-  const height=geom?.height??(a.kind==='text'?pose.width*.32:pose.width*.62);
+  const height=geom?.height??estimatePlacementHeight(a,pose);
+  if(geom?.height)a._placeH=geom.height;
   return {pose,width,height,left:pose.x-width/2,right:pose.x+width/2,top:pose.y-height/2,bottom:pose.y+height/2};
 }
 function computeArtworkPlacement(a,geom){
@@ -154,27 +160,12 @@ async function drawPlacementRulers(canvas,view){
   drawPlacementGuideLine(ctx,hemX-5,box.bottom,hemX+5,box.bottom);
   drawPlacementGuideLine(ctx,hemX-5,frame.hem,hemX+5,frame.hem);
   drawPlacementLabel(ctx,'Bajo '+formatDual(p.hemCm),hemX+8,(box.bottom+frame.hem)/2,'left');
-  const guideY=Math.max(frame.neck+16,box.top-22);
+  const guideY=Math.max(frame.neck+14,box.top-20);
   drawPlacementGuideLine(ctx,frame.center,guideY,box.pose.x,guideY);
   drawPlacementGuideLine(ctx,frame.center,guideY-5,frame.center,guideY+5);
   drawPlacementGuideLine(ctx,box.pose.x,guideY-5,box.pose.x,guideY+5);
-  drawPlacementLabel(ctx,'Centro '+placementSideLabel(p.centerCm),(frame.center+box.pose.x)/2,guideY-10,'center');
-  const chipX=clamp(box.pose.x+box.width/2+12,24,W-210),chipY=clamp(box.pose.y-box.height/2-8,24,H-86);
-  ctx.fillStyle='#fffffff2';
-  ctx.strokeStyle='#012169';
-  ctx.lineWidth=1.2;
-  ctx.beginPath();
-  ctx.roundRect?ctx.roundRect(chipX,chipY,198,72,8):(ctx.rect(chipX,chipY,198,72));
-  ctx.fill();ctx.stroke();
-  ctx.font='700 11px Arial';
-  ctx.fillStyle='#012169';
-  ctx.textAlign='left';
-  ctx.textBaseline='alphabetic';
-  ctx.fillText('Regla · cm / pulgadas',chipX+10,chipY+16);
-  ctx.font='12px Arial';
-  ctx.fillText('Cuello  '+formatDual(p.neckCm),chipX+10,chipY+34);
-  ctx.fillText('Centro  '+placementSideLabel(p.centerCm),chipX+10,chipY+50);
-  ctx.fillText('Bajo    '+formatDual(p.hemCm),chipX+10,chipY+66);
+  const centerShort=Math.abs(p.centerCm)<0.15?'Centrado':formatDual(Math.abs(p.centerCm))+(p.centerCm>0?' der.':' izq.');
+  drawPlacementLabel(ctx,centerShort,(frame.center+box.pose.x)/2,guideY-11,'center');
   ctx.restore();
 }
 function syncPlacementReadout(canvas){
@@ -189,10 +180,10 @@ function syncPlacementReadout(canvas){
   const stage=$('#photoStage');
   if(!host||!stage)return;
   const rect=host.getBoundingClientRect(),stageRect=stage.getBoundingClientRect(),pose=photoPose(a);
-  const left=rect.left-stageRect.left+(pose.x/W)*rect.width+14;
-  const top=rect.top-stageRect.top+(pose.y/H)*rect.height-78;
-  readout.style.left=Math.max(8,Math.min(left,stageRect.width-220))+'px';
-  readout.style.top=Math.max(8,top)+'px';
+  const left=rect.left-stageRect.left+(pose.x/W)*rect.width+Math.max(36,pose.width*.35);
+  const top=rect.top-stageRect.top+(pose.y/H)*rect.height-24;
+  readout.style.left=Math.max(8,Math.min(left,stageRect.width-228))+'px';
+  readout.style.top=Math.max(8,Math.min(top,stageRect.height-96))+'px';
 }
 function syncPlacementArtField(){
   const field=$('#artPlacement');
