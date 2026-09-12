@@ -31,7 +31,9 @@ async function ensureFirebaseStorage(){
       uploadBytes:storageMod.uploadBytes,
       getDownloadURL:storageMod.getDownloadURL,
       list:storageMod.list,
-      getBytes:storageMod.getBytes
+      getBytes:storageMod.getBytes,
+      getDownloadURL:storageMod.getDownloadURL,
+      getMetadata:storageMod.getMetadata
     };
     return TGM_CLOUD.sdk;
   })().catch(error=>{TGM_CLOUD.loading=null;throw error});
@@ -49,9 +51,49 @@ async function blobToDataUrl(blob){
     reader.readAsDataURL(blob);
   });
 }
+async function bytesFromUnknown(data){
+  if(!data)throw Error('Archivo de la nube vacío.');
+  if(typeof data.arrayBuffer==='function'&&typeof data.size==='number')return new Uint8Array(await data.arrayBuffer());
+  if(ArrayBuffer.isView(data))return new Uint8Array(data.buffer,data.byteOffset,data.byteLength);
+  try{
+    const view=new Uint8Array(data);
+    if(view.byteLength||data.byteLength===0)return view;
+  }catch{}
+  throw Error('Respuesta de Storage ilegible.');
+}
+async function fetchCloudUrl(url){
+  const res=await fetch(url,{mode:'cors',credentials:'omit'});
+  if(!res.ok)throw Error('Nube: HTTP '+res.status+' al leer el archivo.');
+  return bytesFromUnknown(await res.arrayBuffer());
+}
 async function readCloudBytes(sdk,pathOrUrl){
-  const bytes=await sdk.getBytes(storageRefFor(sdk,pathOrUrl));
-  return bytes instanceof Uint8Array?bytes:new Uint8Array(bytes);
+  const errors=[];
+  const fail=(label,error)=>{errors.push(label+': '+(error&&error.message||error));return null};
+  if(typeof pathOrUrl==='string'&&pathOrUrl.startsWith('https://')){
+    try{return await fetchCloudUrl(pathOrUrl)}catch(error){fail('https',error)}
+  }
+  const ref=storageRefFor(sdk,pathOrUrl);
+  try{
+    const bytes=await withTimeout(sdk.getBytes(ref),4000,'getBytes lento');
+    return await bytesFromUnknown(bytes);
+  }catch(error){fail('getBytes',error)}
+  if(typeof sdk.getDownloadURL==='function'){
+    try{return await fetchCloudUrl(await sdk.getDownloadURL(ref))}catch(error){fail('downloadURL',error)}
+  }
+  try{
+    const path=storageObjectPath(typeof pathOrUrl==='string'?pathOrUrl:(ref&&ref.fullPath)||'');
+    if(path){
+      let token='';
+      if(typeof sdk.getMetadata==='function'){
+        try{
+          const meta=await sdk.getMetadata(ref);
+          token=String(meta&&meta.downloadTokens||'').split(',')[0];
+        }catch{}
+      }
+      return await fetchCloudUrl(firebaseMediaUrl(path,token));
+    }
+  }catch(error){fail('media',error)}
+  throw Error(errors.filter(Boolean).pop()||'No se pudo leer el archivo de la nube.');
 }
 async function hydrateCloudPedido(raw){
   if(!raw||typeof raw!=='object')return raw;

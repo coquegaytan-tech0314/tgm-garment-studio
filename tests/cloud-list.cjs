@@ -8,7 +8,7 @@ const path=require('path');
   assert(!cloudJs.includes('listAll'),'cloud library must not call recursive listAll');
   assert(cloudJs.includes('sdk.list('),'cloud library must paginate with non-recursive list()');
   assert.match(cloudJs,/hydrateCloudPedido\(raw\)/,'opening a pedido must still hydrate art');
-  assert.match(built,/MGM · v8\.2\.5/);
+  assert.match(built,/MGM · v8\.2\.6/);
   assert.equal(built.includes('listAll'),false,'built app must not ship listAll');
   assert.match(built,/Leyendo pedidos de la nube/);
   assert.equal(run('VERSION'),8,'Schema VERSION stays 8');
@@ -21,13 +21,21 @@ const path=require('path');
   };
   context.listCalls=[];
   context.byteCalls=[];
+  context.urlCalls=[];
   context.pedidos=pedidos;
+  context.fetch=async url=>{
+    const match=decodeURIComponent(String(url)).match(/pedidos\/([^/?]+)\/pedido\.json/);
+    const order=match&&pedidos[match[1]];
+    if(!order)throw Error('fetch missing '+url);
+    const bytes=encoder.encode(JSON.stringify(order));
+    return {ok:true,arrayBuffer:async()=>bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength)};
+  };
   context.sdk={
     storage:{},
     ref:(_,path)=>path,
     list:async(ref,options)=>{
       context.listCalls.push({ref,options});
-      return {prefixes:Object.keys(pedidos).map(name=>({name})),items:[{name:'stray.json'}]};
+      return {prefixes:Object.keys(pedidos).map(name=>({name:'pedidos/'+name+'/',fullPath:'pedidos/'+name+'/'})),items:[{name:'stray.json'}]};
     },
     listAll:async()=>{throw Error('listAll must not be used');},
     getBytes:async(ref)=>{
@@ -37,6 +45,11 @@ const path=require('path');
       const order=pedidos[id];
       if(!order)throw Error('missing '+ref);
       return encoder.encode(JSON.stringify(order));
+    },
+    getDownloadURL:async(ref)=>{
+      context.urlCalls.push(ref);
+      const id=String(ref).split('/')[1];
+      return 'https://firebasestorage.googleapis.com/v0/b/tgm-garment-studio.firebasestorage.app/o/pedidos%2F'+id+'%2Fpedido.json?alt=media&token=test';
     }
   };
   run('ensureFirebaseStorage=async()=>sdk');
@@ -47,16 +60,17 @@ const path=require('path');
   assert.ok(context.listCalls[0].options.maxResults<=100);
   assert.ok(context.byteCalls.every(ref=>String(ref).endsWith('/pedido.json')),'list must download only pedido.json');
   assert.equal(context.byteCalls.length,2);
+  assert.equal(context.urlCalls.length,1,'getBytes failure must fall back to downloadURL');
 
   const root=$('#cloudOrders');
   assert.equal(root.children.some(c=>c.className==='cloud-loading'),false,'dialog must leave the loading state');
   const notice=root.children.find(c=>c.className==='cloud-list-error');
-  assert.match(notice.textContent,/Se leyeron 1 de 2 pedidos/);
+  assert.equal(notice,undefined,'downloadURL fallback should recover the second pedido.json');
   const rows=root.children.filter(c=>c.className==='saved-row');
-  assert.equal(rows.length,1,'failed pedido.json stays out of the visible rows');
-  const title=rows[0].children[0].children[0];
-  assert.equal(title.textContent,'#CR - POLO BLANCO · CUMBRES - RHINOS');
-  assert.match($('#cloudStatus').textContent,/1 pedidos · 1 con error/);
+  assert.equal(rows.length,2,'fullPath prefixes and downloadURL fallback list both CUMBRES–RHINOS folios');
+  const titles=rows.map(r=>r.children[0].children[0].textContent).sort();
+  assert.deepEqual(titles,['#CR - HOODIE · CUMBRES - RHINOS','#CR - POLO BLANCO · CUMBRES - RHINOS']);
+  assert.match($('#cloudStatus').textContent,/2 pedidos listos/);
 
   const openBtn=rows[0].children.find(c=>c.tagName==='BUTTON');
   assert.equal(openBtn.textContent,'Abrir');

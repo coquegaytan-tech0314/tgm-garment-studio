@@ -3,7 +3,7 @@ from pathlib import Path
 import base64
 import re
 
-UI_VERSION = '8.2.5'
+UI_VERSION = '8.2.6'
 
 ICONS = '''
 <symbol id="i-lab" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10.2" stroke-dasharray="1.5 1.7"/><path d="M10 6.6h4v1.3h-1.15v4.4c1 .5 1.65 1.45 1.65 2.6a3.5 3.5 0 1 1-7 0c0-1.15.65-2.1 1.65-2.6V7.9H10z"/><circle cx="13.15" cy="16.2" r=".45"/></symbol>
