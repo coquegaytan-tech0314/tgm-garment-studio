@@ -8,7 +8,7 @@ const PLACEMENT_GUIDES={
   sleevelessMujer:{chestCm:42,lengthCm:60,neckV:.13,hemV:.94,leftU:.32,rightU:.68},
   zipneck:{chestCm:52,lengthCm:70,neckV:.16,hemV:.95,leftU:.22,rightU:.78}
 };
-let photoRulerOn=true;
+let photoRulerOn=true,photoDragLive=false,photoRulerPaint=0,photoLiveTimer=0;
 function inchesFromCm(cm){return Number(cm)/CM_PER_INCH}
 function cmFromInches(inches){return Number(inches)*CM_PER_INCH}
 function roundPlacement(value){return Math.round(Number(value)*10)/10}
@@ -133,12 +133,30 @@ function drawPlacementGuideLine(ctx,x1,y1,x2,y2){
   ctx.lineTo(x2,y2);
   ctx.stroke();
 }
+function ensureRulerLayer(canvas){
+  const host=canvas.parentElement;if(!host)return null;
+  let layer=host.querySelector('.photo-ruler-layer');
+  if(!layer){
+    layer=document.createElement('canvas');
+    layer.className='photo-ruler-layer';
+    layer.setAttribute('aria-hidden','true');
+    host.append(layer);
+  }
+  if(layer.width!==canvas.width)layer.width=canvas.width;
+  if(layer.height!==canvas.height)layer.height=canvas.height;
+  return layer;
+}
+function clearRulerLayer(canvas){
+  const layer=canvas.parentElement?.querySelector('.photo-ruler-layer');
+  if(!layer)return;
+  layer.getContext('2d').clearRect(0,0,layer.width,layer.height);
+}
 async function drawPlacementRulers(canvas,view){
   const a=selected();
   if(!a||a.view!==view)return;
   const pose=photoPose(a),geom=await artGeometry(pose),box=placementBox(a,{pose,...geom}),frame=placementFrame(view),p=computeArtworkPlacement(a,{pose,...geom});
   rememberArtworkPlacement(a,{pose,...geom});
-  const ctx=canvas.getContext('2d'),scale=canvas.width/W;
+  const ctx=canvas.getContext('2d'),scale=canvas.width/W||1;
   ctx.save();
   ctx.setTransform(scale,0,0,scale,0,0);
   ctx.strokeStyle='#012169cc';
@@ -208,11 +226,26 @@ function bindPlacementRuler(){
   btn.dataset.rulerBound='1';
   btn.addEventListener('click',()=>{photoRulerOn=!photoRulerOn;syncPlacementRulerUI();schedulePhoto()});
 }
-const renderPhotoBeforeRuler=renderPhoto;
-renderPhoto=async function(canvas,view,options={}){
-  const result=await renderPhotoBeforeRuler(canvas,view,options);
-  if(options.edit&&photoShowsPlacementGuides(view))await drawPlacementRulers(canvas,view);
-  return result;
+async function paintRulerLayer(view){
+  const canvas=$(view==='back'?'#photoBack':'#photoFront');
+  if(!canvas)return;
+  const layer=ensureRulerLayer(canvas);
+  if(!layer)return;
+  const ctx=layer.getContext('2d');
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.clearRect(0,0,layer.width,layer.height);
+  if(photoShowsPlacementGuides(view))await drawPlacementRulers(layer,view);
+}
+async function paintAllRulerLayers(){
+  const ticket=++photoRulerPaint;
+  await paintRulerLayer('front');
+  if(ticket!==photoRulerPaint)return;
+  await paintRulerLayer('back');
+}
+const afterPhotoSheetsBeforeRuler=typeof afterPhotoSheets==='function'?afterPhotoSheets:null;
+afterPhotoSheets=async function(canvases){
+  if(afterPhotoSheetsBeforeRuler)await afterPhotoSheetsBeforeRuler(canvases);
+  await paintAllRulerLayers();
 };
 const photoPutPositionBeforeRuler=photoPutPosition;
 photoPutPosition=function(a,x,y){
@@ -222,7 +255,19 @@ photoPutPosition=function(a,x,y){
 const setupPhotoDragBeforeRuler=setupPhotoDrag;
 setupPhotoDrag=function(canvas,view){
   setupPhotoDragBeforeRuler(canvas,view);
-  canvas.addEventListener('pointermove',()=>{if((canvas.className||'').includes('dragging'))syncPlacementReadout(canvas)});
+  canvas.addEventListener('pointermove',()=>{
+    if(!(canvas.className||'').includes('dragging'))return;
+    photoDragLive=true;
+    syncPlacementReadout(canvas);
+    void paintRulerLayer(view);
+  });
+  const stopLive=()=>{
+    if(!photoDragLive)return;
+    photoDragLive=false;
+    clearTimeout(photoLiveTimer);photoLiveTimer=0;
+    changed();
+  };
+  for(const event of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(event,stopLive);
 };
 const syncPhotoUIBeforeRuler=syncPhotoUI;
 syncPhotoUI=function(){
@@ -240,6 +285,12 @@ const changedBeforeRuler=changed;
 changed=function(){
   const a=selected();
   if(a)rememberArtworkPlacement(a);
+  if(photoDragLive){
+    dirty=true;
+    state.updatedAt=new Date().toISOString();
+    if(!photoLiveTimer)photoLiveTimer=setTimeout(()=>{photoLiveTimer=0;if(photoDragLive)schedulePhoto()},70);
+    return;
+  }
   changedBeforeRuler();
 };
 const clientSpecLinesBeforeRuler=clientSpecLines;
