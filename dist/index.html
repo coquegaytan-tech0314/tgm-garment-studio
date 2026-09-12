@@ -2804,11 +2804,12 @@ function clearRulerLayer(canvas){
   if(!layer)return;
   layer.getContext('2d').clearRect(0,0,layer.width,layer.height);
 }
-async function drawPlacementRulers(canvas,view){
+async function drawPlacementRulers(canvas,view,geom){
   const a=selected();
   if(!a||a.view!==view)return;
-  const pose=photoPose(a),geom=await artGeometry(pose),box=placementBox(a,{pose,...geom}),frame=placementFrame(view),p=computeArtworkPlacement(a,{pose,...geom});
-  rememberArtworkPlacement(a,{pose,...geom});
+  if(!geom){const pose=photoPose(a);geom={pose,...await artGeometry(pose)}}
+  const box=placementBox(a,geom),frame=placementFrame(view),p=computeArtworkPlacement(a,geom);
+  rememberArtworkPlacement(a,geom);
   const ctx=canvas.getContext('2d'),scale=canvas.width/W||1;
   ctx.save();
   ctx.setTransform(scale,0,0,scale,0,0);
@@ -2850,9 +2851,9 @@ function syncPlacementReadout(canvas){
   const host=canvas||$(a.view==='back'?'#photoBack':'#photoFront');
   const stage=$('#photoStage');
   if(!host||!stage)return;
-  const rect=host.getBoundingClientRect(),stageRect=stage.getBoundingClientRect(),pose=photoPose(a);
-  const left=rect.left-stageRect.left+(pose.x/W)*rect.width+Math.max(36,pose.width*.35);
-  const top=rect.top-stageRect.top+(pose.y/H)*rect.height-24;
+  const rect=host.getBoundingClientRect(),stageRect=stage.getBoundingClientRect(),box=placementBox(a);
+  const left=rect.left-stageRect.left+(box.right/W)*rect.width+10;
+  const top=rect.top-stageRect.top+(box.top/H)*rect.height;
   readout.style.left=Math.max(8,Math.min(left,stageRect.width-228))+'px';
   readout.style.top=Math.max(8,Math.min(top,stageRect.height-96))+'px';
 }
@@ -2884,10 +2885,15 @@ async function paintRulerLayer(view){
   if(!canvas)return;
   const layer=ensureRulerLayer(canvas);
   if(!layer)return;
+  const ticket=++photoRulerPaint;
   const ctx=layer.getContext('2d');
   ctx.setTransform(1,0,0,1,0,0);
   ctx.clearRect(0,0,layer.width,layer.height);
-  if(photoShowsPlacementGuides(view))await drawPlacementRulers(layer,view);
+  if(!photoShowsPlacementGuides(view))return;
+  const a=selected();if(!a)return;
+  const pose=photoPose(a),geom=await artGeometry(pose);
+  if(ticket!==photoRulerPaint)return;
+  await drawPlacementRulers(layer,view,{pose,...geom});
 }
 async function paintAllRulerLayers(){
   const ticket=++photoRulerPaint;
@@ -2910,7 +2916,7 @@ setupPhotoDrag=function(canvas,view){
   setupPhotoDragBeforeRuler(canvas,view);
   canvas.addEventListener('pointermove',()=>{
     if(!(canvas.className||'').includes('dragging'))return;
-    photoDragLive=true;
+    if(!photoDragLive){photoDragLive=true;if(typeof photoTicket==='number')photoTicket++}
     syncPlacementReadout(canvas);
     void paintRulerLayer(view);
   });
