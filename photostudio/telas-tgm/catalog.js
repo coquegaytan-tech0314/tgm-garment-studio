@@ -1,17 +1,45 @@
-/* TGM = factory. MGM = finishing only (~1200–1500 garments/week).
-   Curated presets until Producción delivers the full inventory. Do not invent SKUs.
-   PIQUÉ OLMO is 50% algodón / 50% poliéster (Koke). Never lycra. */
+/* TGM Catálogo de Telas — curated subset using Production Manager wording.
+   Full 156-row seed CSV was not in this workspace or Dropbox at build time.
+   compose.py loads tgm-catalogo-telas-SEED_2026_05_25.csv when present.
+   PIQUÉ OLMO is Poliéster/Algodón — catalog has no exact %; never lycra. */
 const TGM_TELA_CUSTOM_KEY='tgm-estudio-telas-custom';
+let TGM_TELA_SEED_SOURCE='curated';
 const TGM_TELA_CATALOG=[
-  {id:'fomer',nombre:'FOMER',composicion:'Poliéster 100%',pesoGm2:135,nota:'liso · knitt liso, sin textura piqué',texture:'smooth',composition:'polyester',cue:'fomer'},
-  {id:'pique-atlante',nombre:'PIQUÉ ATLANTE',composicion:'Poliéster Multifilamento',pesoGm2:160,nota:'piqué · mismo knitt que Olmo, más ligero · warehouse / active wear',texture:'pique',composition:'polyester',cue:'atlante'},
-  {id:'pique-olmo',nombre:'PIQUÉ OLMO',composicion:'50% algodón / 50% poliéster',pesoGm2:216,nota:'piqué clásico · schools · no lycra',texture:'pique',composition:'polycotton',cue:'olmo'},
-  {id:'chifon-140',nombre:'CHIFÓN 140',composicion:'Poliéster 100%',pesoGm2:'',nota:'playera cuello redondo · default MGM',texture:'smooth',composition:'polyester',alias:'Chifón'},
-  {id:'mayki-plus',nombre:'MAYKI PLUS',composicion:'Poliéster Multifilamento',pesoGm2:'',nota:'playera · ops Maiky Plus',texture:'smooth',composition:'polyester',alias:'Maiky Plus'},
+  {id:'fomer',nombre:'FOMER',composicion:'Poliéster 100%',pesoGm2:135,nota:'liso',texture:'smooth',composition:'polyester',cue:'fomer'},
+  {id:'pique-atlante',nombre:'PIQUÉ ATLANTE',composicion:'Poliéster Multifilamento',pesoGm2:160,nota:'piqué',texture:'pique',composition:'polyester',cue:'atlante'},
+  {id:'pique-olmo',nombre:'PIQUÉ OLMO',composicion:'Poliéster/Algodón',pesoGm2:216,nota:'piqué · catálogo sin porcentaje exacto',texture:'pique',composition:'polycotton',cue:'olmo'},
+  {id:'chifon-140',nombre:'CHIFÓN 140',composicion:'',pesoGm2:'',nota:'playera cuello redondo · default MGM',texture:'smooth',composition:'polyester',alias:'Chifón'},
+  {id:'mayki-plus',nombre:'MAYKI',composicion:'Poliéster Multifilamento',pesoGm2:'',nota:'ops MAYKI PLUS / Maiky Plus',texture:'smooth',composition:'polyester',alias:'MAYKI PLUS'},
   {id:'millenium',nombre:'MILLENIUM',composicion:'Nylon 100%',pesoGm2:70,nota:'hoodie',texture:'smooth',composition:'other'},
   {id:'rib-millenium',nombre:'RIB MILLENIUM',composicion:'Poliéster/Algodón/Elastano',pesoGm2:415,nota:'rib',texture:'fleece',composition:'other'}
 ];
 const TGM_TELA_DEFAULTS={polo:'pique-olmo',playera:'chifon-140',hoodie:'millenium'};
+const TGM_TELA_KNOWN_NAMES={FOMER:'fomer','PIQUE ATLANTE':'pique-atlante','PIQUÉ ATLANTE':'pique-atlante','PIQUE OLMO':'pique-olmo','PIQUÉ OLMO':'pique-olmo','CHIFON 140':'chifon-140','CHIFÓN 140':'chifon-140',MAYKI:'mayki-plus','MAYKI PLUS':'mayki-plus',MILLENIUM:'millenium','RIB MILLENIUM':'rib-millenium'};
+function telaMergeSeed(curated,rows,source){
+  if(source)TGM_TELA_SEED_SOURCE=source;
+  if(!Array.isArray(rows)||!rows.length)return curated;
+  const used=new Set(curated.map(t=>t.id)),byId=Object.fromEntries(curated.map(t=>[t.id,{...t}]));
+  const extras=[];
+  for(const raw of rows){
+    const nombre=String(raw.nombre||'').trim();if(!nombre)continue;
+    const key=nombre.toUpperCase().normalize('NFD').replace(/\p{M}/gu,'');
+    const known=TGM_TELA_KNOWN_NAMES[nombre.toUpperCase()]||TGM_TELA_KNOWN_NAMES[key];
+    const composicion=String(raw.composicion||'').trim();
+    const nota=String(raw.nota||'').trim();
+    const peso=raw.pesoGm2===''||raw.pesoGm2==null?'':Number(raw.pesoGm2);
+    if(known&&byId[known]){
+      if(composicion)byId[known].composicion=composicion;
+      if(peso!==''&&Number.isFinite(peso))byId[known].pesoGm2=peso;
+      if(nota)byId[known].nota=nota;
+      continue;
+    }
+    let id=key.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'tela';
+    while(used.has(id))id=id+'-x';
+    used.add(id);
+    extras.push({id,nombre,composicion,pesoGm2:Number.isFinite(peso)?peso:'',nota,texture:/piqu/i.test(nombre+nota)?'pique':/liso|chif/i.test(nombre+nota)?'smooth':'',composition:''});
+  }
+  return Object.values(byId).concat(extras);
+}
 function telaBlank(){return {source:'',id:'',nombre:'',composicion:'',pesoGm2:'',nota:'',texture:''}}
 function ensureTela(order=state){if(!order.tela||typeof order.tela!=='object'||Array.isArray(order.tela))order.tela=telaBlank();return order.tela}
 function validateTela(raw){
@@ -65,9 +93,10 @@ function telaSuggestedIds(garment=state.garment){
   return['chifon-140'];
 }
 function telaHelpText(garment=state.garment){
-  const role='TGM es la fábrica. MGM solo acaba prendas (~1200–1500/semana). Inventario completo lo confirma Producción; no se inventan SKUs. ';
-  if(garment==='polo')return role+'Presets polo: Olmo, Atlante y Fomer. Editables + desarrollo nuevo.';
-  if(garment==='playera')return role+'Playera cuello redondo: CHIFÓN (default), Fomer o Maiky Plus según cliente. Editables + desarrollo nuevo.';
+  const seed=TGM_TELA_SEED_SOURCE==='curated'?'Subconjunto curado (el CSV de 156 telas no estaba en el box). ':'Catálogo cargado de '+TGM_TELA_SEED_SOURCE+'. ';
+  const role='TGM es la fábrica. MGM solo acaba prendas (~1200–1500/semana). '+seed+'Wording de catálogo; no se inventan % ni SKUs. ';
+  if(garment==='polo')return role+'Presets: PIQUÉ OLMO (Poliéster/Algodón), PIQUÉ ATLANTE, FOMER. Editables + otra / desarrollo nuevo.';
+  if(garment==='playera')return role+'Playera: CHIFÓN 140 (default), FOMER o MAYKI (ops MAYKI PLUS / Maiky Plus). Editables + desarrollo nuevo.';
   return role+'Elige una tela o guarda un desarrollo nuevo.';
 }
 function telaOptionLabel(t){

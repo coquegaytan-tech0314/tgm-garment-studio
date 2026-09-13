@@ -10,10 +10,11 @@ function sample(canvas,x,y){
   const built=require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8');
   assert.match(built,/MGM · v8\.2\.10/);
   assert.match(built,/PIQUÉ OLMO/);
-  assert.match(built,/50% algodón \/ 50% poliéster/);
+  assert.match(built,/Poliéster\/Algodón/);
   assert.equal(built.includes('50% lycra')||built.includes('50% cotton / 50% lycra'),false);
-  assert.match(built,/nunca lycra|no lycra/);
+  assert.match(built,/sin porcentaje exacto/);
   assert.match(built,/MAYKI PLUS/);
+  assert.match(built,/function telaMergeSeed/);
   assert.match(built,/MILLENIUM/);
   assert.match(built,/id="telaCatalog"/);
   assert.match(built,/id="telaKnitt"/);
@@ -26,11 +27,16 @@ function sample(canvas,x,y){
   assert.equal(run('state.fabric'),'PIQUÉ OLMO');
   assert.equal(run('state.gsm'),216);
   assert.equal(run('state.texture'),'pique');
-  assert.equal(run('ensureTela().composicion'),'50% algodón / 50% poliéster');
-  assert.equal(run('ensureTela().composicion.toLowerCase().includes("lycra")'),false,'Olmo is cotton/polyester, not lycra');
-  assert.match(run('ensureReference().compositionNotes'),/50% algodón \/ 50% poliéster/);
-  assert.match(run('state.stretch'),/50% algodón \/ 50% poliéster/);
+  assert.equal(run('ensureTela().composicion'),'Poliéster/Algodón');
+  assert.equal(run('ensureTela().composicion.includes("50")'),false,'Olmo has no invented fiber %');
+  assert.equal(run('ensureTela().composicion.toLowerCase().includes("lycra")'),false);
+  assert.match(run('ensureReference().compositionNotes'),/Poliéster\/Algodón/);
   assert.equal(run('ensureReference().composition'),'polycotton');
+  assert.equal(run('TGM_TELA_SEED_SOURCE'),'curated');
+  const merged=run("telaMergeSeed(TGM_TELA_CATALOG,[{nombre:'PIQUÉ OLMO',composicion:'Poliéster/Algodón',pesoGm2:216,nota:'piqué'}],'tgm-catalogo-telas-SEED_2026_05_25.csv')");
+  assert.equal(merged.find(t=>t.id==='pique-olmo').composicion,'Poliéster/Algodón');
+  assert.equal(run('TGM_TELA_SEED_SOURCE'),'tgm-catalogo-telas-SEED_2026_05_25.csv');
+  run("TGM_TELA_SEED_SOURCE='curated'");
 
   run("state=blank();state.garment='playera';photoBaseDefaults();populate()");
   assert.equal(run('state.fabric'),'CHIFÓN 140');
@@ -40,7 +46,8 @@ function sample(canvas,x,y){
   assert.match(run("telaHelpText('playera')"),/Maiky Plus/);
   assert.match(run("telaHelpText('playera')"),/TGM es la fábrica/);
   assert.match(run("$('#telaHelp').textContent"),/1200–1500/);
-  assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='mayki-plus').alias"),'Maiky Plus');
+  assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='mayki-plus').nombre"),'MAYKI');
+  assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='mayki-plus').alias"),'MAYKI PLUS');
 
   run("state=blank();state.garment='hoodie';photoBaseDefaults();populate()");
   assert.equal(run('state.fabric'),'MILLENIUM');
@@ -64,15 +71,18 @@ function sample(canvas,x,y){
   assert.equal(loaded.version,8);
 
   const olmo=run("TGM_TELA_CATALOG.find(t=>t.id==='pique-olmo')");
-  assert.equal(olmo.composicion,'50% algodón / 50% poliéster');
+  assert.equal(olmo.composicion,'Poliéster/Algodón');
+  assert.equal(olmo.pesoGm2,216);
   assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='pique-atlante').composicion"),'Poliéster Multifilamento');
+  assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='pique-atlante').pesoGm2"),160);
   assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='fomer').composicion"),'Poliéster 100%');
-  assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='mayki-plus').nombre"),'MAYKI PLUS');
+  assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='fomer').pesoGm2"),135);
+  assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='mayki-plus').nombre"),'MAYKI');
   assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='millenium').nombre"),'MILLENIUM');
   assert.equal(run("telaSuggestedIds('polo').join(',')"),'pique-olmo,pique-atlante,fomer');
-  assert.equal(run("telaSuggestedIds('playera').join(',')"),'chifon-140,fomer,mayki-plus','playera ships Chifón / Fomer / Maiky Plus only');
-  assert.match(run("TGM_TELA_CATALOG.find(t=>t.id==='pique-olmo').nota"),/schools/);
-  assert.match(run("TGM_TELA_CATALOG.find(t=>t.id==='pique-atlante').nota"),/warehouse/);
+  assert.equal(run("telaSuggestedIds('playera').join(',')"),'chifon-140,fomer,mayki-plus','playera ships Chifón / Fomer / MAYKI');
+  assert.match(run("TGM_TELA_CATALOG.find(t=>t.id==='pique-olmo').nota"),/sin porcentaje exacto/);
+  assert.match(run("TGM_TELA_CATALOG.find(t=>t.id==='pique-atlante').nota"),/piqué/);
   assert.match(run("TGM_TELA_CATALOG.find(t=>t.id==='fomer').nota"),/liso/);
   assert.equal(run("telaResolveCue({tela:{id:'pique-olmo'}}).kind"),'pique');
   assert.equal(run("telaResolveCue({tela:{id:'pique-atlante'}}).kind"),'pique');
