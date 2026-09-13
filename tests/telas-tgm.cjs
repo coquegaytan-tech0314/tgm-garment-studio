@@ -54,7 +54,7 @@ function sample(canvas,x,y){
   assert.equal(olmo.composicion,'Poliéster/Algodón');
   assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='mayki-plus').nombre"),'MAYKI PLUS');
   assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='millenium').nombre"),'MILLENIUM');
-  assert.deepEqual(run("telaSuggestedIds('polo')"),['pique-olmo','pique-atlante','fomer']);
+  assert.equal(run("telaSuggestedIds('polo').join(',')"),'pique-olmo,pique-atlante,fomer');
   assert.match(run("TGM_TELA_CATALOG.find(t=>t.id==='pique-olmo').nota"),/schools/);
   assert.match(run("TGM_TELA_CATALOG.find(t=>t.id==='pique-atlante').nota"),/warehouse/);
   assert.match(run("TGM_TELA_CATALOG.find(t=>t.id==='fomer').nota"),/liso/);
