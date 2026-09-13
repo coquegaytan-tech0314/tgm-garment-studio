@@ -1,4 +1,8 @@
-const {assert,context,run}=require('./harness.cjs');
+const {assert,context,run,createCanvas}=require('./harness.cjs');
+function sample(canvas,x,y){
+  const d=canvas.getContext('2d').getImageData(Math.round(x),Math.round(y),1,1).data;
+  return {r:d[0],g:d[1],b:d[2],a:d[3]};
+}
 
 (async()=>{
   await run('init()');
@@ -50,6 +54,33 @@ const {assert,context,run}=require('./harness.cjs');
   assert.equal(olmo.composicion,'Poliéster/Algodón');
   assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='mayki-plus').nombre"),'MAYKI PLUS');
   assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='millenium').nombre"),'MILLENIUM');
+  assert.deepEqual(run("telaSuggestedIds('polo')"),['pique-olmo','pique-atlante','fomer']);
+  assert.match(run("TGM_TELA_CATALOG.find(t=>t.id==='pique-olmo').nota"),/schools/);
+  assert.match(run("TGM_TELA_CATALOG.find(t=>t.id==='pique-atlante').nota"),/warehouse/);
+  assert.match(run("TGM_TELA_CATALOG.find(t=>t.id==='fomer').nota"),/liso/);
+  assert.equal(run("telaResolveCue({tela:{id:'pique-olmo'}}).kind"),'pique');
+  assert.equal(run("telaResolveCue({tela:{id:'pique-atlante'}}).kind"),'pique');
+  assert.equal(run("telaResolveCue({tela:{id:'fomer'}}).kind"),'smooth');
+  assert(run("telaResolveCue({tela:{id:'pique-atlante'}}).amp")<run("telaResolveCue({tela:{id:'pique-olmo'}}).amp"),'Atlante piqué cue is lighter than Olmo');
+
+  run("state=blank();state.garment='polo';photoBaseDefaults();populate();state.bodyColor='#242529'");
+  const olmoSig=run('visualSignature()');
+  const olmoCanvas=createCanvas(800,920);context.olmoCanvas=olmoCanvas;
+  await run("renderPhoto(olmoCanvas,'front',{background:true})");
+  run("telaApplyRecord(TGM_TELA_CATALOG.find(t=>t.id==='pique-atlante'))");
+  assert.equal(run('state.texture'),'pique');
+  assert.notEqual(run('visualSignature()'),olmoSig,'Atlante changes the Acabado signature');
+  run("telaApplyRecord(TGM_TELA_CATALOG.find(t=>t.id==='fomer'))");
+  assert.equal(run('state.fabric'),'FOMER');
+  assert.equal(run('state.texture'),'smooth');
+  const fomerCanvas=createCanvas(800,920);context.fomerCanvas=fomerCanvas;
+  await run("renderPhoto(fomerCanvas,'front',{background:true})");
+  const r=run("photoRect('polo','front')");
+  const olmoPx=sample(olmoCanvas,r.x+r.w*.42,r.y+r.h*.42);
+  const fomerPx=sample(fomerCanvas,r.x+r.w*.42,r.y+r.h*.42);
+  assert(Math.abs(olmoPx.r-fomerPx.r)+Math.abs(olmoPx.g-fomerPx.g)+Math.abs(olmoPx.b-fomerPx.b)>0,'Olmo piqué and Fomer liso differ on the body');
+  assert.equal(run('poloConstructionRows().length'),5,'polo construction rows stay after tela picks');
+  assert.equal(run("$('#poloExtras').hidden"),false);
 
   console.log('telas-tgm: ok');
 })().catch(err=>{console.error(err);process.exit(1)});

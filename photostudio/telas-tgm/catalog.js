@@ -2,9 +2,9 @@
    The 156-row CSV was not in this workspace; do not invent extra SKUs or %. */
 const TGM_TELA_CUSTOM_KEY='tgm-estudio-telas-custom';
 const TGM_TELA_CATALOG=[
-  {id:'fomer',nombre:'FOMER',composicion:'Poliéster 100%',pesoGm2:135,nota:'liso',texture:'smooth',composition:'polyester'},
-  {id:'pique-atlante',nombre:'PIQUÉ ATLANTE',composicion:'Poliéster Multifilamento',pesoGm2:160,nota:'piqué',texture:'pique',composition:'polyester'},
-  {id:'pique-olmo',nombre:'PIQUÉ OLMO',composicion:'Poliéster/Algodón',pesoGm2:216,nota:'piqué · catálogo sin porcentaje exacto',texture:'pique',composition:'polycotton'},
+  {id:'fomer',nombre:'FOMER',composicion:'Poliéster 100%',pesoGm2:135,nota:'liso · knitt liso, sin textura piqué',texture:'smooth',composition:'polyester',cue:'fomer'},
+  {id:'pique-atlante',nombre:'PIQUÉ ATLANTE',composicion:'Poliéster Multifilamento',pesoGm2:160,nota:'piqué · mismo knitt que Olmo, más ligero · warehouse / active wear',texture:'pique',composition:'polyester',cue:'atlante'},
+  {id:'pique-olmo',nombre:'PIQUÉ OLMO',composicion:'Poliéster/Algodón',pesoGm2:216,nota:'piqué clásico · schools · catálogo sin porcentaje exacto',texture:'pique',composition:'polycotton',cue:'olmo'},
   {id:'chifon-140',nombre:'CHIFÓN 140',composicion:'Poliéster 100%',pesoGm2:'',nota:'playera / lisos',texture:'smooth',composition:'polyester'},
   {id:'mayki-plus',nombre:'MAYKI PLUS',composicion:'Poliéster Multifilamento',pesoGm2:'',nota:'catálogo MAYKI',texture:'smooth',composition:'polyester'},
   {id:'millenium',nombre:'MILLENIUM',composicion:'Nylon 100%',pesoGm2:70,nota:'hoodie',texture:'smooth',composition:'other'},
@@ -35,6 +35,28 @@ function loadCustomTelas(){
 }
 function saveCustomTelas(list){try{localStorage.setItem(TGM_TELA_CUSTOM_KEY,JSON.stringify(list))}catch{}}
 function telaCatalogById(id){return TGM_TELA_CATALOG.find(t=>t.id===id)||loadCustomTelas().find(t=>t.id===id)||null}
+function telaResolveCue(order=state){
+  const id=order.tela?.id||'';
+  if(id==='pique-olmo')return{id,kind:'pique',scale:1,amp:1,label:'piqué Olmo'};
+  if(id==='pique-atlante')return{id,kind:'pique',scale:1.18,amp:.58,label:'piqué Atlante'};
+  if(id==='fomer')return{id,kind:'smooth',scale:1,amp:0,label:'liso Fomer'};
+  const texture=order.tela?.texture||order.texture;
+  return{id,kind:texture||'',scale:1,amp:texture==='pique'?1:0,label:''};
+}
+function telaApplyPiqueCue(canvas,cue){
+  if(!canvas||cue.kind!=='pique')return canvas;
+  const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height,img=ctx.getImageData(0,0,w,h),d=img.data;
+  const fx=2.15*cue.scale,fy=2.35*cue.scale,amp=7.5*cue.amp;
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+    const i=(y*w+x)*4;if(!d[i+3])continue;
+    const n=Math.sin(x*fx)*Math.sin(y*fy)*amp;
+    d[i]=Math.max(0,Math.min(255,d[i]+n));
+    d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));
+    d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));
+  }
+  ctx.putImageData(img,0,0);
+  return canvas;
+}
 function telaSuggestedIds(garment=state.garment){
   if(garment==='polo')return['pique-olmo','pique-atlante','fomer'];
   if(garment==='playera')return['chifon-140','fomer','mayki-plus'];
@@ -184,4 +206,28 @@ initUI=function(){
     toast('Desarrollo guardado en este dispositivo. Disponible en el catálogo local.');
   });
   $$('[data-garment]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{telaApplyGarmentDefault(false);syncTelas()},0)));
+};
+const visualBeforeTelaCue=typeof visualSignature==='function'?visualSignature:null;
+if(visualBeforeTelaCue)visualSignature=function(){
+  const cue=telaResolveCue();
+  return visualBeforeTelaCue()+'tela-cue'+cue.id+cue.kind+cue.amp+cue.scale;
+};
+const tintedBeforeTelaCue=typeof tintedPhoto==='function'?tintedPhoto:null;
+if(tintedBeforeTelaCue)tintedPhoto=async function(garment,view){
+  const cue=telaResolveCue(),saved=state.texture;
+  if(cue.kind==='smooth'||cue.kind==='pique')state.texture=cue.kind;
+  try{
+    const base=await tintedBeforeTelaCue(garment,view);
+    if(garment!=='polo'||cue.kind!=='pique')return base;
+    const out=document.createElement('canvas');
+    out.width=base.width;out.height=base.height;
+    out.getContext('2d').drawImage(base,0,0);
+    return telaApplyPiqueCue(out,cue);
+  }finally{state.texture=saved}
+};
+const syncPhotoBeforeTelaCue=typeof syncPhotoUI==='function'?syncPhotoUI:null;
+if(syncPhotoBeforeTelaCue)syncPhotoUI=function(){
+  syncPhotoBeforeTelaCue();
+  const name=$('#photoBaseName'),cue=telaResolveCue();
+  if(name&&state.garment==='polo'&&cue.label)name.textContent='Polo · '+cue.label;
 };
