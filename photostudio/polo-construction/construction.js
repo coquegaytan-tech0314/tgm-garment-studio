@@ -105,16 +105,22 @@ function poloConstructionRows(){
   ];
 }
 function poloFichaSummary(){return poloConstructionRows().map(([label,text])=>label+': '+text).join('\n')}
-function poloAssignField(key,el){
+function poloAssignField(key,el,commit=false){
   const p=ensurePolo();
   if(el.type==='checkbox')p[key]=el.checked;
   else if(POLO_NUMBER_FIELDS[key]){
     const[min,max,integer]=POLO_NUMBER_FIELDS[key];
-    let n=Number(el.value);
-    if(!Number.isFinite(n))n=poloStdDefaults()[key];
+    const raw=String(el.value).trim();
+    let n=Number(raw);
+    if(raw===''||raw==='-'||raw==='.'||raw==='-.'||!Number.isFinite(n)){
+      if(commit){n=poloStdDefaults()[key];p[key]=n;el.value=n}
+      return;
+    }
+    if(!commit&&n<min&&n>=0)return;
     n=clamp(n,min,max);
     if(integer)n=Math.round(n);
-    p[key]=n;if(String(el.value)!==String(n))el.value=n;
+    p[key]=n;
+    if(commit&&String(el.value)!==String(n))el.value=n;
   }else p[key]=el.value;
 }
 function poloUFromCm(cm){return Number(cm)*POLO_PHOTO_SCALE.spanV/POLO_PHOTO_SCALE.lengthCm}
@@ -305,6 +311,7 @@ initUI=function(){
   for(const el of $$('[data-polo]')){
     if(el.dataset.poloStdBound)continue;
     el.dataset.poloStdBound='1';
-    el.addEventListener(el.type==='checkbox'?'change':'input',()=>{poloAssignField(el.dataset.polo,el);changed()});
+    el.addEventListener(el.type==='checkbox'?'change':'input',()=>{poloAssignField(el.dataset.polo,el,false);changed()});
+    if(el.type!=='checkbox')el.addEventListener('change',()=>{poloAssignField(el.dataset.polo,el,true);changed()});
   }
 };

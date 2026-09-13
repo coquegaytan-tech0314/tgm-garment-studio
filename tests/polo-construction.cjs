@@ -36,6 +36,13 @@ function isDark(c){return (c.r+c.g+c.b)/3<80}
   assert.equal(fresh.cuffStripes,true);
   assert.equal(fresh.sideVents,true);
   almost(fresh.ventHeightCm,8,.01,'side vent default 8 cm');
+  run("$('#poloVentHeight').value='1';poloAssignField('ventHeightCm',$('#poloVentHeight'),false)");
+  almost(run('ensurePolo().ventHeightCm'),8,.01,'typing 1 of 12 does not snap vent height to the 3 cm minimum');
+  run("$('#poloVentHeight').value='12';poloAssignField('ventHeightCm',$('#poloVentHeight'),false)");
+  almost(run('ensurePolo().ventHeightCm'),12,.01,'vent height accepts 12 cm');
+  run("poloAssignField('ventHeightCm',$('#poloVentHeight'),true)");
+  assert.equal(run("$('#poloVentHeight').value"),'12');
+  run("state.polo.ventHeightCm=8;$('#poloVentHeight').value=8");
   assert.equal(run("$('#poloExtras').hidden"),false,'polo extras visible on polo');
   assert.equal(run("$('#poloFichaSpecs').hidden"),false);
   assert.match(run("$('#poloFichaText').textContent"),/9\.0 cm/);
