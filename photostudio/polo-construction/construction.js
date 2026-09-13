@@ -225,19 +225,19 @@ function drawPoloAletilla(ctx,view,p){
 }
 function drawPoloVents(ctx,view,p){
   if(!p.sideVents)return;
-  const h=Math.max(.04,poloUFromCm(p.ventHeightCm)),tape=poloResolvedVentTape(p),hem=.908;
-  const sides=[[.198,1],[.802,-1]];
+  const h=Math.max(.04,poloUFromCm(p.ventHeightCm)),tape=poloResolvedVentTape(p),hem=.924;
+  const sides=[[.222,1],[.778,-1]];
   for(const [u,sign] of sides){
-    const topU=u+sign*.004,open=u+sign*.016;
-    poloFillPath(ctx,[[topU,hem-h],[open,hem-.006],[u+sign*.006,hem],[u-sign*.003,hem-h+.01]],tape,.9);
+    const top=hem-h;
+    poloFillPath(ctx,[[u+sign*.002,top],[u+sign*.018,hem-.008],[u+sign*.004,hem],[u-sign*.002,top+.012]],tape,.92);
     ctx.save();
-    ctx.strokeStyle='#161616';ctx.lineWidth=.0026;ctx.lineCap='round';
-    ctx.beginPath();ctx.moveTo(u-sign*.002,hem-h);ctx.lineTo(u-sign*.006,hem);ctx.stroke();
-    ctx.lineWidth=.0036;
-    ctx.beginPath();ctx.moveTo(u-sign*.012,hem-h);ctx.lineTo(u+sign*.016,hem-h);ctx.stroke();
-    ctx.strokeStyle=shade('#111111',0,.38);ctx.lineWidth=.0013;
-    ctx.beginPath();ctx.moveTo(u-sign*.045,hem-.012);ctx.lineTo(u+sign*.028,hem-.012);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(u-sign*.045,hem-.019);ctx.lineTo(u+sign*.028,hem-.019);ctx.stroke();
+    ctx.strokeStyle='#161616';ctx.lineWidth=.0024;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(u,top);ctx.lineTo(u+sign*.001,hem);ctx.stroke();
+    ctx.lineWidth=.0032;
+    ctx.beginPath();ctx.moveTo(u-sign*.004,top);ctx.lineTo(u+sign*.014,top);ctx.stroke();
+    ctx.strokeStyle=shade('#111111',0,.38);ctx.lineWidth=.0012;
+    ctx.beginPath();ctx.moveTo(u-sign*.004,hem-.010);ctx.lineTo(u+sign*.04,hem-.010);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(u-sign*.004,hem-.016);ctx.lineTo(u+sign*.04,hem-.016);ctx.stroke();
     ctx.restore();
   }
 }
