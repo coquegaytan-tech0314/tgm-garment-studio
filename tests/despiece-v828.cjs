@@ -7,12 +7,19 @@ const {assert,context,run,set,$}=require('./harness.cjs');
   assert.match(built,/MGM · v8\.2\./);
   assert.match(built,/function enterDespieceMode/);
   assert.match(built,/id="photoDespieceView"/);
-  assert.match(built,/Despiece · costo por parte/);
+  assert.match(built,/Despiece · detalle por parte/);
+  assert.match(built,/id="despiecePartNotes"/);
+  assert.match(built,/id="despiecePartPantone"/);
+  assert.match(built,/data-part-notes="dobladillo"/);
+  assert.match(built,/data-part-pantone="aletilla"/);
   assert.equal(run("$$('[data-photo-view]').map(b=>b.dataset.photoView).join(',')"),'front,back,both,orbit','Despiece is not a persisted photo.side');
 
   run("state=blank()");
   assert.deepEqual(JSON.parse(run('JSON.stringify(state.costing.parts)')),JSON.parse(run('JSON.stringify(blankCostParts())')));
+  assert.deepEqual(JSON.parse(run('JSON.stringify(state.costing.partDetails)')),JSON.parse(run('JSON.stringify(blankPartDetails())')));
   assert.equal(run('Object.keys(state.costing.artworkCents).join(",")'),'');
+  assert.equal(run('Object.keys(state.costing.artworkDetails).join(",")'),'');
+  assert.equal(run("Object.values(state.costing.parts).every(v=>v==='')"),true,'No invented factory prices');
   assert.equal(run("state.photo.side"),'front');
   assert.equal(run('despiecePartVisible("aletilla")'),false,'Playera does not force aletilla');
   assert.equal(run('despiecePartVisible("mangas")'),true);
@@ -136,5 +143,95 @@ const {assert,context,run,set,$}=require('./harness.cjs');
   await set('despiecePartCost','9');
   assert.equal(run('state.pricing.unitCents'),selling,'Part costs never write the selling price');
 
-  console.log('PASS v8.2.10 despiece / costo por parte explode, edit, persist, polo aletilla');
+  run("state=blank();state.garment='playera';photoBaseDefaults();enterDespieceMode()");
+  for(const key of ['dobladillo','mangas','punos','estampado']){
+    assert.equal(run(`despiecePartVisible('${key}')`),true,`Playera shows ${key}`);
+    assert.equal(run(`state.costing.parts.${key}`),'',`Empty ${key} price stays Por definir`);
+  }
+  run("selectDespiecePart('dobladillo')");
+  await set('despiecePartLabel','Dobladillo inferior');
+  await set('despiecePartNotes','Doble costura 2.5 cm');
+  await set('despiecePartPantone','19-1664 TCX');
+  await set('despiecePartHex','#b63d42','change');
+  assert.equal(run('state.costing.partDetails.dobladillo.label'),'Dobladillo inferior');
+  assert.equal(run('state.costing.partDetails.dobladillo.notes'),'Doble costura 2.5 cm');
+  assert.equal(run('state.costing.partDetails.dobladillo.pantone'),'19-1664 TCX');
+  assert.equal(run('state.costing.partDetails.dobladillo.color'),'#b63d42');
+  assert.equal(run('state.costing.parts.dobladillo'),'','Detail fields do not invent a price');
+  assert.equal(run("$('#despiecePartName').textContent"),'Dobladillo inferior');
+  assert.equal($('#costPartNotes-dobladillo').value,'Doble costura 2.5 cm');
+  assert.equal($('#costPartHex-dobladillo').value,'#B63D42');
+
+  await set('costPartNotes-mangas','Manga raglán, costura plana');
+  await set('costPartPantone-mangas','Custom navy');
+  await set('costPartHex-mangas','#18283c','change');
+  await set('costPartLabel-punos','Puño canalé');
+  assert.equal(run('state.costing.partDetails.mangas.notes'),'Manga raglán, costura plana');
+  assert.equal(run('state.costing.partDetails.mangas.pantone'),'Custom navy');
+  assert.equal(run('state.costing.partDetails.mangas.color'),'#18283c');
+  assert.equal(run('state.costing.partDetails.punos.label'),'Puño canalé');
+
+  run("selectDespiecePart('estampado')");
+  await set('despiecePartNotes','Plastisol pecho + espalda');
+  await set('despiecePartPantone','Process Black');
+  assert.equal(run('state.costing.partDetails.estampado.notes'),'Plastisol pecho + espalda');
+  run("addArt();selected().kind='text';selected().text='RHINOS';selected().view='front'");
+  const printId=run('selected().id');
+  context.printId=printId;
+  await run("ensureArtworkDetail(printId).notes='1 tinta pecho';ensureArtworkDetail(printId).pantone='186 C';ensureArtworkDetail(printId).color='#c81e3a';syncDespieceFields()");
+  assert.equal(run('state.costing.artworkDetails[printId].notes'),'1 tinta pecho');
+  assert.equal(run('state.costing.artworkDetails[printId].pantone'),'186 C');
+  assert.equal(run('state.costing.artworkDetails[printId].color'),'#c81e3a');
+
+  run("state.garment='hoodie';syncDespieceFields()");
+  assert.equal(run('despiecePartVisible("mangas")'),true);
+  assert.equal(run('despiecePartVisible("dobladillo")'),true);
+  assert.equal(run('despiecePartVisible("punos")'),true);
+  assert.equal(run('despiecePartVisible("estampado")'),true);
+  run("state.garment='zipneck';syncDespieceFields()");
+  assert.equal(run('visibleCostPartKeys().includes("mangas")'),true,'Manga larga has sleeves');
+  assert.equal(run('visibleCostPartKeys().includes("aletilla")'),false);
+  run("state.garment='polo';photoBaseDefaults();enterDespieceMode();selectDespiecePart('cuello')");
+  await set('despiecePartNotes','Cuello tejido 1x1');
+  await set('despiecePartPantone','186 C');
+  await set('despiecePartHex','#b63d42','change');
+  run("selectDespiecePart('aletilla')");
+  await set('despiecePartLabel','Aletilla / tapeta');
+  await set('despiecePartNotes','3 botones, forro contrastado');
+  await set('despiecePartPantone','Custom negro');
+  await set('despiecePartHex','#242529','change');
+  assert.equal(run('state.costing.partDetails.cuello.notes'),'Cuello tejido 1x1');
+  assert.equal(run('state.costing.partDetails.cuello.color'),'#b63d42');
+  assert.equal(run('state.costing.partDetails.aletilla.label'),'Aletilla / tapeta');
+  assert.equal(run('state.costing.partDetails.aletilla.notes'),'3 botones, forro contrastado');
+  const poloDetailRows=run("(()=>{const rows=[];referenceDespiece({section(){},row:(l,v)=>rows.push([l,v])});return rows})()");
+  assert(poloDetailRows.some(([label])=>label==='Aletilla / tapeta'),'Custom aletilla name reaches ficha');
+  assert(poloDetailRows.some(([label,value])=>label.includes('detalle')&&String(value).includes('3 botones')));
+  assert(poloDetailRows.some(([label,value])=>label.includes('Cuello')&&String(value).includes('186 C')));
+
+  const detailed=run('clone(state)');
+  context.detailed=detailed;
+  const reopenedDetails=await run('validateOrder(detailed)');
+  assert.equal(reopenedDetails.version,8);
+  assert.equal(reopenedDetails.costing.partDetails.dobladillo.label,'Dobladillo inferior');
+  assert.equal(reopenedDetails.costing.partDetails.dobladillo.color,'#b63d42');
+  assert.equal(reopenedDetails.costing.partDetails.aletilla.pantone,'Custom negro');
+  assert.equal(reopenedDetails.costing.artworkDetails[printId].notes,'1 tinta pecho');
+  assert.equal(reopenedDetails.costing.parts.dobladillo,'');
+
+  context.legacyDetails=JSON.parse(JSON.stringify(detailed));
+  delete context.legacyDetails.costing.partDetails;
+  delete context.legacyDetails.costing.artworkDetails;
+  const migratedDetails=await run('validateOrder(legacyDetails)');
+  assert.deepEqual(JSON.parse(JSON.stringify(migratedDetails.costing.partDetails)),JSON.parse(run('JSON.stringify(blankPartDetails())')));
+  assert.equal(Object.keys(migratedDetails.costing.artworkDetails).length,0);
+
+  context.badColor=JSON.parse(JSON.stringify(detailed));
+  context.badColor.costing.partDetails.cuello.color='rojo';
+  await assert.rejects(()=>run('validateOrder(badColor)'),/Color de parte/);
+
+  await set('despiecePartHex','not-a-color','change');
+  assert.equal(run('state.costing.partDetails.aletilla.color'),'#242529','Invalid hex keeps last valid part color');
+
+  console.log('PASS v8.2.14 despiece / detalle por parte name notes color price');
 })().catch(e=>{console.error(e);process.exitCode=1});
