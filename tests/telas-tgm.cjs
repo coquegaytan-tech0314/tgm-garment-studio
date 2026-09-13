@@ -47,6 +47,12 @@ function sample(canvas,x,y){
   assert.equal(run("telaSuggestedIds('sleeveless').join(',')"),'chifon-140,chifon-estrella,fomer,mayki-plus');
   assert.equal(run("telaSuggestedIds('playera')[0]"),'chifon-140');
   assert.equal(run("telaSuggestedIds('playera')[1]"),'chifon-estrella');
+  run("syncFabricSkuList()");
+  assert.match(run("$('#fabric').placeholder"),/Chifón \/ Chifón Estrella/);
+  assert.equal(run("fabricSkuOptions().map(s=>s.value).join(',')"),'CHIFÓN 140,CHIFÓN ESTRELLA');
+  run("state.garment='zipneck';syncFabricSkuList()");
+  assert.equal(run("fabricSkuOptions().map(s=>s.value).join(',')"),'CHIFÓN 140,CHIFÓN ESTRELLA');
+  run("state.garment='playera';syncFabricSkuList()");
   assert.match(run("telaHelpText('playera')"),/CHIFÓN/);
   assert.match(run("telaHelpText('zipneck')"),/CHIFÓN ESTRELLA/);
   assert.match(run("telaHelpText('playera')"),/Maiky Plus/);

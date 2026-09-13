@@ -2213,9 +2213,13 @@ const POLO_FABRIC_SKUS=[
   {value:'Piqué Atlante',label:'Piqué Atlante · 100% poliéster · misma textura que Olmo · más ligero'},
   {value:'Piqué Fomer',label:'Piqué Fomer · 100% poliéster · liso, sin textura piqué'}
 ];
+function jerseyChifonFamily(g=state.garment){return g==='playera'||g==='zipneck'||g==='sleeveless'}
 function fabricSkuOptions(){
   if(state.garment==='polo')return POLO_FABRIC_SKUS;
-  if(state.garment==='sleeveless'||state.garment==='zipneck')return [{value:CHIFON_FABRIC,label:CHIFON_FABRIC+' · Chifón'}];
+  if(jerseyChifonFamily())return [
+    {value:'CHIFÓN 140',label:'CHIFÓN 140 · Chifón'},
+    {value:'CHIFÓN ESTRELLA',label:'CHIFÓN ESTRELLA · Chifón Estrella'}
+  ];
   return [];
 }
 let fabricSuggestList=null;
@@ -2237,7 +2241,7 @@ function syncFabricSkuList(){
     option.textContent=sku.label;
     list.append(option);
   }
-  fabric.placeholder=state.garment==='polo'?'Piqué Olmo, Atlante o Fomer':state.garment==='sleeveless'||state.garment==='zipneck'?'Chifón / Chifón Estrella':'Ej. jersey de algodón';
+  fabric.placeholder=state.garment==='polo'?'Piqué Olmo, Atlante o Fomer':jerseyChifonFamily()?'Chifón / Chifón Estrella':'Ej. jersey de algodón';
 }
 function applyPoloFabricSku(){
   if(state.garment!=='polo')return;
