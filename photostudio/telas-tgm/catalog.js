@@ -1,10 +1,11 @@
 /* TGM Catálogo de Telas — curated seed from Production Manager wording.
-   The 156-row CSV was not in this workspace; do not invent extra SKUs or %. */
+   The 156-row CSV was not in this workspace; do not invent extra SKUs.
+   PIQUÉ OLMO is 50% algodón / 50% poliéster (Koke). Never lycra. */
 const TGM_TELA_CUSTOM_KEY='tgm-estudio-telas-custom';
 const TGM_TELA_CATALOG=[
   {id:'fomer',nombre:'FOMER',composicion:'Poliéster 100%',pesoGm2:135,nota:'liso · knitt liso, sin textura piqué',texture:'smooth',composition:'polyester',cue:'fomer'},
   {id:'pique-atlante',nombre:'PIQUÉ ATLANTE',composicion:'Poliéster Multifilamento',pesoGm2:160,nota:'piqué · mismo knitt que Olmo, más ligero · warehouse / active wear',texture:'pique',composition:'polyester',cue:'atlante'},
-  {id:'pique-olmo',nombre:'PIQUÉ OLMO',composicion:'Poliéster/Algodón',pesoGm2:216,nota:'piqué clásico · schools · catálogo sin porcentaje exacto',texture:'pique',composition:'polycotton',cue:'olmo'},
+  {id:'pique-olmo',nombre:'PIQUÉ OLMO',composicion:'50% algodón / 50% poliéster',pesoGm2:216,nota:'piqué clásico · schools · no lycra',texture:'pique',composition:'polycotton',cue:'olmo'},
   {id:'chifon-140',nombre:'CHIFÓN 140',composicion:'Poliéster 100%',pesoGm2:'',nota:'playera / lisos',texture:'smooth',composition:'polyester'},
   {id:'mayki-plus',nombre:'MAYKI PLUS',composicion:'Poliéster Multifilamento',pesoGm2:'',nota:'catálogo MAYKI',texture:'smooth',composition:'polyester'},
   {id:'millenium',nombre:'MILLENIUM',composicion:'Nylon 100%',pesoGm2:70,nota:'hoodie',texture:'smooth',composition:'other'},

@@ -10,8 +10,9 @@ function sample(canvas,x,y){
   const built=require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8');
   assert.match(built,/MGM · v8\.2\.10/);
   assert.match(built,/PIQUÉ OLMO/);
-  assert.match(built,/Poliéster\/Algodón/);
+  assert.match(built,/50% algodón \/ 50% poliéster/);
   assert.equal(built.includes('50% lycra')||built.includes('50% cotton / 50% lycra'),false);
+  assert.match(built,/nunca lycra|no lycra/);
   assert.match(built,/MAYKI PLUS/);
   assert.match(built,/MILLENIUM/);
   assert.match(built,/id="telaCatalog"/);
@@ -21,8 +22,10 @@ function sample(canvas,x,y){
   assert.equal(run('state.fabric'),'PIQUÉ OLMO');
   assert.equal(run('state.gsm'),216);
   assert.equal(run('state.texture'),'pique');
-  assert.match(run('ensureTela().composicion'),/Poliéster\/Algodón/);
-  assert.equal(run('ensureTela().composicion.includes("50")'),false,'Olmo has no invented fiber %');
+  assert.equal(run('ensureTela().composicion'),'50% algodón / 50% poliéster');
+  assert.equal(run('ensureTela().composicion.toLowerCase().includes("lycra")'),false,'Olmo is cotton/polyester, not lycra');
+  assert.match(run('ensureReference().compositionNotes'),/50% algodón \/ 50% poliéster/);
+  assert.match(run('state.stretch'),/50% algodón \/ 50% poliéster/);
   assert.equal(run('ensureReference().composition'),'polycotton');
 
   run("state=blank();state.garment='playera';photoBaseDefaults();populate()");
@@ -51,7 +54,9 @@ function sample(canvas,x,y){
   assert.equal(loaded.version,8);
 
   const olmo=run("TGM_TELA_CATALOG.find(t=>t.id==='pique-olmo')");
-  assert.equal(olmo.composicion,'Poliéster/Algodón');
+  assert.equal(olmo.composicion,'50% algodón / 50% poliéster');
+  assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='pique-atlante').composicion"),'Poliéster Multifilamento');
+  assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='fomer').composicion"),'Poliéster 100%');
   assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='mayki-plus').nombre"),'MAYKI PLUS');
   assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='millenium').nombre"),'MILLENIUM');
   assert.equal(run("telaSuggestedIds('polo').join(',')"),'pique-olmo,pique-atlante,fomer');
