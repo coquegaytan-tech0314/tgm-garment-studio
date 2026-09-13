@@ -1,14 +1,37 @@
-/* Despiece / costo por parte. Optional costing.parts on tgm-pedido v8. */
+/* Despiece / detalle por parte. Optional costing.parts + partDetails on tgm-pedido v8. */
 const COST_PART_KEYS=['cuello','cuerpo','mangas','punos','dobladillo','etiqueta','aletilla','estampado'];
 const COST_PART_LABELS={cuello:'Cuello',cuerpo:'Cuerpo',mangas:'Mangas',punos:'Puños',dobladillo:'Dobladillo',etiqueta:'Etiqueta',aletilla:'Aletilla',estampado:'Estampado'};
+const UNSET_PART_SWATCH='#f4f3ef';
 let despieceMode=false,despieceExploded=true,selectedDespiecePart='cuerpo',despieceReady=false;
 function blankCostParts(){return Object.fromEntries(COST_PART_KEYS.map(key=>[key,'']))}
+function blankPartDetail(){return {label:'',notes:'',color:'',pantone:''}}
+function blankPartDetails(){return Object.fromEntries(COST_PART_KEYS.map(key=>[key,blankPartDetail()]))}
+function blankArtworkDetail(){return {notes:'',color:'',pantone:''}}
 function ensureCostParts(){
   const c=ensureCosting();
   if(!c.parts||typeof c.parts!=='object'||Array.isArray(c.parts))c.parts=blankCostParts();
   for(const key of COST_PART_KEYS)if(c.parts[key]===undefined)c.parts[key]='';
   if(!c.artworkCents||typeof c.artworkCents!=='object'||Array.isArray(c.artworkCents))c.artworkCents={};
+  if(!c.partDetails||typeof c.partDetails!=='object'||Array.isArray(c.partDetails))c.partDetails=blankPartDetails();
+  for(const key of COST_PART_KEYS){
+    const raw=c.partDetails[key];
+    if(!raw||typeof raw!=='object'||Array.isArray(raw))c.partDetails[key]=blankPartDetail();
+    else c.partDetails[key]={label:raw.label??'',notes:raw.notes??'',color:raw.color??'',pantone:raw.pantone??''};
+  }
+  if(!c.artworkDetails||typeof c.artworkDetails!=='object'||Array.isArray(c.artworkDetails))c.artworkDetails={};
   return c;
+}
+function ensurePartDetail(key){
+  const details=ensureCostParts().partDetails;
+  if(!details[key]||typeof details[key]!=='object')details[key]=blankPartDetail();
+  return details[key];
+}
+function ensureArtworkDetail(id){
+  const bag=ensureCostParts().artworkDetails;
+  if(!bag[id]||typeof bag[id]!=='object'||Array.isArray(bag[id]))bag[id]=blankArtworkDetail();
+  const raw=bag[id];
+  bag[id]={notes:raw.notes??'',color:raw.color??'',pantone:raw.pantone??''};
+  return bag[id];
 }
 function despiecePartLabel(key,garment=state.garment){
   if(key==='cuello')return garment==='hoodie'?'Capucha':garment==='zipneck'?'Cuello con cierre':'Cuello';
@@ -21,6 +44,58 @@ function despiecePartVisible(key,garment=state.garment){
   return COST_PART_KEYS.includes(key);
 }
 function visibleCostPartKeys(garment=state.garment){return COST_PART_KEYS.filter(key=>despiecePartVisible(key,garment))}
+function despiecePartDisplayName(key,garment=state.garment){
+  const custom=String(ensurePartDetail(key).label||'').trim();
+  return custom||despiecePartLabel(key,garment);
+}
+function parseOptionalPartHex(value){
+  const text=String(value||'').trim();
+  if(!text)return '';
+  const hex=text.startsWith('#')?text:'#'+text;
+  if(!validHex(hex))throw Error('Usa un color hexadecimal de seis dígitos o déjalo vacío.');
+  return hex.toLowerCase();
+}
+function formatPartColor(detail){
+  if(!detail)return '';
+  const hex=detail.color?String(detail.color).toUpperCase():'';
+  const pantone=String(detail.pantone||'').trim();
+  return [hex,pantone].filter(Boolean).join(' · ');
+}
+function formatPartMeta(detail){
+  if(!detail)return '';
+  return [String(detail.notes||'').trim(),formatPartColor(detail)].filter(Boolean).join(' · ');
+}
+function validatePartDetailItem(raw,key){
+  if(raw==null||raw==='')return blankPartDetail();
+  if(typeof raw!=='object'||Array.isArray(raw))throw Error('Detalle de parte inválido: '+key);
+  const color=raw.color===undefined||raw.color===''?'':safeString(raw.color,7,'color de '+key);
+  if(color&&!validHex(color))throw Error('Color de parte inválido: '+key);
+  return {
+    label:safeString(raw.label??'',80,'nombre de '+key),
+    notes:safeString(raw.notes??'',400,'detalle de '+key),
+    color:color?color.toLowerCase():'',
+    pantone:safeString(raw.pantone??'',40,'pantone de '+key)
+  };
+}
+function validatePartDetails(raw){
+  if(raw===undefined)return blankPartDetails();
+  if(!raw||typeof raw!=='object'||Array.isArray(raw))throw Error('Detalle de despiece inválido.');
+  const out=blankPartDetails();
+  for(const key of COST_PART_KEYS)out[key]=validatePartDetailItem(raw[key],key);
+  return out;
+}
+function validateArtworkDetails(raw){
+  if(raw===undefined)return {};
+  if(!raw||typeof raw!=='object'||Array.isArray(raw))throw Error('Detalle de estampado inválido.');
+  const out={};
+  for(const [id,value] of Object.entries(raw)){
+    const key=safeString(id,80,'aplicación');
+    if(value==null||value==='')continue;
+    out[key]=validatePartDetailItem({label:'',...value},'estampado');
+    delete out[key].label;
+  }
+  return out;
+}
 function validateCostParts(raw){
   if(raw===undefined)return blankCostParts();
   if(!raw||typeof raw!=='object'||Array.isArray(raw))throw Error('Despiece de costos inválido.');
@@ -97,6 +172,8 @@ function toggleDespieceExplode(on= !despieceExploded){
 }
 
 function despieceFill(key){
+  const custom=ensurePartDetail(key).color;
+  if(custom&&validHex(custom))return custom;
   const body=state.bodyColor,contrast=state.contrastColor;
   if(key==='cuello')return state.contrast.neck?contrast:shade(body,state.garment==='hoodie'?-18:-8);
   if(key==='punos')return state.contrast.cuff?contrast:shade(body,-14);
@@ -177,7 +254,7 @@ function refreshDespieceSvg(){
     if(key==='cuerpo'||key==='mangas'||key==='dobladillo')group.append(svgNode('path',{'class':'despiece-stitch',d:paths[0]||'',fill:'none'}));
     const tag=svgNode('g',{'class':'despiece-tag',transform:'translate('+tx+' '+ty+')'});
     tag.append(svgNode('rect',{'class':'despiece-tag-bg',x:'0',y:'0',width:'118',height:'36',rx:'8'}));
-    tag.append(svgNode('text',{'class':'despiece-tag-name',x:'10',y:'15',text:despiecePartLabel(key,garment)}));
+    tag.append(svgNode('text',{'class':'despiece-tag-name',x:'10',y:'15',text:despiecePartDisplayName(key,garment)}));
     tag.append(svgNode('text',{'class':'despiece-tag-cost',id:'despieceTag-'+key,x:'10',y:'29',text:formatPartMoney(ensureCostParts().parts[key])}));
     group.append(tag);
     svg.append(group);
@@ -185,7 +262,7 @@ function refreshDespieceSvg(){
   ensureDespieceHitButtons();
   for(const key of COST_PART_KEYS){
     const chip=findDespieceNode('#despieceHit-'+key);
-    if(chip)chip.textContent=despiecePartLabel(key);
+    if(chip)chip.textContent=despiecePartDisplayName(key);
   }
   bindDespieceHits();
   paintDespieceSelection();
@@ -220,7 +297,7 @@ function ensureDespieceHitButtons(){
   host._despieceHits=true;
   for(const key of COST_PART_KEYS){
     const b=document.createElement('button');
-    b.id='despieceHit-'+key;b.type='button';b.setAttribute('data-part',key);b.textContent=despiecePartLabel(key);
+    b.id='despieceHit-'+key;b.type='button';b.setAttribute('data-part',key);b.textContent=despiecePartDisplayName(key);
     b.addEventListener('click',()=>selectDespiecePart(key));
     host.append(b);
   }
@@ -233,12 +310,22 @@ function refreshDespieceTags(){
     if(el)el.textContent=formatPartMoney(parts[key]);
   }
 }
+function syncColorPair(colorEl,hexEl,stored){
+  const hex=stored&&validHex(stored)?stored.toLowerCase():'';
+  if(colorEl&&document.activeElement!==colorEl)colorEl.value=hex||UNSET_PART_SWATCH;
+  if(hexEl&&document.activeElement!==hexEl)hexEl.value=hex?hex.toUpperCase():'';
+}
 function syncDespieceEditor(){
   const key=despiecePartVisible(selectedDespiecePart)?selectedDespiecePart:(visibleCostPartKeys()[0]||'cuerpo');
   selectedDespiecePart=key;
-  const parts=ensureCostParts().parts;
+  const parts=ensureCostParts().parts,detail=ensurePartDetail(key);
   const name=$('#despiecePartName'),input=$('#despiecePartCost'),err=$('#despiecePartError');
-  if(name)name.textContent=despiecePartLabel(key);
+  const label=$('#despiecePartLabel'),notes=$('#despiecePartNotes'),pantone=$('#despiecePartPantone');
+  if(name)name.textContent=despiecePartDisplayName(key);
+  if(label&&document.activeElement!==label){label.value=detail.label;label.placeholder=despiecePartLabel(key)}
+  if(notes&&document.activeElement!==notes)notes.value=detail.notes;
+  if(pantone&&document.activeElement!==pantone)pantone.value=detail.pantone;
+  syncColorPair($('#despiecePartColor'),$('#despiecePartHex'),detail.color);
   if(input&&document.activeElement!==input)input.value=priceInputValue(parts[key]);
   if(err)err.textContent='';
   syncDespieceArtCosts();
@@ -251,9 +338,10 @@ function syncDespieceArtCosts(){
   if(!show){box.replaceChildren();return}
   const cents=ensureCostParts().artworkCents;
   box.replaceChildren();
-  const title=document.createElement('p');title.className='help';title.textContent='Por aplicación · la suma escribe el costo de estampado.';box.append(title);
+  const title=document.createElement('p');title.className='help';title.textContent='Por aplicación · precio, detalle y color. La suma escribe el precio de estampado.';box.append(title);
   (state.artworks||[]).filter(photoArtworkVisible).forEach((art,index)=>{
-    const field=document.createElement('div');field.className='field';
+    const detail=ensureArtworkDetail(art.id);
+    const field=document.createElement('div');field.className='field despiece-art-card';
     const label=document.createElement('label');label.setAttribute('for','despieceArt-'+art.id);label.textContent=artworkCostLabel(art,index);
     const input=document.createElement('input');input.id='despieceArt-'+art.id;input.dataset.artCost=art.id;input.type='text';input.inputMode='decimal';input.maxLength=12;input.placeholder='Por definir';input.value=priceInputValue(cents[art.id]??'');
     input.addEventListener('input',()=>{
@@ -268,7 +356,29 @@ function syncDespieceArtCosts(){
       }
     });
     input.addEventListener('change',()=>{input.value=priceInputValue(ensureCostParts().artworkCents[art.id]??'')});
-    field.append(label,input);box.append(field);
+    const notes=document.createElement('textarea');notes.id='despieceArtNotes-'+art.id;notes.maxLength=400;notes.rows=2;notes.placeholder='Detalle / notas · por definir';notes.value=detail.notes;
+    notes.addEventListener('input',()=>{ensureArtworkDetail(art.id).notes=notes.value.slice(0,400);changed()});
+    const colorRow=document.createElement('div');colorRow.className='despiece-color-row';
+    const colorWrap=document.createElement('div');colorWrap.className='field';
+    const colorLab=document.createElement('label');colorLab.setAttribute('for','despieceArtColor-'+art.id);colorLab.textContent='Color';
+    const color=document.createElement('input');color.id='despieceArtColor-'+art.id;color.type='color';color.value=detail.color&&validHex(detail.color)?detail.color:UNSET_PART_SWATCH;
+    color.addEventListener('input',()=>{ensureArtworkDetail(art.id).color=color.value.toLowerCase();const hex=$('#despieceArtHex-'+art.id);if(hex)hex.value=color.value.toUpperCase();changed()});
+    colorWrap.append(colorLab,color);
+    const hexWrap=document.createElement('div');hexWrap.className='field';
+    const hexLab=document.createElement('label');hexLab.setAttribute('for','despieceArtHex-'+art.id);hexLab.textContent='Hex';
+    const hex=document.createElement('input');hex.id='despieceArtHex-'+art.id;hex.type='text';hex.maxLength=7;hex.placeholder='Por definir';hex.spellcheck=false;hex.value=detail.color&&validHex(detail.color)?detail.color.toUpperCase():'';
+    hex.addEventListener('change',()=>{
+      try{ensureArtworkDetail(art.id).color=parseOptionalPartHex(hex.value);hex.value=ensureArtworkDetail(art.id).color?ensureArtworkDetail(art.id).color.toUpperCase():'';color.value=ensureArtworkDetail(art.id).color||UNSET_PART_SWATCH;$('#despiecePartError').textContent='';changed()}
+      catch(error){hex.value=ensureArtworkDetail(art.id).color?ensureArtworkDetail(art.id).color.toUpperCase():'';$('#despiecePartError').textContent=error.message}
+    });
+    hexWrap.append(hexLab,hex);
+    const pantoneWrap=document.createElement('div');pantoneWrap.className='field';
+    const pantoneLab=document.createElement('label');pantoneLab.setAttribute('for','despieceArtPantone-'+art.id);pantoneLab.textContent='Pantone / custom';
+    const pantone=document.createElement('input');pantone.id='despieceArtPantone-'+art.id;pantone.type='text';pantone.maxLength=40;pantone.placeholder='Ej. 19-1664 TCX';pantone.value=detail.pantone;
+    pantone.addEventListener('input',()=>{ensureArtworkDetail(art.id).pantone=pantone.value.slice(0,40);changed()});
+    pantoneWrap.append(pantoneLab,pantone);
+    colorRow.append(colorWrap,hexWrap,pantoneWrap);
+    field.append(label,input,notes,colorRow);box.append(field);
   });
 }
 function syncDespieceTotals(){
@@ -282,21 +392,49 @@ function syncDespieceTotals(){
   refreshDespieceTags();
   syncFichaDespiece();
 }
+function setDespieceFieldDisabled(el,disabled){
+  if(!el)return;
+  el.disabled=disabled;
+  if(el.placeholder!==undefined){
+    if(el.dataset.costPart)el.placeholder=disabled?'N/A en esta prenda':'Por definir';
+    else if(el.dataset.partLabel)el.placeholder=disabled?'N/A':despiecePartLabel(el.dataset.partLabel);
+  }
+}
+function fillPartDetailInputs(key,visible){
+  const detail=visible?ensurePartDetail(key):blankPartDetail();
+  const label=$('#costPartLabel-'+key),notes=$('#costPartNotes-'+key),hex=$('#costPartHex-'+key),color=$('#costPartColor-'+key),pantone=$('#costPartPantone-'+key);
+  if(label&&document.activeElement!==label)label.value=visible?detail.label:'';
+  if(notes&&document.activeElement!==notes)notes.value=visible?detail.notes:'';
+  if(pantone&&document.activeElement!==pantone)pantone.value=visible?detail.pantone:'';
+  syncColorPair(color,hex,visible?detail.color:'');
+  [label,notes,hex,color,pantone].forEach(el=>setDespieceFieldDisabled(el,!visible));
+}
 function syncDespieceFields(){
   ensureCostParts();
+  $$('[data-part-field]').forEach(wrap=>{
+    const key=wrap.dataset.partField,visible=despiecePartVisible(key);
+    wrap.hidden=!visible;
+    const title=wrap.querySelector('[data-part-title]')||$$('[data-part-title]').find?.(el=>el.dataset.partTitle===key);
+    if(title)title.textContent=despiecePartLabel(key);
+  });
+  $$('[data-part-title]').forEach(el=>{el.textContent=despiecePartLabel(el.dataset.partTitle)});
   $$('[data-cost-part]').forEach(input=>{
     const key=input.dataset.costPart,visible=despiecePartVisible(key);
-    const wrap=input.closest('[data-part-field]')||input.parentElement;
-    if(wrap)wrap.hidden=!visible;
     if(document.activeElement!==input)input.value=visible?priceInputValue(ensureCostParts().parts[key]):'';
-    input.disabled=!visible;
-    input.placeholder=visible?'Por definir':'N/A en esta prenda';
-    const lab=wrap&&wrap.querySelector('label');
-    if(lab)lab.textContent=despiecePartLabel(key);
+    setDespieceFieldDisabled(input,!visible);
+    fillPartDetailInputs(key,visible);
   });
   const aletilla=$('#costPart-aletilla');
-  if(aletilla)aletilla.title=state.garment==='polo'?'Costo de la aletilla / tapeta':'No aplica fuera de polo';
+  if(aletilla)aletilla.title=state.garment==='polo'?'Precio de la aletilla / tapeta':'No aplica fuera de polo';
   syncDespieceEditor();
+}
+function appendFichaMeta(host,detail){
+  const meta=formatPartMeta(detail);
+  if(!meta)return;
+  const line=document.createElement('small');
+  line.className='despiece-ficha-meta';
+  line.textContent=meta;
+  host.append(line);
 }
 function syncFichaDespiece(){
   const box=$('#fichaDespieceRows');if(!box)return;
@@ -304,7 +442,9 @@ function syncFichaDespiece(){
   const parts=ensureCostParts().parts,summary=partCostSummary();
   for(const key of visibleCostPartKeys()){
     const row=document.createElement('div');
-    const name=document.createElement('span');name.textContent=despiecePartLabel(key);
+    const name=document.createElement('span');
+    name.textContent=despiecePartDisplayName(key);
+    appendFichaMeta(name,ensurePartDetail(key));
     const value=document.createElement('strong');value.textContent=formatPartMoney(parts[key]);
     row.append(name,value);box.append(row);
   }
@@ -315,14 +455,22 @@ function syncFichaDespiece(){
 }
 function referenceDespiece(report){
   const summary=partCostSummary(),parts=ensureCostParts().parts;
-  report.section('DESPIECE · COSTO POR PARTE');
-  for(const key of visibleCostPartKeys())report.row(despiecePartLabel(key),formatPartMoney(parts[key]));
+  report.section('DESPIECE · DETALLE POR PARTE');
+  for(const key of visibleCostPartKeys()){
+    report.row(despiecePartDisplayName(key),formatPartMoney(parts[key]));
+    const meta=formatPartMeta(ensurePartDetail(key));
+    if(meta)report.row(despiecePartDisplayName(key)+' · detalle',meta);
+  }
   if((state.artworks||[]).length){
-    const cents=ensureCostParts().artworkCents;
-    (state.artworks||[]).filter(photoArtworkVisible).forEach((art,index)=>report.row('Estampado · '+artworkCostLabel(art,index),formatPartMoney(cents[art.id]??'')));
+    const cents=ensureCostParts().artworkCents,details=ensureCostParts().artworkDetails||{};
+    (state.artworks||[]).filter(photoArtworkVisible).forEach((art,index)=>{
+      report.row('Estampado · '+artworkCostLabel(art,index),formatPartMoney(cents[art.id]??''));
+      const meta=formatPartMeta(details[art.id]);
+      if(meta)report.row('Estampado · '+artworkCostLabel(art,index)+' · detalle',meta);
+    });
   }
   report.row(summary.complete?'Total por partes':'Suma parcial de partes',summary.count?formatPartMoney(summary.cents):'Por definir');
-  report.row('Alcance','Uso interno. No modifica el precio de venta ni el PDF del cliente.');
+  report.row('Alcance','Uso interno. No modifica el precio de venta ni el PDF del cliente. Precios vacíos = por definir.');
 }
 function syncDespieceChrome(){
   const stage=$('#photoStage'),pane=$('#photoDespiece'),btn=$('#photoDespieceView');
@@ -334,7 +482,7 @@ function syncDespieceChrome(){
   stage.dataset.despieceShape=state.garment;
   if(despieceMode){
     stage.dataset.view='despiece';
-    $('#photoOrigin').textContent='Despiece · costo por parte · uso interno';
+    $('#photoOrigin').textContent='Despiece · detalle por parte · uso interno';
     if(!photoIssues().length)$('#photoStatus').textContent=despieceExploded?'Prenda separada · toca cuello, cuerpo, mangas…':'Prenda unida · toca una parte o Separar';
     toggleDespieceExplode(despieceExploded);
     refreshDespieceSvg();
@@ -354,6 +502,33 @@ function initDespiece(){
     catch(error){e.target.value=priceInputValue(ensureCostParts().parts[selectedDespiecePart]);$('#despiecePartError').textContent=error.message+' Se conservó el último costo válido.'}
   });
   $('#despiecePartCost')?.addEventListener('change',()=>{$('#despiecePartCost').value=priceInputValue(ensureCostParts().parts[selectedDespiecePart])});
+  const writeSelectedDetail=(field,value)=>{
+    const detail=ensurePartDetail(selectedDespiecePart);
+    detail[field]=value;
+    if(field==='label'){
+      const name=$('#despiecePartName');
+      if(name)name.textContent=despiecePartDisplayName(selectedDespiecePart);
+    }
+    if(despieceMode)refreshDespieceSvg();
+    syncDespieceFields();
+    changed();
+  };
+  $('#despiecePartLabel')?.addEventListener('input',e=>writeSelectedDetail('label',e.target.value.slice(0,80)));
+  $('#despiecePartNotes')?.addEventListener('input',e=>writeSelectedDetail('notes',e.target.value.slice(0,400)));
+  $('#despiecePartPantone')?.addEventListener('input',e=>writeSelectedDetail('pantone',e.target.value.slice(0,40)));
+  $('#despiecePartColor')?.addEventListener('input',e=>{
+    writeSelectedDetail('color',String(e.target.value||'').toLowerCase());
+    const hex=$('#despiecePartHex');if(hex)hex.value=ensurePartDetail(selectedDespiecePart).color.toUpperCase();
+  });
+  $('#despiecePartHex')?.addEventListener('change',e=>{
+    try{
+      writeSelectedDetail('color',parseOptionalPartHex(e.target.value));
+      $('#despiecePartError').textContent='';
+    }catch(error){
+      e.target.value=ensurePartDetail(selectedDespiecePart).color?ensurePartDetail(selectedDespiecePart).color.toUpperCase():'';
+      $('#despiecePartError').textContent=error.message;
+    }
+  });
   $$('[data-cost-part]').forEach(input=>{
     input.addEventListener('input',()=>{
       if(!despiecePartVisible(input.dataset.costPart))return;
@@ -363,18 +538,47 @@ function initDespiece(){
     input.addEventListener('change',()=>{input.value=despiecePartVisible(input.dataset.costPart)?priceInputValue(ensureCostParts().parts[input.dataset.costPart]):''});
     input.addEventListener('focus',()=>{if(despiecePartVisible(input.dataset.costPart))selectDespiecePart(input.dataset.costPart)});
   });
+  const bindPartMeta=(sel,field,limit,event='input')=>{
+    $$(sel).forEach(input=>{
+      const keyOf=()=>input.dataset.partLabel||input.dataset.partNotes||input.dataset.partPantone||input.dataset.partHex||input.dataset.partColor;
+      input.addEventListener('focus',()=>{const key=keyOf();if(despiecePartVisible(key))selectDespiecePart(key)});
+      input.addEventListener(event,()=>{
+        const key=keyOf();
+        if(!despiecePartVisible(key))return;
+        try{
+          const detail=ensurePartDetail(key);
+          if(field==='color')detail.color=event==='change'?parseOptionalPartHex(input.value):String(input.value||'').toLowerCase();
+          else detail[field]=String(input.value||'').slice(0,limit);
+          selectDespiecePart(key);
+          $('#costInputError').textContent='';
+          if(despieceMode)refreshDespieceSvg();
+          syncDespieceFields();changed();
+        }catch(error){
+          if(field==='color')input.value=ensurePartDetail(key).color?ensurePartDetail(key).color.toUpperCase():'';
+          $('#costInputError').textContent=error.message;
+        }
+      });
+    });
+  };
+  bindPartMeta('[data-part-label]','label',80);
+  bindPartMeta('[data-part-notes]','notes',400);
+  bindPartMeta('[data-part-pantone]','pantone',40);
+  bindPartMeta('[data-part-color]','color',7);
+  bindPartMeta('[data-part-hex]','color',7,'change');
   ensureDespieceHitButtons();
   refreshDespieceSvg();
   syncDespieceFields();
 }
 
 const blankBeforeDespiece=blank;
-blank=function(){const out=blankBeforeDespiece();out.costing.parts=blankCostParts();out.costing.artworkCents={};return out};
+blank=function(){const out=blankBeforeDespiece();out.costing.parts=blankCostParts();out.costing.artworkCents={};out.costing.partDetails=blankPartDetails();out.costing.artworkDetails={};return out};
 const validateBeforeDespiece=validateOrder;
 validateOrder=async function(raw){
   const out=await validateBeforeDespiece(raw);
   out.costing.parts=validateCostParts(raw.costing?.parts);
   out.costing.artworkCents=validateArtworkCents(raw.costing?.artworkCents);
+  out.costing.partDetails=validatePartDetails(raw.costing?.partDetails);
+  out.costing.artworkDetails=validateArtworkDetails(raw.costing?.artworkDetails);
   return out;
 };
 const syncPricingUIBeforeDespiece=syncPricingUI;

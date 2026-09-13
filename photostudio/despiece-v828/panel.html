@@ -1,16 +1,96 @@
   <div class="despiece-cost-card" id="costPartCard">
-    <h4>Despiece · costo por parte</h4>
-    <p class="help">Misma captura que en Acabado → Despiece. Aletilla solo aplica en polo. El estampado puede desglosarse por aplicación.</p>
+    <h4>Despiece · detalle por parte</h4>
+    <p class="help">Nombre, notas, color (hex o Pantone/custom) y precio por parte. Precios vacíos = por definir; no se inventan costos. Aletilla solo aplica en polo. El estampado puede desglosarse por aplicación.</p>
     <button type="button" id="openDespiece" class="despiece-open">Ver despiece en Acabado</button>
     <div class="despiece-cost-grid" id="costPartGrid">
-      <div class="field" data-part-field="cuello"><label for="costPart-cuello">Cuello</label><input id="costPart-cuello" data-cost-part="cuello" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
-      <div class="field" data-part-field="cuerpo"><label for="costPart-cuerpo">Cuerpo</label><input id="costPart-cuerpo" data-cost-part="cuerpo" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
-      <div class="field" data-part-field="mangas"><label for="costPart-mangas">Mangas</label><input id="costPart-mangas" data-cost-part="mangas" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
-      <div class="field" data-part-field="punos"><label for="costPart-punos">Puños</label><input id="costPart-punos" data-cost-part="punos" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
-      <div class="field" data-part-field="dobladillo"><label for="costPart-dobladillo">Dobladillo</label><input id="costPart-dobladillo" data-cost-part="dobladillo" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
-      <div class="field" data-part-field="etiqueta"><label for="costPart-etiqueta">Etiqueta</label><input id="costPart-etiqueta" data-cost-part="etiqueta" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
-      <div class="field" data-part-field="aletilla"><label for="costPart-aletilla">Aletilla</label><input id="costPart-aletilla" data-cost-part="aletilla" type="text" inputmode="decimal" maxlength="12" placeholder="N/A en esta prenda"></div>
-      <div class="field" data-part-field="estampado"><label for="costPart-estampado">Estampado</label><input id="costPart-estampado" data-cost-part="estampado" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+      <div class="despiece-part-card" data-part-field="cuello">
+        <strong class="despiece-part-card-title" data-part-title="cuello">Cuello</strong>
+        <div class="field"><label for="costPartLabel-cuello">Nombre</label><input id="costPartLabel-cuello" data-part-label="cuello" type="text" maxlength="80" placeholder="Cuello" autocomplete="off"></div>
+        <div class="field"><label for="costPartNotes-cuello">Detalle</label><textarea id="costPartNotes-cuello" data-part-notes="cuello" maxlength="400" rows="2" placeholder="Por definir"></textarea></div>
+        <div class="despiece-color-row">
+          <div class="field"><label for="costPartColor-cuello">Color</label><input id="costPartColor-cuello" data-part-color="cuello" type="color" value="#f4f3ef"></div>
+          <div class="field"><label for="costPartHex-cuello">Hex</label><input id="costPartHex-cuello" data-part-hex="cuello" type="text" maxlength="7" placeholder="Por definir" spellcheck="false" autocomplete="off"></div>
+          <div class="field"><label for="costPartPantone-cuello">Pantone</label><input id="costPartPantone-cuello" data-part-pantone="cuello" type="text" maxlength="40" placeholder="Pantone / custom" autocomplete="off"></div>
+        </div>
+        <div class="field"><label for="costPart-cuello">Precio</label><input id="costPart-cuello" data-cost-part="cuello" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+      </div>
+      <div class="despiece-part-card" data-part-field="cuerpo">
+        <strong class="despiece-part-card-title" data-part-title="cuerpo">Cuerpo</strong>
+        <div class="field"><label for="costPartLabel-cuerpo">Nombre</label><input id="costPartLabel-cuerpo" data-part-label="cuerpo" type="text" maxlength="80" placeholder="Cuerpo" autocomplete="off"></div>
+        <div class="field"><label for="costPartNotes-cuerpo">Detalle</label><textarea id="costPartNotes-cuerpo" data-part-notes="cuerpo" maxlength="400" rows="2" placeholder="Por definir"></textarea></div>
+        <div class="despiece-color-row">
+          <div class="field"><label for="costPartColor-cuerpo">Color</label><input id="costPartColor-cuerpo" data-part-color="cuerpo" type="color" value="#f4f3ef"></div>
+          <div class="field"><label for="costPartHex-cuerpo">Hex</label><input id="costPartHex-cuerpo" data-part-hex="cuerpo" type="text" maxlength="7" placeholder="Por definir" spellcheck="false" autocomplete="off"></div>
+          <div class="field"><label for="costPartPantone-cuerpo">Pantone</label><input id="costPartPantone-cuerpo" data-part-pantone="cuerpo" type="text" maxlength="40" placeholder="Pantone / custom" autocomplete="off"></div>
+        </div>
+        <div class="field"><label for="costPart-cuerpo">Precio</label><input id="costPart-cuerpo" data-cost-part="cuerpo" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+      </div>
+      <div class="despiece-part-card" data-part-field="mangas">
+        <strong class="despiece-part-card-title" data-part-title="mangas">Mangas</strong>
+        <div class="field"><label for="costPartLabel-mangas">Nombre</label><input id="costPartLabel-mangas" data-part-label="mangas" type="text" maxlength="80" placeholder="Mangas" autocomplete="off"></div>
+        <div class="field"><label for="costPartNotes-mangas">Detalle</label><textarea id="costPartNotes-mangas" data-part-notes="mangas" maxlength="400" rows="2" placeholder="Por definir"></textarea></div>
+        <div class="despiece-color-row">
+          <div class="field"><label for="costPartColor-mangas">Color</label><input id="costPartColor-mangas" data-part-color="mangas" type="color" value="#f4f3ef"></div>
+          <div class="field"><label for="costPartHex-mangas">Hex</label><input id="costPartHex-mangas" data-part-hex="mangas" type="text" maxlength="7" placeholder="Por definir" spellcheck="false" autocomplete="off"></div>
+          <div class="field"><label for="costPartPantone-mangas">Pantone</label><input id="costPartPantone-mangas" data-part-pantone="mangas" type="text" maxlength="40" placeholder="Pantone / custom" autocomplete="off"></div>
+        </div>
+        <div class="field"><label for="costPart-mangas">Precio</label><input id="costPart-mangas" data-cost-part="mangas" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+      </div>
+      <div class="despiece-part-card" data-part-field="punos">
+        <strong class="despiece-part-card-title" data-part-title="punos">Puños</strong>
+        <div class="field"><label for="costPartLabel-punos">Nombre</label><input id="costPartLabel-punos" data-part-label="punos" type="text" maxlength="80" placeholder="Puños" autocomplete="off"></div>
+        <div class="field"><label for="costPartNotes-punos">Detalle</label><textarea id="costPartNotes-punos" data-part-notes="punos" maxlength="400" rows="2" placeholder="Por definir"></textarea></div>
+        <div class="despiece-color-row">
+          <div class="field"><label for="costPartColor-punos">Color</label><input id="costPartColor-punos" data-part-color="punos" type="color" value="#f4f3ef"></div>
+          <div class="field"><label for="costPartHex-punos">Hex</label><input id="costPartHex-punos" data-part-hex="punos" type="text" maxlength="7" placeholder="Por definir" spellcheck="false" autocomplete="off"></div>
+          <div class="field"><label for="costPartPantone-punos">Pantone</label><input id="costPartPantone-punos" data-part-pantone="punos" type="text" maxlength="40" placeholder="Pantone / custom" autocomplete="off"></div>
+        </div>
+        <div class="field"><label for="costPart-punos">Precio</label><input id="costPart-punos" data-cost-part="punos" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+      </div>
+      <div class="despiece-part-card" data-part-field="dobladillo">
+        <strong class="despiece-part-card-title" data-part-title="dobladillo">Dobladillo</strong>
+        <div class="field"><label for="costPartLabel-dobladillo">Nombre</label><input id="costPartLabel-dobladillo" data-part-label="dobladillo" type="text" maxlength="80" placeholder="Dobladillo" autocomplete="off"></div>
+        <div class="field"><label for="costPartNotes-dobladillo">Detalle</label><textarea id="costPartNotes-dobladillo" data-part-notes="dobladillo" maxlength="400" rows="2" placeholder="Por definir"></textarea></div>
+        <div class="despiece-color-row">
+          <div class="field"><label for="costPartColor-dobladillo">Color</label><input id="costPartColor-dobladillo" data-part-color="dobladillo" type="color" value="#f4f3ef"></div>
+          <div class="field"><label for="costPartHex-dobladillo">Hex</label><input id="costPartHex-dobladillo" data-part-hex="dobladillo" type="text" maxlength="7" placeholder="Por definir" spellcheck="false" autocomplete="off"></div>
+          <div class="field"><label for="costPartPantone-dobladillo">Pantone</label><input id="costPartPantone-dobladillo" data-part-pantone="dobladillo" type="text" maxlength="40" placeholder="Pantone / custom" autocomplete="off"></div>
+        </div>
+        <div class="field"><label for="costPart-dobladillo">Precio</label><input id="costPart-dobladillo" data-cost-part="dobladillo" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+      </div>
+      <div class="despiece-part-card" data-part-field="etiqueta">
+        <strong class="despiece-part-card-title" data-part-title="etiqueta">Etiqueta</strong>
+        <div class="field"><label for="costPartLabel-etiqueta">Nombre</label><input id="costPartLabel-etiqueta" data-part-label="etiqueta" type="text" maxlength="80" placeholder="Etiqueta" autocomplete="off"></div>
+        <div class="field"><label for="costPartNotes-etiqueta">Detalle</label><textarea id="costPartNotes-etiqueta" data-part-notes="etiqueta" maxlength="400" rows="2" placeholder="Por definir"></textarea></div>
+        <div class="despiece-color-row">
+          <div class="field"><label for="costPartColor-etiqueta">Color</label><input id="costPartColor-etiqueta" data-part-color="etiqueta" type="color" value="#f4f3ef"></div>
+          <div class="field"><label for="costPartHex-etiqueta">Hex</label><input id="costPartHex-etiqueta" data-part-hex="etiqueta" type="text" maxlength="7" placeholder="Por definir" spellcheck="false" autocomplete="off"></div>
+          <div class="field"><label for="costPartPantone-etiqueta">Pantone</label><input id="costPartPantone-etiqueta" data-part-pantone="etiqueta" type="text" maxlength="40" placeholder="Pantone / custom" autocomplete="off"></div>
+        </div>
+        <div class="field"><label for="costPart-etiqueta">Precio</label><input id="costPart-etiqueta" data-cost-part="etiqueta" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+      </div>
+      <div class="despiece-part-card" data-part-field="aletilla">
+        <strong class="despiece-part-card-title" data-part-title="aletilla">Aletilla</strong>
+        <div class="field"><label for="costPartLabel-aletilla">Nombre</label><input id="costPartLabel-aletilla" data-part-label="aletilla" type="text" maxlength="80" placeholder="Aletilla" autocomplete="off"></div>
+        <div class="field"><label for="costPartNotes-aletilla">Detalle</label><textarea id="costPartNotes-aletilla" data-part-notes="aletilla" maxlength="400" rows="2" placeholder="Por definir"></textarea></div>
+        <div class="despiece-color-row">
+          <div class="field"><label for="costPartColor-aletilla">Color</label><input id="costPartColor-aletilla" data-part-color="aletilla" type="color" value="#f4f3ef"></div>
+          <div class="field"><label for="costPartHex-aletilla">Hex</label><input id="costPartHex-aletilla" data-part-hex="aletilla" type="text" maxlength="7" placeholder="Por definir" spellcheck="false" autocomplete="off"></div>
+          <div class="field"><label for="costPartPantone-aletilla">Pantone</label><input id="costPartPantone-aletilla" data-part-pantone="aletilla" type="text" maxlength="40" placeholder="Pantone / custom" autocomplete="off"></div>
+        </div>
+        <div class="field"><label for="costPart-aletilla">Precio</label><input id="costPart-aletilla" data-cost-part="aletilla" type="text" inputmode="decimal" maxlength="12" placeholder="N/A en esta prenda"></div>
+      </div>
+      <div class="despiece-part-card" data-part-field="estampado">
+        <strong class="despiece-part-card-title" data-part-title="estampado">Estampado</strong>
+        <div class="field"><label for="costPartLabel-estampado">Nombre</label><input id="costPartLabel-estampado" data-part-label="estampado" type="text" maxlength="80" placeholder="Estampado" autocomplete="off"></div>
+        <div class="field"><label for="costPartNotes-estampado">Detalle</label><textarea id="costPartNotes-estampado" data-part-notes="estampado" maxlength="400" rows="2" placeholder="Por definir"></textarea></div>
+        <div class="despiece-color-row">
+          <div class="field"><label for="costPartColor-estampado">Color</label><input id="costPartColor-estampado" data-part-color="estampado" type="color" value="#f4f3ef"></div>
+          <div class="field"><label for="costPartHex-estampado">Hex</label><input id="costPartHex-estampado" data-part-hex="estampado" type="text" maxlength="7" placeholder="Por definir" spellcheck="false" autocomplete="off"></div>
+          <div class="field"><label for="costPartPantone-estampado">Pantone</label><input id="costPartPantone-estampado" data-part-pantone="estampado" type="text" maxlength="40" placeholder="Pantone / custom" autocomplete="off"></div>
+        </div>
+        <div class="field"><label for="costPart-estampado">Precio</label><input id="costPart-estampado" data-cost-part="estampado" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+      </div>
     </div>
     <div class="price-total despiece-inline-total"><span id="costPartSummaryLabel">Suma por partes</span><strong id="costPartSummaryAmount" aria-live="polite">Por definir</strong></div>
   </div>

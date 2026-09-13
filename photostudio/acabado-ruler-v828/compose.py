@@ -1,4 +1,4 @@
-"""Dual-unit placement rulers on Acabado Frente/Espalda (HPS origin, MGM v8.2.13)."""
+"""Dual-unit placement rulers on Acabado Frente/Espalda (HPS origin, MGM v8.2.14)."""
 from pathlib import Path
 
 def extend(html, root):

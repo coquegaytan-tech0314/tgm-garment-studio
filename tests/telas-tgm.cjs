@@ -8,7 +8,7 @@ function sample(canvas,x,y){
   await run('init()');
   assert.equal(run('VERSION'),8);
   const built=require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8');
-  assert.match(built,/MGM · v8\.2\.13/);
+  assert.match(built,/MGM · v8\.2\.14/);
   assert.match(built,/PIQUÉ OLMO/);
   assert.match(built,/Poliéster\/Algodón/);
   assert.equal(built.includes('50% lycra')||built.includes('50% cotton / 50% lycra'),false);
@@ -42,8 +42,19 @@ function sample(canvas,x,y){
   run("state=blank();state.garment='playera';photoBaseDefaults();populate()");
   assert.equal(run('state.fabric'),'CHIFÓN 140');
   assert.equal(run('state.gsm'),'');
-  assert.equal(run("telaSuggestedIds('playera').join(',')"),'chifon-140,fomer,mayki-plus');
+  assert.equal(run("telaSuggestedIds('playera').join(',')"),'chifon-140,chifon-estrella,fomer,mayki-plus');
+  assert.equal(run("telaSuggestedIds('zipneck').join(',')"),'chifon-140,chifon-estrella,fomer,mayki-plus');
+  assert.equal(run("telaSuggestedIds('sleeveless').join(',')"),'chifon-140,chifon-estrella,fomer,mayki-plus');
+  assert.equal(run("telaSuggestedIds('playera')[0]"),'chifon-140');
+  assert.equal(run("telaSuggestedIds('playera')[1]"),'chifon-estrella');
+  run("syncFabricSkuList()");
+  assert.match(run("$('#fabric').placeholder"),/Chifón \/ Chifón Estrella/);
+  assert.equal(run("fabricSkuOptions().map(s=>s.value).join(',')"),'CHIFÓN 140,CHIFÓN ESTRELLA');
+  run("state.garment='zipneck';syncFabricSkuList()");
+  assert.equal(run("fabricSkuOptions().map(s=>s.value).join(',')"),'CHIFÓN 140,CHIFÓN ESTRELLA');
+  run("state.garment='playera';syncFabricSkuList()");
   assert.match(run("telaHelpText('playera')"),/CHIFÓN/);
+  assert.match(run("telaHelpText('zipneck')"),/CHIFÓN ESTRELLA/);
   assert.match(run("telaHelpText('playera')"),/Maiky Plus/);
   assert.match(run("telaHelpText('playera')"),/TGM es la fábrica/);
   assert.match(run("$('#telaHelp').textContent"),/1200–1500/);
@@ -63,7 +74,15 @@ function sample(canvas,x,y){
   assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='rib-millenium').pesoGm2"),415);
 
   run("state=blank();state.garment='sleeveless';photoBaseDefaults();populate()");
-  assert.equal(run('state.fabric'),'Chifón Estrella','sleeveless keeps the existing Chifón photobase label');
+  assert.match(run('state.fabric'),/CHIF[OÓ]N ESTRELLA/i,'sleeveless leads with Chifón Estrella');
+  assert.equal(run('ensureTela().id'),'chifon-estrella');
+  assert.equal(run('ensureTela().pesoGm2'),'','Chifón Estrella has no invented GSM');
+  run("state=blank();state.garment='zipneck';photoBaseDefaults();populate()");
+  assert.match(run('state.fabric'),/CHIF[OÓ]N ESTRELLA/i,'manga larga defaults to Chifón Estrella');
+  assert.equal(run('ensureTela().id'),'chifon-estrella');
+  assert.equal(run("telaJerseyFamily('playera')"),true);
+  assert.equal(run("telaJerseyFamily('zipneck')"),true);
+  assert.equal(run("telaJerseyFamily('polo')"),false);
 
   run("state=blank();state.garment='polo';photoBaseDefaults();populate()");
   assert.equal(run('state.fabric'),'PIQUÉ OLMO');
@@ -94,7 +113,9 @@ function sample(canvas,x,y){
   assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='mayki-plus').nombre"),'MAYKI');
   assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='millenium').nombre"),'MILLENIUM');
   assert.equal(run("telaSuggestedIds('polo').join(',')"),'pique-olmo,pique-atlante,fomer');
-  assert.equal(run("telaSuggestedIds('playera').join(',')"),'chifon-140,fomer,mayki-plus','playera ships Chifón / Fomer / MAYKI');
+  assert.equal(run("telaSuggestedIds('playera').join(',')"),'chifon-140,chifon-estrella,fomer,mayki-plus','playera leads with Chifón / Chifón Estrella');
+  assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='chifon-estrella').nombre"),'CHIFÓN ESTRELLA');
+  assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='chifon-estrella').pesoGm2"),'');
   assert.match(run("TGM_TELA_CATALOG.find(t=>t.id==='pique-olmo').nota"),/sin porcentaje exacto/);
   assert.match(run("TGM_TELA_CATALOG.find(t=>t.id==='pique-atlante').nota"),/piqué/);
   assert.match(run("TGM_TELA_CATALOG.find(t=>t.id==='fomer').nota"),/liso/);

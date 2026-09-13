@@ -105,6 +105,45 @@ function poloConstructionRows(){
   ];
 }
 function poloFichaSummary(){return poloConstructionRows().map(([label,text])=>label+': '+text).join('\n')}
+function poloPaintsAcabadoOverlays(){
+  /* Photoreal polo bases already include cuello, puño, aletilla and ruedo.
+     Polygon fills (red trapezoid, jagged cuff stripes, vent blobs) sat on top
+     of the photo and read as dirty placeholders. Specs stay in controls / ficha / Despiece. */
+  return false;
+}
+function poloPhotoConstructionOverlays(){return poloPaintsAcabadoOverlays()}
+function poloPaintStandingCollarMask(t,view){
+  t.fillStyle='white';
+  if(view==='front'){
+    t.beginPath();
+    t.moveTo(.402,.010);
+    t.bezierCurveTo(.430,.002,.570,.002,.598,.010);
+    t.bezierCurveTo(.638,.018,.658,.055,.652,.092);
+    t.bezierCurveTo(.670,.128,.658,.168,.620,.170);
+    t.bezierCurveTo(.586,.150,.548,.140,.518,.150);
+    t.lineTo(.500,.160);
+    t.lineTo(.482,.150);
+    t.bezierCurveTo(.452,.140,.414,.150,.380,.170);
+    t.bezierCurveTo(.342,.168,.330,.128,.348,.092);
+    t.bezierCurveTo(.342,.055,.362,.018,.402,.010);
+    t.closePath();
+    t.fill();
+    t.globalCompositeOperation='destination-out';
+    t.beginPath();
+    t.ellipse(.500,.052,.070,.036,0,0,Math.PI*2);
+    t.fill();
+    t.globalCompositeOperation='source-over';
+    return;
+  }
+  t.beginPath();
+  t.moveTo(.408,.008);
+  t.bezierCurveTo(.448,.001,.552,.001,.592,.008);
+  t.bezierCurveTo(.618,.018,.628,.038,.612,.052);
+  t.quadraticCurveTo(.500,.064,.388,.052);
+  t.bezierCurveTo(.372,.038,.382,.018,.408,.008);
+  t.closePath();
+  t.fill();
+}
 function poloAssignField(key,el,commit=false){
   const p=ensurePolo();
   if(el.type==='checkbox')p[key]=el.checked;
@@ -258,6 +297,7 @@ const drawPoloAccentsBeforeStd=drawPoloAccents;
 drawPoloAccents=function(ctx,r,view){
   if(state.garment!=='polo')return;
   const p=ensurePolo();
+  if(!poloPaintsAcabadoOverlays())return;
   drawPoloAccentsBeforeStd(ctx,r,view);
   ctx.save();ctx.translate(r.x,r.y);ctx.scale(r.w,r.h);
   drawPoloCollar(ctx,view,p);
@@ -265,6 +305,14 @@ drawPoloAccents=function(ctx,r,view){
   drawPoloAletilla(ctx,view,p);
   drawPoloVents(ctx,view,p);
   ctx.restore();
+};
+const photoTrimMaskBeforePoloStd=typeof photoTrimMask==='function'?photoTrimMask:null;
+if(photoTrimMaskBeforePoloStd)photoTrimMask=function(garment,view,width,height,part){
+  if(garment!=='polo'||part!=='neck')return photoTrimMaskBeforePoloStd(garment,view,width,height,part);
+  const c=document.createElement('canvas');c.width=width;c.height=height;
+  const t=c.getContext('2d');t.scale(width,height);
+  poloPaintStandingCollarMask(t,view);
+  return c;
 };
 const visualSignatureBeforePoloStd=visualSignature;
 visualSignature=function(){

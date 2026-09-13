@@ -1,4 +1,4 @@
-/* Despiece / costo por parte — exploded garment costing (MGM v8.2.10). */
+/* Despiece / detalle por parte — exploded garment costing (MGM v8.2.14). */
 .photo-despiece{display:none;flex-direction:column;min-height:570px;padding:58px 16px 18px;gap:12px}
 .photo-stage[data-view=despiece] .photo-pair,.photo-stage[data-view=despiece] .photo-orbit{display:none}
 .photo-stage[data-view=despiece] .photo-despiece{display:flex}
@@ -37,16 +37,25 @@
 .despiece-dock-head{display:flex;flex-direction:column;gap:2px}
 .despiece-kicker{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:#7a8496}
 .despiece-dock strong{font-size:1.15rem}
-.despiece-dock input{min-height:46px;font-size:16px}
+.despiece-dock input,.despiece-dock textarea{min-height:46px;font-size:16px}
+.despiece-dock textarea,.despiece-part-card textarea{min-height:64px;resize:vertical}
+.despiece-color-row{display:grid;grid-template-columns:52px minmax(0,1fr) minmax(0,1.15fr);gap:8px;align-items:end}
+.despiece-color-row input[type=text]{min-width:0}
+.despiece-color-row input[type=color]{width:46px;height:46px;padding:4px;min-height:46px}
 .despiece-total{display:grid;gap:4px;padding:12px 14px;background:#fff3f5;border-radius:10px;color:#3a2430}
 .despiece-total strong{font-size:1.35rem;color:#c81e3a}
 .despiece-arts{display:grid;gap:8px;padding:10px 0 2px}
 .despiece-arts .field{margin:0}
+.despiece-art-card{display:grid;gap:8px;padding:10px;border:1px dashed #d7dde8;border-radius:10px;background:#fff}
 .despiece-cost-card{margin:18px 0;padding-top:8px}
 .despiece-cost-card h4{margin:0 0 8px;font-size:1rem}
 .despiece-open{margin:0 0 12px;min-height:44px;width:100%}
-.despiece-cost-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.despiece-cost-grid input{min-height:44px;font-size:16px}
+.despiece-cost-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.despiece-cost-grid input,.despiece-cost-grid textarea{min-height:44px;font-size:16px}
+.despiece-part-card{display:grid;gap:8px;padding:12px;border:1px solid #d7dde8;border-radius:12px;background:#fbfcfe}
+.despiece-part-card .field{margin:0}
+.despiece-part-card-title{font-size:.92rem}
+.despiece-ficha-rows .despiece-ficha-meta{display:block;font-size:.75rem;color:#5d6678;font-weight:400;margin-top:2px}
 .despiece-inline-total{margin-top:12px}
 .despiece-ficha-rows{display:grid;gap:6px;font-size:.875rem}
 .despiece-ficha-rows div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed #d7dde8;padding:6px 0}

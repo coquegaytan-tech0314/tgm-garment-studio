@@ -1,4 +1,4 @@
-"""TGM polo construction standards + Acabado/ficha simulation. Does not stamp UI chrome."""
+"""TGM polo construction standards. Photoreal Acabado hides crude overlays (v8.2.14)."""
 from pathlib import Path
 import re
 
