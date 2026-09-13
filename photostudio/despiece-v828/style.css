@@ -39,7 +39,8 @@
 .despiece-dock strong{font-size:1.15rem}
 .despiece-dock input,.despiece-dock textarea{min-height:46px;font-size:16px}
 .despiece-dock textarea,.despiece-part-card textarea{min-height:64px;resize:vertical}
-.despiece-color-row{display:grid;grid-template-columns:52px 1fr 1.2fr;gap:8px;align-items:end}
+.despiece-color-row{display:grid;grid-template-columns:52px minmax(0,1fr) minmax(0,1.15fr);gap:8px;align-items:end}
+.despiece-color-row input[type=text]{min-width:0}
 .despiece-color-row input[type=color]{width:46px;height:46px;padding:4px;min-height:46px}
 .despiece-total{display:grid;gap:4px;padding:12px 14px;background:#fff3f5;border-radius:10px;color:#3a2430}
 .despiece-total strong{font-size:1.35rem;color:#c81e3a}
@@ -49,7 +50,7 @@
 .despiece-cost-card{margin:18px 0;padding-top:8px}
 .despiece-cost-card h4{margin:0 0 8px;font-size:1rem}
 .despiece-open{margin:0 0 12px;min-height:44px;width:100%}
-.despiece-cost-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.despiece-cost-grid{display:grid;grid-template-columns:1fr;gap:12px}
 .despiece-cost-grid input,.despiece-cost-grid textarea{min-height:44px;font-size:16px}
 .despiece-part-card{display:grid;gap:8px;padding:12px;border:1px solid #d7dde8;border-radius:12px;background:#fbfcfe}
 .despiece-part-card .field{margin:0}
