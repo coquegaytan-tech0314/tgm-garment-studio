@@ -52,6 +52,7 @@ function isDark(c){return (c.r+c.g+c.b)/3<80}
   assert.match(rows[3].join(' '),/caja y X/);
   assert.match(rows[4].join(' '),/Abertura lateral/);
   assert.match(rows[4].join(' '),/8\.0 cm/);
+  assert.match(rows[4].join(' '),/color de detalle \/ cinta #B63D42/i);
   assert.equal(run('ensurePolo().sideVents'),true);
   assert.match(JSON.stringify(run('clientSpecLines()')),/Cuello \(TGM\)/);
 
@@ -123,6 +124,7 @@ function isDark(c){return (c.r+c.g+c.b)/3<80}
   assert.match(run('poloFichaSummary()'),/Cuello \(TGM\): 9\.0 cm/);
   assert.match(run('poloFichaSummary()'),/Puño \(después de coser\): 2\.5 cm/);
   assert.match(run('poloFichaSummary()'),/Aletilla: caja en CF/);
+  assert.match(run('poloFichaSummary()'),/Abertura lateral: hendidura en ambos ruedos · alto 8\.0 cm · color de detalle \/ cinta #B63D42/);
 
   run("state.garment='hoodie';photoBaseDefaults();populate()");
   assert.equal(run("$('#poloExtras').hidden"),true,'hoodie hides polo / aletilla controls');

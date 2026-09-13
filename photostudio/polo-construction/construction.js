@@ -101,7 +101,7 @@ function poloConstructionRows(){
     ['Puño (después de coser)',poloFormatCm(p.cuffWidthCm)+' · rayas '+poloFormatMmAndCm(p.cuffStripeMm)+' · costura '+poloFormatCm(p.cuffSeamCm)+' (rango 0.5–1.0 cm)'],
     ['Rayas del puño',p.cuffStripes?poloStripeColors(p).map(c=>c.toUpperCase()).join(' · '):'Sin rayas de color'],
     ['Aletilla',p.aletilla?('caja en CF · exterior '+poloResolvedAletillaOuter(p).toUpperCase()+' · interior '+poloResolvedAletillaInner(p).toUpperCase()+' · '+p.aletillaButtons+' botones '+p.aletillaButtonColor.toUpperCase()+' · ojal vertical · refuerzo caja y X'):'Sin aletilla simulada'],
-    ['Abertura lateral',p.sideVents?('hendidura en ambos ruedos · alto '+poloFormatCm(p.ventHeightCm)+' · cinta '+poloResolvedVentTape(p).toUpperCase()+' · pespunte doble · refuerzo en la coronilla'):'Sin abertura lateral']
+    ['Abertura lateral',p.sideVents?('hendidura en ambos ruedos · alto '+poloFormatCm(p.ventHeightCm)+' · color de detalle / cinta '+poloResolvedVentTape(p).toUpperCase()+' · pespunte doble · refuerzo en la coronilla'):'Sin abertura lateral']
   ];
 }
 function poloFichaSummary(){return poloConstructionRows().map(([label,text])=>label+': '+text).join('\n')}
@@ -228,19 +228,21 @@ function drawPoloVents(ctx,view,p){
   const h=Math.max(.035,poloUFromCm(p.ventHeightCm)),tape=poloResolvedVentTape(p),hem=.988;
   const sides=[[.210,1],[.790,-1]];
   for(const [u,sign] of sides){
-    const top=hem-h,mouth=Math.min(h*.32,.028);
-    poloFillPath(ctx,[[u+sign*.001,hem-mouth],[u+sign*.016,hem-.003],[u+sign*.004,hem],[u-sign*.001,hem-mouth*.45]],tape,.95);
+    const top=hem-h,open=Math.min(.022,h*.28),flare=open+.012;
+    poloFillPath(ctx,[[u+sign*.002,hem-open*1.8],[u+sign*flare,hem-.002],[u+sign*.006,hem],[u-sign*.001,hem-open*.7]],tape,.96);
+    poloFillPath(ctx,[[u-sign*.001,hem-open],[u+sign*.01,hem-.004],[u+sign*.003,hem],[u-sign*.004,hem-open*.35]],shade(tape,-18),.9);
     ctx.save();
-    ctx.strokeStyle='#101012';ctx.lineWidth=.0021;ctx.lineCap='round';
-    ctx.beginPath();ctx.moveTo(u,top);ctx.lineTo(u-sign*.001,hem-mouth);ctx.lineTo(u-sign*.005,hem);ctx.stroke();
-    ctx.lineWidth=.0016;
-    ctx.strokeRect(u-sign*.006,top-.005,sign*.016,.01);
-    ctx.beginPath();ctx.moveTo(u-sign*.006,top);ctx.lineTo(u+sign*.010,top);ctx.stroke();
-    ctx.strokeStyle=shade('#111111',0,.42);ctx.lineWidth=.00115;
-    for(const dy of[.007,.013]){
+    ctx.strokeStyle='#101012';ctx.lineWidth=.0022;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(u+sign*.001,top);ctx.lineTo(u+sign*.002,hem-open);ctx.lineTo(u+sign*open*.4,hem);ctx.stroke();
+    ctx.lineWidth=.0018;
+    ctx.strokeRect(u-sign*.002,top-.005,sign*.012,.01);
+    ctx.beginPath();ctx.moveTo(u-sign*.001,top-.004);ctx.lineTo(u+sign*.011,top+.005);
+    ctx.moveTo(u+sign*.011,top-.004);ctx.lineTo(u-sign*.001,top+.005);ctx.stroke();
+    ctx.strokeStyle=shade('#111111',0,.42);ctx.lineWidth=.0012;
+    for(const dy of[.006,.012]){
       ctx.beginPath();
-      ctx.moveTo(u-sign*.002,hem-dy);
-      ctx.quadraticCurveTo(u+sign*.022,hem-dy,u+sign*.058,hem-dy*.65);
+      ctx.moveTo(u+sign*.004,hem-dy);
+      ctx.quadraticCurveTo(u+sign*.028,hem-dy*.92,u+sign*.072,hem-dy*.55);
       ctx.stroke();
     }
     ctx.restore();
@@ -284,9 +286,12 @@ syncPolo=function(){
   const ficha=$('#poloFichaSpecs'),text=$('#poloFichaText');
   if(ficha){ficha.hidden=state.garment!=='polo';if(text&&state.garment==='polo')text.textContent=poloFichaSummary()}
   const outer=$('#poloAletillaOuter'),inner=$('#poloAletillaInner'),tape=$('#poloVentTape');
+  const ventH=$('#poloVentHeight'),ventFollow=$('#poloVentTapeFollows');
   if(outer)outer.disabled=!!p.aletillaOuterFollowsBody;
   if(inner)inner.disabled=!!p.aletillaInnerFollowsCollar;
-  if(tape)tape.disabled=!!p.ventTapeFollowsContrast;
+  if(ventH)ventH.disabled=!p.sideVents;
+  if(ventFollow)ventFollow.disabled=!p.sideVents;
+  if(tape)tape.disabled=!p.sideVents||!!p.ventTapeFollowsContrast;
   for(const el of $$('[data-polo]')){
     if(document.activeElement===el)continue;
     const key=el.dataset.polo,value=p[key];
