@@ -100,19 +100,38 @@ function placementFichaText(a){
   rememberArtworkPlacement(a);
   return placementLines(p).join('\n')+'\nReferencia talla M sobre la base de acabado; confirmar en muestra física.';
 }
+const RULER_EMPTY_TIP='Selecciona un estampado para ver la regla.';
+const RULER_ACTIVE_CHIP='Regla activa';
+function photoPlacementView(){
+  const side=ensurePhoto().side;
+  return side==='front'||side==='back'?side:'';
+}
+function placementSelectionFitsView(view){
+  const a=selected();
+  return !!(a&&view&&a.view===view&&photoArtworkVisible(a));
+}
 function photoShowsPlacementGuides(view){
   if(!photoRulerOn||!photoCanPlaceArt())return false;
-  const side=ensurePhoto().side;
-  if(side==='orbit'||side==='both')return false;
-  const a=selected();
-  return !!a&&a.view===view&&side===view&&photoArtworkVisible(a);
+  const side=photoPlacementView();
+  return !!side&&side===view&&placementSelectionFitsView(view);
 }
 function photoShowsPlacementReadout(){
+  return photoShowsPlacementGuides(photoPlacementView());
+}
+function photoShowsPlacementBaseline(view){
   if(!photoRulerOn||!photoCanPlaceArt())return false;
-  const side=ensurePhoto().side;
-  if(side==='orbit'||side==='both')return false;
-  const a=selected();
-  return !!a&&photoArtworkVisible(a)&&a.view===side;
+  const side=photoPlacementView();
+  return !!side&&(!view||view===side);
+}
+function photoShowsPlacementHint(view){
+  return photoShowsPlacementBaseline(view)&&!photoShowsPlacementGuides(view||photoPlacementView());
+}
+function togglePlacementRuler(){
+  photoRulerOn=!photoRulerOn;
+  if(photoRulerOn&&photoPlacementView()&&!photoShowsPlacementReadout())toast(RULER_EMPTY_TIP);
+  syncPlacementRulerUI();
+  void paintAllRulerLayers();
+  schedulePhoto();
 }
 function drawPlacementLabel(ctx,text,x,y,align='left'){
   ctx.save();
@@ -151,6 +170,40 @@ function clearRulerLayer(canvas){
   if(!layer)return;
   layer.getContext('2d').clearRect(0,0,layer.width,layer.height);
 }
+function drawPlacementBaseline(ctx,view){
+  const frame=placementFrame(view);
+  ctx.strokeStyle='#012169';
+  ctx.lineWidth=1.7;
+  ctx.setLineDash([7,4]);
+  drawPlacementGuideLine(ctx,frame.center,frame.neck,frame.center,frame.hem);
+  drawPlacementGuideLine(ctx,frame.left,frame.neck,frame.right,frame.neck);
+  drawPlacementGuideLine(ctx,frame.left,frame.hem,frame.right,frame.hem);
+  drawPlacementGuideLine(ctx,frame.left,frame.neck,frame.left,frame.hem);
+  drawPlacementGuideLine(ctx,frame.right,frame.neck,frame.right,frame.hem);
+  ctx.setLineDash([]);
+  ctx.lineWidth=1.4;
+  drawPlacementGuideLine(ctx,frame.left-6,frame.neck,frame.left+6,frame.neck);
+  drawPlacementGuideLine(ctx,frame.right-6,frame.neck,frame.right+6,frame.neck);
+  drawPlacementGuideLine(ctx,frame.left-6,frame.hem,frame.left+6,frame.hem);
+  drawPlacementGuideLine(ctx,frame.right-6,frame.hem,frame.right+6,frame.hem);
+  drawPlacementGuideLine(ctx,frame.center-6,frame.neck,frame.center+6,frame.neck);
+  drawPlacementGuideLine(ctx,frame.center-6,frame.hem,frame.center+6,frame.hem);
+  drawPlacementLabel(ctx,'Cuello',frame.center,frame.neck-13,'center');
+  drawPlacementLabel(ctx,'Dobladillo',frame.center,frame.hem+13,'center');
+  drawPlacementLabel(ctx,'Centro',frame.center+10,(frame.neck+frame.hem)/2,'left');
+  drawPlacementLabel(ctx,'Izq.',frame.left-8,(frame.neck+frame.hem)/2,'right');
+  drawPlacementLabel(ctx,'Der.',frame.right+8,(frame.neck+frame.hem)/2,'left');
+  drawPlacementLabel(ctx,formatDual(frame.chestCm),(frame.left+frame.right)/2,frame.neck+16,'center');
+  drawPlacementLabel(ctx,formatDual(frame.lengthCm),frame.left+12,(frame.neck+frame.hem)/2,'left');
+  return frame;
+}
+function drawPlacementHintFrame(canvas,view){
+  const ctx=canvas.getContext('2d'),scale=canvas.width/W||1;
+  ctx.save();
+  ctx.setTransform(scale,0,0,scale,0,0);
+  drawPlacementBaseline(ctx,view);
+  ctx.restore();
+}
 async function drawPlacementRulers(canvas,view,geom){
   const a=selected();
   if(!a||a.view!==view)return;
@@ -160,13 +213,7 @@ async function drawPlacementRulers(canvas,view,geom){
   const ctx=canvas.getContext('2d'),scale=canvas.width/W||1;
   ctx.save();
   ctx.setTransform(scale,0,0,scale,0,0);
-  ctx.strokeStyle='#012169cc';
-  ctx.lineWidth=1.1;
-  ctx.setLineDash([5,4]);
-  drawPlacementGuideLine(ctx,frame.center,frame.neck,frame.center,frame.hem);
-  drawPlacementGuideLine(ctx,frame.left,frame.neck,frame.right,frame.neck);
-  drawPlacementGuideLine(ctx,frame.left,frame.hem,frame.right,frame.hem);
-  ctx.setLineDash([]);
+  drawPlacementBaseline(ctx,view);
   ctx.strokeStyle='#FF2E4D';
   ctx.lineWidth=1.35;
   const midX=Math.min(box.left-18,frame.center-28);
@@ -191,18 +238,32 @@ function syncPlacementReadout(canvas){
   const readout=$('#photoRulerReadout');
   if(!readout)return;
   const a=selected();
-  if(!photoShowsPlacementReadout()||!a){readout.hidden=true;readout.textContent='';return}
-  const p=artworkPlacement(a);
-  readout.hidden=false;
-  readout.textContent=placementReadoutText(p);
-  const host=canvas||$(a.view==='back'?'#photoBack':'#photoFront');
-  const stage=$('#photoStage');
-  if(!host||!stage)return;
-  const rect=host.getBoundingClientRect(),stageRect=stage.getBoundingClientRect(),box=placementBox(a);
-  const left=rect.left-stageRect.left+(box.right/W)*rect.width+10;
-  const top=rect.top-stageRect.top+(box.top/H)*rect.height;
-  readout.style.left=Math.max(8,Math.min(left,stageRect.width-228))+'px';
-  readout.style.top=Math.max(8,Math.min(top,stageRect.height-96))+'px';
+  if(photoShowsPlacementReadout()&&a){
+    const p=artworkPlacement(a);
+    readout.hidden=false;
+    readout.classList.remove('tip');
+    readout.textContent=placementReadoutText(p);
+    const host=canvas||$(a.view==='back'?'#photoBack':'#photoFront');
+    const stage=$('#photoStage');
+    if(!host||!stage)return;
+    const rect=host.getBoundingClientRect(),stageRect=stage.getBoundingClientRect(),box=placementBox(a);
+    const left=rect.left-stageRect.left+(box.right/W)*rect.width+10;
+    const top=rect.top-stageRect.top+(box.top/H)*rect.height;
+    readout.style.left=Math.max(8,Math.min(left,stageRect.width-228))+'px';
+    readout.style.top=Math.max(8,Math.min(top,stageRect.height-96))+'px';
+    return;
+  }
+  if(photoShowsPlacementHint(photoPlacementView())){
+    readout.hidden=false;
+    readout.classList.add('tip');
+    readout.textContent=RULER_ACTIVE_CHIP;
+    readout.style.left='12px';
+    readout.style.top='12px';
+    return;
+  }
+  readout.hidden=true;
+  readout.classList.remove('tip');
+  readout.textContent='';
 }
 function syncPlacementArtField(){
   const field=$('#artPlacement');
@@ -214,10 +275,16 @@ function syncPlacementRulerUI(){
   const btn=$('#photoRuler');
   if(btn){
     btn.disabled=!photoCanPlaceArt()||ensurePhoto().side==='orbit';
-    btn.setAttribute('aria-pressed',photoRulerOn&&!btn.disabled?'true':'false');
+    btn.setAttribute('aria-pressed',photoRulerOn?'true':'false');
     btn.hidden=ensurePhoto().side==='orbit';
   }
+  const hint=photoShowsPlacementHint(photoPlacementView());
   $('#photoStage')?.classList.toggle('ruling',photoShowsPlacementReadout());
+  $('#photoStage')?.classList.toggle('ruling-hint',hint);
+  if(hint){
+    const status=$('#photoStatus');
+    if(status)status.textContent=RULER_EMPTY_TIP;
+  }
   syncPlacementReadout();
   syncPlacementArtField();
 }
@@ -225,7 +292,7 @@ function bindPlacementRuler(){
   const btn=$('#photoRuler');
   if(!btn||btn.dataset.rulerBound)return;
   btn.dataset.rulerBound='1';
-  btn.addEventListener('click',()=>{photoRulerOn=!photoRulerOn;syncPlacementRulerUI();schedulePhoto()});
+  btn.addEventListener('click',togglePlacementRuler);
 }
 async function paintRulerLayer(view){
   const canvas=$(view==='back'?'#photoBack':'#photoFront');
@@ -236,11 +303,14 @@ async function paintRulerLayer(view){
   const ctx=layer.getContext('2d');
   ctx.setTransform(1,0,0,1,0,0);
   ctx.clearRect(0,0,layer.width,layer.height);
-  if(!photoShowsPlacementGuides(view))return;
-  const a=selected();if(!a)return;
-  const pose=photoPose(a),geom=await artGeometry(pose);
-  if(ticket!==photoRulerPaint)return;
-  await drawPlacementRulers(layer,view,{pose,...geom});
+  if(photoShowsPlacementGuides(view)){
+    const a=selected();if(!a)return;
+    const pose=photoPose(a),geom=await artGeometry(pose);
+    if(ticket!==photoRulerPaint)return;
+    await drawPlacementRulers(layer,view,{pose,...geom});
+    return;
+  }
+  if(photoShowsPlacementBaseline(view)&&!photoShowsPlacementGuides(view))drawPlacementHintFrame(layer,view);
 }
 async function paintAllRulerLayers(){
   const ticket=++photoRulerPaint;

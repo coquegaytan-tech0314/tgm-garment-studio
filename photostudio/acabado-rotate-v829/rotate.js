@@ -350,7 +350,9 @@ syncPhotoUI=function(){
   syncPhotoUIBeforeRotate();
   const p=ensurePhoto();
   if(p.source==='generated'&&p.side!=='orbit'&&!photoIssues().length&&state.artworks.some(photoArtworkVisible)){
-    $('#photoStatus').textContent='Arrastra o gira el estampado · Frente y Espalda';
+    if(!(typeof photoShowsPlacementHint==='function'&&photoShowsPlacementHint())){
+      $('#photoStatus').textContent='Arrastra o gira el estampado · Frente y Espalda';
+    }
   }
 };
 const initPhotoBeforeRotate=initPhoto;
