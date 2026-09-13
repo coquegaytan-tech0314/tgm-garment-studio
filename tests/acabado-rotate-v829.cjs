@@ -11,7 +11,16 @@ function almost(actual,expected,tol,label){
   assert.match(built,/MGM · v8\.2\./);
   assert.match(built,/function photoSetRotation/);
   assert.match(built,/function photoRotateHandlePoint/);
+  assert.match(built,/function photoRotateFromPointer/);
+  assert.match(built,/PHOTO_ROTATE_DRAG_GAIN/);
   assert.match(built,/id="artRotationDeg"/);
+  assert.match(built,/id="artRotationHint"/);
+  assert.match(built,/MGM · v8\.2\.14/);
+  almost(run('PHOTO_ROTATE_DRAG_GAIN'),0.28,1e-9,'handle/pinch gain is well below 1:1');
+  almost(run('photoRotateFromPointer(0,0,Math.PI/2)'),0.28*90,0.6,'90° pointer arc writes ~25°');
+  assert(Math.abs(run('photoRotateFromPointer(0,0,Math.PI/2)')-90)>40,'gain helper is not the old 1:1 mapping');
+  assert(Math.abs(run('photoRotateFromPointer(0,0,Math.PI/2)'))<50,'same arc is softer than the old 90° mapping');
+  almost(run('photoRotateFromPinch(0,0,Math.PI/2)'),0.28*90,0.6,'pinch uses the same gain');
   assert.match(built,/Giro: /);
   assert.equal(built.includes('VERSION=9'),false,'schema stays VERSION 8');
 
@@ -90,11 +99,12 @@ function almost(actual,expected,tol,label){
   assert.match(front.className,/rotating/);
   await front.emit('pointermove',{pointerId:71,clientX:swingClient.x,clientY:swingClient.y});
   await front.emit('pointerup',{pointerId:71,clientX:swingClient.x,clientY:swingClient.y});
-  assert(Math.abs(run('selected().rotation'))>20,'Handle drag writes a free (non-90-step-only) rotation');
+  const handleDeg=run('selected().rotation');
+  assert(Math.abs(handleDeg)>6,'Handle drag still writes a free (non-90-step-only) rotation');
+  assert(Math.abs(handleDeg)<55,'Handle drag is softer than the old 1:1 arc');
   almost(run('selected().x'),poseBefore.x,0.75,'Rotate handle keeps artwork.x');
   almost(run('selected().y'),poseBefore.y,0.75,'Rotate handle keeps artwork.y');
   assert.equal(run('selected().width'),poseBefore.width);
-  const handleDeg=run('selected().rotation');
   assert.equal(String(run("$('#artRotationDeg').value")),String(handleDeg));
 
   run('selected().rotation=0;syncArt()');
@@ -120,7 +130,8 @@ function almost(actual,expected,tol,label){
   await front.emit('pointermove',{pointerId:82,clientX:180,clientY:200});
   await front.emit('pointerup',{pointerId:82,clientX:180,clientY:200});
   await front.emit('pointerup',{pointerId:81,clientX:80,clientY:120});
-  assert(Math.abs(run('selected().rotation'))>20,'Two-finger gesture tilts the print');
+  assert(Math.abs(run('selected().rotation'))>4,'Two-finger gesture still tilts the print');
+  assert(Math.abs(run('selected().rotation'))<25,'Pinch tilt uses the softer gain');
   almost(run('selected().x'),before.x,0.75,'Pinch rotate keeps X');
 
   const rotBeforeOrbit=run('selected().rotation');
@@ -143,5 +154,5 @@ function almost(actual,expected,tol,label){
   assert.match(run('placementFichaText(selected())'),/Giro: -27°/);
   assert.match(run('placementFichaText(selected())'),/cm \/ .+ in/);
 
-  console.log('PASS v8.2.9 Acabado free-rotation tilt on Frente/Espalda');
+  console.log('PASS v8.2.14 Acabado free-rotation with softer drag-to-degree');
 })().catch(error=>{console.error(error);process.exitCode=1});

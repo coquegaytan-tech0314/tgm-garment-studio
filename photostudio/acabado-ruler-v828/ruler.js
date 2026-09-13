@@ -3,15 +3,18 @@
 const CM_PER_INCH=2.54;
 const HPS_ORIGIN_NOTE='HPS · unión cuello-cuerpo (el cuello no cuenta)';
 const HPS_CANVAS_LABEL='HPS · sin cuello';
+const RULER_GARMENT_KEYS=['playera','polo','hoodie','zipneck','sleeveless','sleevelessMujer'];
 const PLACEMENT_GUIDES={
-  /* neckV = HPS (collar–body seam at the shoulders). collarTipV is the standing/rib tip, excluded. */
+  /* neckV = HPS (collar–body seam at the shoulders). collarTipV is the standing/rib tip, excluded.
+     Polo HPS locked at v8.2.13 (.102). Every other prenda has its own guide — no playera fallback for hoodie / manga larga. */
   playera:{chestCm:52,lengthCm:70,neckV:.055,collarTipV:.012,hemV:.955,leftU:.205,rightU:.795,hpsLeftU:.36,hpsRightU:.64},
   polo:{chestCm:52,lengthCm:72,neckV:.102,collarTipV:.018,hemV:.955,leftU:.20,rightU:.81,hpsLeftU:.36,hpsRightU:.64},
-  hoodie:{chestCm:56,lengthCm:70,neckV:.200,collarTipV:.012,hemV:.905,leftU:.22,rightU:.78,hpsLeftU:.30,hpsRightU:.70},
-  sleeveless:{chestCm:46,lengthCm:66,neckV:.020,collarTipV:.010,hemV:.94,leftU:.30,rightU:.70,hpsLeftU:.27,hpsRightU:.73},
-  sleevelessMujer:{chestCm:42,lengthCm:60,neckV:.022,collarTipV:.011,hemV:.94,leftU:.32,rightU:.68,hpsLeftU:.24,hpsRightU:.76},
-  zipneck:{chestCm:52,lengthCm:70,neckV:.032,collarTipV:.011,hemV:.95,leftU:.22,rightU:.78,hpsLeftU:.36,hpsRightU:.64}
+  hoodie:{chestCm:56,lengthCm:70,neckV:.188,collarTipV:.018,hemV:.905,leftU:.22,rightU:.78,hpsLeftU:.30,hpsRightU:.70},
+  sleeveless:{chestCm:46,lengthCm:66,neckV:.028,collarTipV:.010,hemV:.94,leftU:.30,rightU:.70,hpsLeftU:.27,hpsRightU:.73},
+  sleevelessMujer:{chestCm:42,lengthCm:60,neckV:.030,collarTipV:.011,hemV:.94,leftU:.32,rightU:.68,hpsLeftU:.24,hpsRightU:.76},
+  zipneck:{chestCm:52,lengthCm:74,neckV:.052,collarTipV:.014,hemV:.955,leftU:.20,rightU:.80,hpsLeftU:.34,hpsRightU:.66}
 };
+function placementGuideHasOwn(key){return !!PLACEMENT_GUIDES[key]}
 let photoRulerOn=true,photoDragLive=false,photoRulerPaint=0,photoLiveTimer=0;
 function inchesFromCm(cm){return Number(cm)/CM_PER_INCH}
 function cmFromInches(inches){return Number(inches)*CM_PER_INCH}
@@ -19,8 +22,11 @@ function roundPlacement(value){return Math.round(Number(value)*10)/10}
 function formatCm(cm){return roundPlacement(cm).toFixed(1)+' cm'}
 function formatIn(cm){return roundPlacement(inchesFromCm(cm)).toFixed(1)+' in'}
 function formatDual(cm){return formatCm(cm)+' / '+formatIn(cm)}
-function placementGuideKey(){return typeof photoAssetKey==='function'?photoAssetKey():state.garment}
-function placementGuide(){return PLACEMENT_GUIDES[placementGuideKey()]||PLACEMENT_GUIDES[state.garment]||PLACEMENT_GUIDES.playera}
+function placementGuideKey(garment=state.garment){return typeof photoAssetKey==='function'?photoAssetKey(garment):garment}
+function placementGuide(garment=state.garment){
+  const key=placementGuideKey(garment);
+  return PLACEMENT_GUIDES[key]||PLACEMENT_GUIDES[garment]||PLACEMENT_GUIDES.playera;
+}
 function placementFrame(view){
   const r=photoRect(state.garment,view||'front'),g=placementGuide();
   const left=r.x+r.w*g.leftU,right=r.x+r.w*g.rightU;

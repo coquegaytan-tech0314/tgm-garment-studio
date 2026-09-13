@@ -105,6 +105,12 @@ function poloConstructionRows(){
   ];
 }
 function poloFichaSummary(){return poloConstructionRows().map(([label,text])=>label+': '+text).join('\n')}
+function poloPaintsAcabadoOverlays(){
+  /* Photoreal polo bases already include cuello, puño, aletilla and ruedo.
+     Polygon fills (red trapezoid, jagged cuff stripes, vent blobs) sat on top
+     of the photo and read as dirty placeholders. Specs stay in controls / ficha / Despiece. */
+  return false;
+}
 function poloAssignField(key,el,commit=false){
   const p=ensurePolo();
   if(el.type==='checkbox')p[key]=el.checked;
@@ -258,6 +264,7 @@ const drawPoloAccentsBeforeStd=drawPoloAccents;
 drawPoloAccents=function(ctx,r,view){
   if(state.garment!=='polo')return;
   const p=ensurePolo();
+  if(!poloPaintsAcabadoOverlays())return;
   drawPoloAccentsBeforeStd(ctx,r,view);
   ctx.save();ctx.translate(r.x,r.y);ctx.scale(r.w,r.h);
   drawPoloCollar(ctx,view,p);

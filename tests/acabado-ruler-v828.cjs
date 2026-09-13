@@ -8,7 +8,7 @@ function almost(actual,expected,tol,label){
   await run('init()');
   assert.equal(run('VERSION'),8,'Schema VERSION stays 8');
   const built=require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8');
-  assert.match(built,/MGM · v8\.2\.13/);
+  assert.match(built,/MGM · v8\.2\.14/);
   assert.match(built,/function computeArtworkPlacement/);
   assert.match(built,/function paintRulerLayer/);
   assert.match(built,/function drawPlacementHpsMarks/);
@@ -169,8 +169,34 @@ function almost(actual,expected,tol,label){
   run("state=blank();state.garment='polo';photoBaseDefaults();state.photo.source='generated';state.photo.side='front'");
   const poloFrame=run("placementFrame('front')");
   assert(poloFrame.hps-poloFrame.collarTip>8,'polo body origin is below the standing collar tip');
+  almost(run('PLACEMENT_GUIDES.polo.neckV'),0.102,1e-9,'polo HPS stays at the v8.2.13 lock');
   assert.match(run('HPS_CANVAS_LABEL'),/HPS/);
   assert.match(run('HPS_ORIGIN_NOTE'),/cuello no cuenta/);
 
-  console.log('PASS v8.2.13 Acabado rulers origin at HPS, collar excluded');
+  const rulerGarments=['playera','hoodie','zipneck','polo','sleeveless'];
+  assert.equal(run("RULER_GARMENT_KEYS.join(',')").includes('hoodie'),true);
+  assert.equal(run("RULER_GARMENT_KEYS.join(',')").includes('zipneck'),true);
+  assert.equal(run("RULER_GARMENT_KEYS.join(',')").includes('playera'),true);
+  for(const garment of rulerGarments){
+    run(`state=blank();state.garment='${garment}';photoBaseDefaults();state.photo.source='generated';state.photo.side='front';currentTab='photo';photoRulerOn=true;selectedArt=null;syncPhotoUI()`);
+    assert.equal(run(`placementGuideHasOwn(placementGuideKey('${garment}'))`),true,garment+' has its own HPS guide');
+    assert.equal(run('selected()'),undefined,garment+': Regla does not auto-select');
+    assert.equal(run("photoShowsPlacementBaseline('front')"),true,garment+' shows baseline rulers');
+    assert.equal(run("photoShowsPlacementGuides('front')"),false,garment+' waits for a free estampado pick');
+    const guide=run(`placementGuide('${garment}')`);
+    assert(guide.neckV>guide.collarTipV,garment+' HPS sits below the collar/hood tip');
+    const frame=run("placementFrame('front')");
+    assert(frame.hps>frame.collarTip,garment+' frame HPS is below the excluded tip');
+    const sheet=createCanvas(800,920);
+    context.rulerSheet=sheet;
+    run("drawPlacementHintFrame(rulerSheet,'front')");
+    const ink=sheet.getContext('2d').getImageData(0,0,800,920).data;
+    let painted=0;for(let i=3;i<ink.length;i+=4)if(ink[i]>40)painted++;
+    assert(painted>800,garment+' baseline paints HPS / centro / dobladillo');
+  }
+  run("state.photoCut='mujer';state.garment='sleeveless';photoBaseDefaults()");
+  assert.equal(run("placementGuideKey()"),'sleevelessMujer');
+  assert.equal(run('placementGuideHasOwn("sleevelessMujer")'),true,'sisada mujer has its own guide');
+
+  console.log('PASS v8.2.14 Acabado rulers HPS on every garment, collar excluded');
 })().catch(error=>{console.error(error);process.exitCode=1});
