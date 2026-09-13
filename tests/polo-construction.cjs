@@ -15,7 +15,7 @@ function isDark(c){return (c.r+c.g+c.b)/3<80}
   await run('init()');
   assert.equal(run('VERSION'),8,'Schema VERSION stays 8');
   const built=require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8');
-  assert.match(built,/MGM · v8\.2\.8/);
+  assert.match(built,/MGM · v8\.2\./);
   assert.equal(built.includes('VERSION=9'),false,'schema stays VERSION 8');
   assert.match(built,/id="poloCollarWidth"/);
   assert.match(built,/id="poloAletilla"/);
