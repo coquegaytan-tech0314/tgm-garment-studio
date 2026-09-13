@@ -107,7 +107,7 @@ function isDark(c){return (c.r+c.g+c.b)/3<80}
   const cuffB=sample(poloFront,r.x+r.w*.06,r.y+r.h*.44);
   assert(cuffA.a>20&&cuffB.a>20,'cuffs are painted');
   assert(Math.abs(cuffA.r-cuffB.r)+Math.abs(cuffA.g-cuffB.g)+Math.abs(cuffA.b-cuffB.b)>25,'cuff stripe rhythm changes color across the band');
-  const vent=sample(poloFront,r.x+r.w*.23,r.y+r.h*.90);
+  const vent=sample(poloFront,r.x+r.w*.21,r.y+r.h*.97);
   assert(isReddish(vent)||vent.r>vent.g,'side vent tape reads contrast / red');
 
   const playera=createCanvas(800,920);context.playera=playera;
