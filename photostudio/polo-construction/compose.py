@@ -1,4 +1,4 @@
-"""TGM polo construction standards + Acabado/ficha simulation (MGM v8.2.8)."""
+"""TGM polo construction standards + Acabado/ficha simulation. Does not stamp UI chrome."""
 from pathlib import Path
 import re
 
@@ -11,8 +11,6 @@ def extend(html, root):
             raise RuntimeError('Expected one polo-construction anchor: ' + before[:120])
         html = html.replace(before, after, 1)
 
-    html = re.sub(r'MGM · v8\.2\.\d+', 'MGM · v8.2.8', html)
-    html = re.sub(r'(nube opcional · )v[\d.]+', r'\g<1>v8.2.8', html)
     once('</style>', (source / 'style.css').read_text() + '</style>')
     once('<p class="help">Vivo y tapeta aproximados en Acabado. Confirmar grosor, material y confección en la ficha.</p>',
          (source / 'fields.html').read_text() +

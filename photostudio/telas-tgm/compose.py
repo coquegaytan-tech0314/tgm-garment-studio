@@ -1,10 +1,10 @@
-"""TGM tela catalog presets + custom developments (MGM v8.2.10). Last compose step."""
+"""TGM tela catalog presets + custom developments (MGM v8.2.12). Last compose step."""
 from pathlib import Path
 import csv
 import json
 import re
 
-UI_VERSION = '8.2.10'
+UI_VERSION = '8.2.12'
 SEED_NAME = 'tgm-catalogo-telas-SEED_2026_05_25.csv'
 
 

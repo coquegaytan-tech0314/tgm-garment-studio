@@ -8,7 +8,7 @@ function sample(canvas,x,y){
   await run('init()');
   assert.equal(run('VERSION'),8);
   const built=require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8');
-  assert.match(built,/MGM · v8\.2\.10/);
+  assert.match(built,/MGM · v8\.2\.12/);
   assert.match(built,/PIQUÉ OLMO/);
   assert.match(built,/Poliéster\/Algodón/);
   assert.equal(built.includes('50% lycra')||built.includes('50% cotton / 50% lycra'),false);

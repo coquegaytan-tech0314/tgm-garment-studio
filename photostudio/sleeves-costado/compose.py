@@ -1,8 +1,6 @@
-"""Default sleeve estampados on costado/lateral (MGM v8.2.9). Last compose step."""
+"""Default sleeve estampados on costado/lateral. Does not stamp UI chrome."""
 from pathlib import Path
 import re
-
-UI_VERSION = '8.2.9'
 
 
 def extend(html, root):
@@ -13,9 +11,6 @@ def extend(html, root):
         if html.count(before) != 1:
             raise RuntimeError('Expected one sleeves-costado anchor: ' + before[:120])
         html = html.replace(before, after, 1)
-
-    html = re.sub(r'MGM · v8\.2\.\d+', f'MGM · v{UI_VERSION}', html)
-    html = re.sub(r'(nube opcional · )v[\d.]+', rf'\g<1>v{UI_VERSION}', html)
 
     once(
         '<p class="help">Izquierda y derecha de quien lleva puesta la prenda. Al verla de frente, aparecen invertidas en pantalla.</p>',
