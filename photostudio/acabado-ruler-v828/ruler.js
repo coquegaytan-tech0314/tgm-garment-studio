@@ -118,11 +118,13 @@ function photoShowsPlacementGuides(view){
 function photoShowsPlacementReadout(){
   return photoShowsPlacementGuides(photoPlacementView());
 }
-function photoShowsPlacementHint(view){
+function photoShowsPlacementBaseline(view){
   if(!photoRulerOn||!photoCanPlaceArt())return false;
   const side=photoPlacementView();
-  if(!side||(view&&view!==side))return false;
-  return !photoShowsPlacementGuides(side);
+  return !!side&&(!view||view===side);
+}
+function photoShowsPlacementHint(view){
+  return photoShowsPlacementBaseline(view)&&!photoShowsPlacementGuides(view||photoPlacementView());
 }
 function togglePlacementRuler(){
   photoRulerOn=!photoRulerOn;
@@ -167,22 +169,38 @@ function clearRulerLayer(canvas){
   if(!layer)return;
   layer.getContext('2d').clearRect(0,0,layer.width,layer.height);
 }
-function drawPlacementFrame(ctx,view,alpha=1){
+function drawPlacementBaseline(ctx,view){
   const frame=placementFrame(view);
-  ctx.strokeStyle='rgba(1,33,105,'+(0.82*alpha)+')';
-  ctx.lineWidth=1.1;
-  ctx.setLineDash([5,4]);
+  ctx.strokeStyle='#012169';
+  ctx.lineWidth=1.7;
+  ctx.setLineDash([7,4]);
   drawPlacementGuideLine(ctx,frame.center,frame.neck,frame.center,frame.hem);
   drawPlacementGuideLine(ctx,frame.left,frame.neck,frame.right,frame.neck);
   drawPlacementGuideLine(ctx,frame.left,frame.hem,frame.right,frame.hem);
+  drawPlacementGuideLine(ctx,frame.left,frame.neck,frame.left,frame.hem);
+  drawPlacementGuideLine(ctx,frame.right,frame.neck,frame.right,frame.hem);
   ctx.setLineDash([]);
+  ctx.lineWidth=1.4;
+  drawPlacementGuideLine(ctx,frame.left-6,frame.neck,frame.left+6,frame.neck);
+  drawPlacementGuideLine(ctx,frame.right-6,frame.neck,frame.right+6,frame.neck);
+  drawPlacementGuideLine(ctx,frame.left-6,frame.hem,frame.left+6,frame.hem);
+  drawPlacementGuideLine(ctx,frame.right-6,frame.hem,frame.right+6,frame.hem);
+  drawPlacementGuideLine(ctx,frame.center-6,frame.neck,frame.center+6,frame.neck);
+  drawPlacementGuideLine(ctx,frame.center-6,frame.hem,frame.center+6,frame.hem);
+  drawPlacementLabel(ctx,'Cuello',frame.center,frame.neck-13,'center');
+  drawPlacementLabel(ctx,'Dobladillo',frame.center,frame.hem+13,'center');
+  drawPlacementLabel(ctx,'Centro',frame.center+10,(frame.neck+frame.hem)/2,'left');
+  drawPlacementLabel(ctx,'Izq.',frame.left-8,(frame.neck+frame.hem)/2,'right');
+  drawPlacementLabel(ctx,'Der.',frame.right+8,(frame.neck+frame.hem)/2,'left');
+  drawPlacementLabel(ctx,formatDual(frame.chestCm),(frame.left+frame.right)/2,frame.neck+16,'center');
+  drawPlacementLabel(ctx,formatDual(frame.lengthCm),frame.left+12,(frame.neck+frame.hem)/2,'left');
   return frame;
 }
 function drawPlacementHintFrame(canvas,view){
   const ctx=canvas.getContext('2d'),scale=canvas.width/W||1;
   ctx.save();
   ctx.setTransform(scale,0,0,scale,0,0);
-  drawPlacementFrame(ctx,view,.42);
+  drawPlacementBaseline(ctx,view);
   ctx.restore();
 }
 async function drawPlacementRulers(canvas,view,geom){
@@ -194,7 +212,7 @@ async function drawPlacementRulers(canvas,view,geom){
   const ctx=canvas.getContext('2d'),scale=canvas.width/W||1;
   ctx.save();
   ctx.setTransform(scale,0,0,scale,0,0);
-  drawPlacementFrame(ctx,view);
+  drawPlacementBaseline(ctx,view);
   ctx.strokeStyle='#FF2E4D';
   ctx.lineWidth=1.35;
   const midX=Math.min(box.left-18,frame.center-28);
@@ -291,7 +309,7 @@ async function paintRulerLayer(view){
     await drawPlacementRulers(layer,view,{pose,...geom});
     return;
   }
-  if(photoShowsPlacementHint(view))drawPlacementHintFrame(layer,view);
+  if(photoShowsPlacementBaseline(view)&&!photoShowsPlacementGuides(view))drawPlacementHintFrame(layer,view);
 }
 async function paintAllRulerLayers(){
   const ticket=++photoRulerPaint;

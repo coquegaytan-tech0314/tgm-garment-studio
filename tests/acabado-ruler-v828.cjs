@@ -82,8 +82,14 @@ function almost(actual,expected,tol,label){
   await $('#photoRuler').emit('click');
   assert.equal(run('photoRulerOn'),true);
   assert.equal(run('selected()'),undefined,'Regla never auto-selects an estampado');
-  assert.equal(run("photoShowsPlacementGuides('front')"),false,'guides wait for a free selection');
+  assert.equal(run("photoShowsPlacementGuides('front')"),false,'print guides wait for a free selection');
+  assert.equal(run("photoShowsPlacementBaseline('front')"),true,'garment baseline rulers show without a pick');
   assert.equal(run("photoShowsPlacementHint('front')"),true);
+  const baseline=createCanvas(800,920);context.baseline=baseline;
+  run("drawPlacementHintFrame(baseline,'front')");
+  const baseInk=baseline.getContext('2d').getImageData(0,0,800,920).data;
+  let basePainted=0;for(let i=3;i<baseInk.length;i+=4)if(baseInk[i]>40)basePainted++;
+  assert(basePainted>800,'empty-selection baseline paints cuello/centro/dobladillo/costados');
   assert.equal(run("$('#photoRuler').getAttribute('aria-pressed')"),'true');
   assert.match(run("$('#toast').textContent"),/Selecciona un estampado/);
   assert.match(run("$('#photoStatus').textContent"),/Selecciona un estampado/);
@@ -112,8 +118,10 @@ function almost(actual,expected,tol,label){
   assert.equal(run("$('#photoRuler').getAttribute('aria-pressed')"),'false');
 
   run("state.photo.side='both';syncPhotoUI()");
+  assert.equal(run("photoShowsPlacementBaseline('front')"),false,'Comparar still hides garment rulers');
   assert.equal(run("photoShowsPlacementHint('front')"),false,'Comparar still hides the empty-ruler tip');
   run("state.photo.side='orbit';syncPhotoUI()");
+  assert.equal(run("photoShowsPlacementBaseline('front')"),false,'360 still hides garment rulers');
   assert.equal(run("photoShowsPlacementHint('front')"),false,'360 still hides the empty-ruler tip');
   assert.equal(run("$('#photoRuler').getAttribute('aria-pressed')"),'false','orbit keeps the last pressed state');
   assert.equal(run("$('#photoRuler').hidden"),true);
