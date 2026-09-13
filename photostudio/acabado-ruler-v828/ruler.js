@@ -1,12 +1,16 @@
-/* Acabado placement rulers: garment-relative cm + inches while dragging/selecting. */
+/* Acabado placement rulers: garment-relative cm + inches while dragging/selecting.
+   Vertical origin is HPS (high point shoulder / unión cuello-cuerpo), not the collar tip. */
 const CM_PER_INCH=2.54;
+const HPS_ORIGIN_NOTE='HPS · unión cuello-cuerpo (el cuello no cuenta)';
+const HPS_CANVAS_LABEL='HPS · sin cuello';
 const PLACEMENT_GUIDES={
-  playera:{chestCm:52,lengthCm:70,neckV:.155,hemV:.955,leftU:.205,rightU:.795},
-  polo:{chestCm:52,lengthCm:72,neckV:.168,hemV:.955,leftU:.20,rightU:.81},
-  hoodie:{chestCm:56,lengthCm:70,neckV:.28,hemV:.905,leftU:.22,rightU:.78},
-  sleeveless:{chestCm:46,lengthCm:66,neckV:.14,hemV:.94,leftU:.30,rightU:.70},
-  sleevelessMujer:{chestCm:42,lengthCm:60,neckV:.13,hemV:.94,leftU:.32,rightU:.68},
-  zipneck:{chestCm:52,lengthCm:70,neckV:.16,hemV:.95,leftU:.22,rightU:.78}
+  /* neckV = HPS (collar–body seam at the shoulders). collarTipV is the standing/rib tip, excluded. */
+  playera:{chestCm:52,lengthCm:70,neckV:.055,collarTipV:.012,hemV:.955,leftU:.205,rightU:.795,hpsLeftU:.36,hpsRightU:.64},
+  polo:{chestCm:52,lengthCm:72,neckV:.102,collarTipV:.018,hemV:.955,leftU:.20,rightU:.81,hpsLeftU:.36,hpsRightU:.64},
+  hoodie:{chestCm:56,lengthCm:70,neckV:.200,collarTipV:.012,hemV:.905,leftU:.22,rightU:.78,hpsLeftU:.30,hpsRightU:.70},
+  sleeveless:{chestCm:46,lengthCm:66,neckV:.020,collarTipV:.010,hemV:.94,leftU:.30,rightU:.70,hpsLeftU:.27,hpsRightU:.73},
+  sleevelessMujer:{chestCm:42,lengthCm:60,neckV:.022,collarTipV:.011,hemV:.94,leftU:.32,rightU:.68,hpsLeftU:.24,hpsRightU:.76},
+  zipneck:{chestCm:52,lengthCm:70,neckV:.032,collarTipV:.011,hemV:.95,leftU:.22,rightU:.78,hpsLeftU:.36,hpsRightU:.64}
 };
 let photoRulerOn=true,photoDragLive=false,photoRulerPaint=0,photoLiveTimer=0;
 function inchesFromCm(cm){return Number(cm)/CM_PER_INCH}
@@ -19,8 +23,10 @@ function placementGuideKey(){return typeof photoAssetKey==='function'?photoAsset
 function placementGuide(){return PLACEMENT_GUIDES[placementGuideKey()]||PLACEMENT_GUIDES[state.garment]||PLACEMENT_GUIDES.playera}
 function placementFrame(view){
   const r=photoRect(state.garment,view||'front'),g=placementGuide();
-  const left=r.x+r.w*g.leftU,right=r.x+r.w*g.rightU,neck=r.y+r.h*g.neckV,hem=r.y+r.h*g.hemV;
-  return {left,right,neck,hem,center:(left+right)/2,cmPerX:g.chestCm/Math.max(1,right-left),cmPerY:g.lengthCm/Math.max(1,hem-neck),chestCm:g.chestCm,lengthCm:g.lengthCm};
+  const left=r.x+r.w*g.leftU,right=r.x+r.w*g.rightU;
+  const hps=r.y+r.h*g.neckV,collarTip=r.y+r.h*(g.collarTipV??Math.max(0,g.neckV-.04)),hem=r.y+r.h*g.hemV;
+  const hpsLeft=r.x+r.w*(g.hpsLeftU??.36),hpsRight=r.x+r.w*(g.hpsRightU??.64);
+  return {left,right,neck:hps,hps,collarTip,hem,hpsLeft,hpsRight,center:(left+right)/2,cmPerX:g.chestCm/Math.max(1,right-left),cmPerY:g.lengthCm/Math.max(1,hem-hps),chestCm:g.chestCm,lengthCm:g.lengthCm};
 }
 function estimatePlacementHeight(a,pose){
   if(a._placeH>0)return a._placeH;
@@ -81,7 +87,7 @@ function placementSideLabel(centerCm){
 function placementLines(p){
   if(!p)return [];
   return [
-    'Desde el cuello: '+formatDual(p.neckCm),
+    'Desde HPS (unión cuello-cuerpo, sin cuello): '+formatDual(p.neckCm),
     'Desde el centro: '+placementSideLabel(p.centerCm),
     'Desde el dobladillo: '+formatDual(p.hemCm),
     'Costado izq.: '+formatDual(p.leftCm)+' · der.: '+formatDual(p.rightCm),
@@ -93,12 +99,12 @@ function placementReadoutText(p){
 }
 function placementSpecText(a){
   const p=artworkPlacement(a);
-  return 'cuello '+formatDual(p.neckCm)+' · centro '+placementSideLabel(p.centerCm)+' · bajo '+formatDual(p.hemCm);
+  return 'HPS (sin cuello) '+formatDual(p.neckCm)+' · centro '+placementSideLabel(p.centerCm)+' · bajo '+formatDual(p.hemCm);
 }
 function placementFichaText(a){
   const p=artworkPlacement(a);
   rememberArtworkPlacement(a);
-  return placementLines(p).join('\n')+'\nReferencia talla M sobre la base de acabado; confirmar en muestra física.';
+  return placementLines(p).join('\n')+'\nEl largo del cuerpo nace en HPS (unión cuello-cuerpo); la punta del cuello no cuenta.\nReferencia talla M sobre la base de acabado; confirmar en muestra física.';
 }
 const RULER_EMPTY_TIP='Selecciona un estampado para ver la regla.';
 const RULER_ACTIVE_CHIP='Regla activa';
@@ -188,14 +194,30 @@ function drawPlacementBaseline(ctx,view){
   drawPlacementGuideLine(ctx,frame.right-6,frame.hem,frame.right+6,frame.hem);
   drawPlacementGuideLine(ctx,frame.center-6,frame.neck,frame.center+6,frame.neck);
   drawPlacementGuideLine(ctx,frame.center-6,frame.hem,frame.center+6,frame.hem);
-  drawPlacementLabel(ctx,'Cuello',frame.center,frame.neck-13,'center');
+  drawPlacementHpsMarks(ctx,frame);
+  drawPlacementLabel(ctx,HPS_CANVAS_LABEL,frame.center,frame.neck-15,'center');
   drawPlacementLabel(ctx,'Dobladillo',frame.center,frame.hem+13,'center');
   drawPlacementLabel(ctx,'Centro',frame.center+10,(frame.neck+frame.hem)/2,'left');
   drawPlacementLabel(ctx,'Izq.',frame.left-8,(frame.neck+frame.hem)/2,'right');
   drawPlacementLabel(ctx,'Der.',frame.right+8,(frame.neck+frame.hem)/2,'left');
   drawPlacementLabel(ctx,formatDual(frame.chestCm),(frame.left+frame.right)/2,frame.neck+16,'center');
-  drawPlacementLabel(ctx,formatDual(frame.lengthCm),frame.left+12,(frame.neck+frame.hem)/2,'left');
+  drawPlacementLabel(ctx,formatDual(frame.lengthCm)+' cuerpo',frame.left+12,(frame.neck+frame.hem)/2,'left');
   return frame;
+}
+function drawPlacementHpsMarks(ctx,frame){
+  ctx.save();
+  ctx.strokeStyle='#E8B923';
+  ctx.lineWidth=2.2;
+  for(const x of [frame.hpsLeft,frame.hpsRight]){
+    ctx.beginPath();
+    ctx.arc(x,frame.neck,7.5,0,Math.PI*2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(x,frame.neck,2.2,0,Math.PI*2);
+    ctx.fillStyle='#E8B923';
+    ctx.fill();
+  }
+  ctx.restore();
 }
 function drawPlacementHintFrame(canvas,view){
   const ctx=canvas.getContext('2d'),scale=canvas.width/W||1;
@@ -220,7 +242,7 @@ async function drawPlacementRulers(canvas,view,geom){
   drawPlacementGuideLine(ctx,midX,frame.neck,midX,box.top);
   drawPlacementGuideLine(ctx,midX-5,frame.neck,midX+5,frame.neck);
   drawPlacementGuideLine(ctx,midX-5,box.top,midX+5,box.top);
-  drawPlacementLabel(ctx,'Cuello '+formatDual(p.neckCm),midX-8,(frame.neck+box.top)/2,'right');
+  drawPlacementLabel(ctx,'HPS '+formatDual(p.neckCm),midX-8,(frame.neck+box.top)/2,'right');
   const hemX=Math.max(box.right+18,frame.center+28);
   drawPlacementGuideLine(ctx,hemX,box.bottom,hemX,frame.hem);
   drawPlacementGuideLine(ctx,hemX-5,box.bottom,hemX+5,box.bottom);
@@ -269,7 +291,7 @@ function syncPlacementArtField(){
   const field=$('#artPlacement');
   if(!field)return;
   const a=selected();
-  field.textContent=a?('Posición (regla): '+placementSpecText(a)+'. Referencia talla M; confirmar en muestra.'):'Posición de la regla: arrastra o gira el estampado en Acabado. Cuello/dobladillo = recuadro girado; centro = centro del estampado.';
+  field.textContent=a?('Posición (regla): '+placementSpecText(a)+'. Vertical desde HPS (unión cuello-cuerpo, sin cuello). Referencia talla M; confirmar en muestra.'):'Posición de la regla: arrastra o gira el estampado en Acabado. HPS/dobladillo = recuadro girado (el cuello no cuenta); centro = centro del estampado.';
 }
 function syncPlacementRulerUI(){
   const btn=$('#photoRuler');

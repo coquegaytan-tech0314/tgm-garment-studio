@@ -171,7 +171,7 @@ const placementLinesBeforeRotate=placementLines;
 placementLines=function(p){
   const lines=placementLinesBeforeRotate(p);
   lines.push('Giro: '+Math.round(Number(p?.rotationDeg)||0)+'°');
-  lines.push('Cuello y dobladillo usan el recuadro girado; centro y costados, el centro del estampado.');
+  lines.push('HPS y dobladillo usan el recuadro girado (el cuello no cuenta); centro y costados, el centro del estampado.');
   return lines;
 };
 const placementReadoutTextBeforeRotate=placementReadoutText;
@@ -343,7 +343,7 @@ syncPlacementArtField=function(){
   syncPlacementArtFieldBeforeRotate();
   const field=$('#artPlacement');
   if(!field||selected())return;
-  field.textContent='Posición de la regla: arrastra o gira el estampado en Acabado. Cuello/dobladillo = recuadro girado; centro = centro del estampado.';
+  field.textContent='Posición de la regla: arrastra o gira el estampado en Acabado. HPS/dobladillo = recuadro girado (el cuello no cuenta); centro = centro del estampado.';
 };
 const syncPhotoUIBeforeRotate=syncPhotoUI;
 syncPhotoUI=function(){
