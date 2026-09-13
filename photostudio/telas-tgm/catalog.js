@@ -9,12 +9,14 @@ const TGM_TELA_CATALOG=[
   {id:'pique-atlante',nombre:'PIQUÉ ATLANTE',composicion:'Poliéster Multifilamento',pesoGm2:160,nota:'piqué',texture:'pique',composition:'polyester',cue:'atlante'},
   {id:'pique-olmo',nombre:'PIQUÉ OLMO',composicion:'Poliéster/Algodón',pesoGm2:216,nota:'piqué · catálogo sin porcentaje exacto',texture:'pique',composition:'polycotton',cue:'olmo'},
   {id:'chifon-140',nombre:'CHIFÓN 140',composicion:'',pesoGm2:'',nota:'playera cuello redondo · default MGM',texture:'smooth',composition:'polyester',alias:'Chifón'},
+  {id:'chifon-estrella',nombre:'CHIFÓN ESTRELLA',composicion:'',pesoGm2:'',nota:'playera / manga larga · Chifón Estrella',texture:'smooth',composition:'polyester',alias:'Chifón Estrella'},
   {id:'mayki-plus',nombre:'MAYKI',composicion:'Poliéster Multifilamento',pesoGm2:'',nota:'ops MAYKI PLUS / Maiky Plus',texture:'smooth',composition:'polyester',alias:'MAYKI PLUS'},
   {id:'millenium',nombre:'MILLENIUM',composicion:'Nylon 100%',pesoGm2:70,nota:'hoodie',texture:'smooth',composition:'other'},
   {id:'rib-millenium',nombre:'RIB MILLENIUM',composicion:'Poliéster/Algodón/Elastano',pesoGm2:415,nota:'rib',texture:'fleece',composition:'other'}
 ];
-const TGM_TELA_DEFAULTS={polo:'pique-olmo',playera:'chifon-140',hoodie:'millenium'};
-const TGM_TELA_KNOWN_NAMES={FOMER:'fomer','PIQUE ATLANTE':'pique-atlante','PIQUÉ ATLANTE':'pique-atlante','PIQUE OLMO':'pique-olmo','PIQUÉ OLMO':'pique-olmo','CHIFON 140':'chifon-140','CHIFÓN 140':'chifon-140',MAYKI:'mayki-plus','MAYKI PLUS':'mayki-plus',MILLENIUM:'millenium','RIB MILLENIUM':'rib-millenium'};
+const TGM_TELA_DEFAULTS={polo:'pique-olmo',playera:'chifon-140',hoodie:'millenium',zipneck:'chifon-estrella',sleeveless:'chifon-estrella'};
+const TGM_TELA_KNOWN_NAMES={FOMER:'fomer','PIQUE ATLANTE':'pique-atlante','PIQUÉ ATLANTE':'pique-atlante','PIQUE OLMO':'pique-olmo','PIQUÉ OLMO':'pique-olmo','CHIFON 140':'chifon-140','CHIFÓN 140':'chifon-140','CHIFON ESTRELLA':'chifon-estrella','CHIFÓN ESTRELLA':'chifon-estrella',MAYKI:'mayki-plus','MAYKI PLUS':'mayki-plus',MILLENIUM:'millenium','RIB MILLENIUM':'rib-millenium'};
+function telaJerseyFamily(g=state.garment){return g==='playera'||g==='zipneck'||g==='sleeveless'}
 function telaMergeSeed(curated,rows,source){
   if(source)TGM_TELA_SEED_SOURCE=source;
   if(!Array.isArray(rows)||!rows.length)return curated;
@@ -88,15 +90,15 @@ function telaApplyPiqueCue(canvas,cue){
 }
 function telaSuggestedIds(garment=state.garment){
   if(garment==='polo')return['pique-olmo','pique-atlante','fomer'];
-  if(garment==='playera')return['chifon-140','fomer','mayki-plus'];
+  if(telaJerseyFamily(garment))return['chifon-140','chifon-estrella','fomer','mayki-plus'];
   if(garment==='hoodie')return['millenium','rib-millenium'];
-  return['chifon-140'];
+  return['chifon-140','chifon-estrella'];
 }
 function telaHelpText(garment=state.garment){
   const seed=TGM_TELA_SEED_SOURCE==='curated'?'Subconjunto curado (el CSV de 156 telas no estaba en el box). ':'Catálogo cargado de '+TGM_TELA_SEED_SOURCE+'. ';
   const role='TGM es la fábrica. MGM solo acaba prendas (~1200–1500/semana). '+seed+'Wording de catálogo; no se inventan % ni SKUs. ';
   if(garment==='polo')return role+'Presets: PIQUÉ OLMO (Poliéster/Algodón), PIQUÉ ATLANTE, FOMER. Editables + otra / desarrollo nuevo.';
-  if(garment==='playera')return role+'Playera: CHIFÓN 140 (default), FOMER o MAYKI (ops MAYKI PLUS / Maiky Plus). Editables + desarrollo nuevo.';
+  if(telaJerseyFamily(garment))return role+'Playera / manga corta / manga larga / cuello redondo: CHIFÓN y CHIFÓN ESTRELLA primero (sin g/m² inventado). FOMER o MAYKI (ops MAYKI PLUS / Maiky Plus) son preferencias secundarias. Editables + desarrollo nuevo.';
   if(garment==='hoodie')return role+'Hoodie: MILLENIUM (Nylon 100%, 70 g/m²) default. También RIB MILLENIUM (Poliéster/Algodón/Elastano, 415 g/m²). Editables + desarrollo nuevo.';
   return role+'Elige una tela o guarda un desarrollo nuevo.';
 }
@@ -211,7 +213,7 @@ function telaReadEditor(){
 }
 function syncTelas(){
   ensureTela();
-  if(!state.tela.nombre&&!state.fabric)telaApplyGarmentDefault(true);
+  if(!state.tela.nombre&&(TGM_TELA_DEFAULTS[state.garment]||!state.fabric))telaApplyGarmentDefault(true);
   telaSyncFields();
 }
 const populateBeforeTelas=populate;
