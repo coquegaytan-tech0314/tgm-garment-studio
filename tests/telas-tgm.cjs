@@ -17,7 +17,9 @@ function sample(canvas,x,y){
   assert.match(built,/MILLENIUM/);
   assert.match(built,/id="telaCatalog"/);
   assert.match(built,/id="telaKnitt"/);
-  assert.match(built,/Opciones editables, no una lista cerrada/);
+  assert.match(built,/id="telaHelp"/);
+  assert.match(built,/TGM es la fábrica/);
+  assert.match(built,/Maiky Plus/);
   assert.match(built,/id="poloSideVents"/);
 
   run("state=blank();state.garment='polo';photoBaseDefaults();populate()");
@@ -33,6 +35,12 @@ function sample(canvas,x,y){
   run("state=blank();state.garment='playera';photoBaseDefaults();populate()");
   assert.equal(run('state.fabric'),'CHIFÓN 140');
   assert.equal(run('state.gsm'),'');
+  assert.equal(run("telaSuggestedIds('playera').join(',')"),'chifon-140,fomer,mayki-plus');
+  assert.match(run("telaHelpText('playera')"),/CHIFÓN/);
+  assert.match(run("telaHelpText('playera')"),/Maiky Plus/);
+  assert.match(run("telaHelpText('playera')"),/TGM es la fábrica/);
+  assert.match(run("$('#telaHelp').textContent"),/1200–1500/);
+  assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='mayki-plus').alias"),'Maiky Plus');
 
   run("state=blank();state.garment='hoodie';photoBaseDefaults();populate()");
   assert.equal(run('state.fabric'),'MILLENIUM');
@@ -62,6 +70,7 @@ function sample(canvas,x,y){
   assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='mayki-plus').nombre"),'MAYKI PLUS');
   assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='millenium').nombre"),'MILLENIUM');
   assert.equal(run("telaSuggestedIds('polo').join(',')"),'pique-olmo,pique-atlante,fomer');
+  assert.equal(run("telaSuggestedIds('playera').join(',')"),'chifon-140,fomer,mayki-plus','playera ships Chifón / Fomer / Maiky Plus only');
   assert.match(run("TGM_TELA_CATALOG.find(t=>t.id==='pique-olmo').nota"),/schools/);
   assert.match(run("TGM_TELA_CATALOG.find(t=>t.id==='pique-atlante').nota"),/warehouse/);
   assert.match(run("TGM_TELA_CATALOG.find(t=>t.id==='fomer').nota"),/liso/);
