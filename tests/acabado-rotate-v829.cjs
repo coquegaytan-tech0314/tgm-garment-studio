@@ -12,7 +12,13 @@ function almost(actual,expected,tol,label){
   assert.match(built,/function photoSetRotation/);
   assert.match(built,/function photoRotateHandlePoint/);
   assert.match(built,/function photoRotateFromPointer/);
+  assert.match(built,/function photoRotationFromHandleDrag/);
   assert.match(built,/PHOTO_ROTATE_DRAG_GAIN/);
+  assert(run('photoRotateGain()')<0.5,'handle tilt gain is damped vs #21 0.36 and vs 1:1');
+  assert(run('photoRotateGain()')>0.2,'handle tilt still has usable gain');
+  almost(run('PHOTO_ROTATE_STEP'),5,1e-9,'Shift snaps to 5°');
+  almost(run("photoRotationFromHandleDrag({startRot:0,startAng:0},{x:1,y:0},{x:0,y:0},true)%5"),0,1e-6,'Shift handle drag lands on a 5° step');
+  almost(run("photoRotationFromHandleDrag({startRot:0,startAng:0},{x:1,y:1},{x:0,y:0},true)"),15,0.01,'45° arc × 0.28 snaps to 15°');
   assert.match(built,/id="artRotationDeg"/);
   assert.match(built,/id="artRotationHint"/);
   assert.match(built,/MGM · v8\.2\.14/);

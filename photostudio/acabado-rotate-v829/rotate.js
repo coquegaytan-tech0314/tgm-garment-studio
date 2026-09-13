@@ -1,13 +1,23 @@
 /* Acabado free rotation: any-degree tilt via handle, wheel, pinch, and numeric control. */
 const PHOTO_ROTATE_HANDLE_GAP=34;
 const PHOTO_ROTATE_HANDLE_HIT=40;
-/* Handle/pinch used to map 1° per 1° of pointer arc — too twitchy on small prints. */
+/* Handle/pinch used to map 1° per 1° of pointer arc — too twitchy on small prints.
+   Softer than sibling PR #21 (0.36 / pinch 0.55); Shift still snaps to 5°. */
 const PHOTO_ROTATE_DRAG_GAIN=0.28;
+const PHOTO_PINCH_ROTATE_GAIN=0.28;
+const PHOTO_ROTATE_STEP=5;
+function photoRotateGain(){return PHOTO_ROTATE_DRAG_GAIN}
 function photoRotateFromPointer(startRotRad,startAng,currentAng){
   return ((Number(startRotRad)||0)+(Number(currentAng)-Number(startAng))*PHOTO_ROTATE_DRAG_GAIN)*180/Math.PI;
 }
 function photoRotateFromPinch(startRotDeg,startAng,currentAng){
-  return (Number(startRotDeg)||0)+(Number(currentAng)-Number(startAng))*180/Math.PI*PHOTO_ROTATE_DRAG_GAIN;
+  return (Number(startRotDeg)||0)+(Number(currentAng)-Number(startAng))*180/Math.PI*PHOTO_PINCH_ROTATE_GAIN;
+}
+function photoRotationFromHandleDrag(drag,point,pose,snap=false){
+  const ang=Math.atan2(point.y-pose.y,point.x-pose.x);
+  let deg=photoRotateFromPointer(drag.startRot,drag.startAng,ang);
+  if(snap)deg=Math.round(deg/PHOTO_ROTATE_STEP)*PHOTO_ROTATE_STEP;
+  return deg;
 }
 function photoCanRotateArt(){
   return photoCanPlaceArt()&&ensurePhoto().side!=='orbit';
@@ -285,7 +295,7 @@ setupPhotoDrag=function(canvas,view){
       const width=a.width;
       if(drag.mode==='rotate'){
         const pose=photoPose(a);
-        photoApplyRotation(a,photoRotateFromPointer(drag.startRot,drag.startAng,Math.atan2(point.y-pose.y,point.x-pose.x)));
+        photoApplyRotation(a,photoRotationFromHandleDrag(drag,point,pose,!!e.shiftKey));
       }else{
         const rotation=a.rotation;
         photoPutPosition(a,point.x-drag.dx,point.y-drag.dy);

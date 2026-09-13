@@ -389,7 +389,7 @@ dialog .dialog-actions{background:#faf8f5}
     <div class="field"><label for="poloVentHeight">Alto de la abertura (cm)</label><input id="poloVentHeight" data-polo="ventHeightCm" type="number" min="3" max="18" step="0.5" value="8"></div>
     <label class="checkline"><input id="poloVentTapeFollows" data-polo="ventTapeFollowsContrast" type="checkbox" checked>Cinta interior igual al contraste / cuello</label>
     <div class="field"><label for="poloVentTape">Color de cinta / detalle</label><input id="poloVentTape" data-polo="ventTapeColor" type="color" value="#b63d42"></div>
-    <p class="help">Aletilla: solapa exterior, vista interior, ojales verticales y refuerzo de caja con X. Abertura: corte en el costado del ruedo, cinta interior de contraste, pespunte doble y refuerzo arriba de la hendidura. Puño 2.5 cm después de coser; rayas de 4 mm; costura 0.5–1 cm. Cuello 9 cm con raya de punta. En Acabado fotoreal no se pintan bloques de cuello, puño ni ruedo encima de la foto; el color de cuello/puño/dobladillo usa el contraste de la prenda. Las medidas TGM quedan en estos controles, la ficha y Despiece. Confirmar en muestra física.</p>
+    <p class="help">Acabado usa la base fotográfica de piqué (cuello, puño y ruedo reales). El contraste de cuello tiñe esa base; no se dibujan bloques, rayas ni cintas. Medidas, aletilla, puño y aberturas quedan en esta ficha y en Despiece. Confirmar en muestra física.</p>
   </div>
 <p class="help">Vivo y tapeta aproximados en Acabado. Confirmar grosor, material y confección en la ficha.</p>
 </div>
@@ -458,7 +458,7 @@ dialog .dialog-actions{background:#faf8f5}
     <div class="row"><div class="field"><label for="artX">Posición X (%)</label><input id="artX" type="number" min="0" max="100" step="1"></div><div class="field"><label for="artY">Posición Y (%)</label><input id="artY" type="number" min="0" max="100" step="1"></div></div>
     <div class="field art-rotation-field"><label class="range-label" for="artRotation">Rotación <output id="artRotationValue"></output></label><div class="art-rotation-controls"><input id="artRotationDeg" type="number" min="-180" max="180" step="1" value="0" title="Giro en grados"><span class="art-rotation-unit">°</span><input id="artRotation" type="range" min="-180" max="180" step="1"></div></div>
     <div class="row"><div class="field"><label for="logoWidthCm">Ancho solicitado (cm)</label><input id="logoWidthCm" data-logo="widthCm" type="number" min="0.1" max="150" step="0.1" placeholder="Por definir"></div><div class="field"><label for="logoHeightCm">Alto solicitado (cm)</label><input id="logoHeightCm" data-logo="heightCm" type="number" min="0.1" max="150" step="0.1" placeholder="Por definir"></div></div>
-    <p class="help">Las medidas en cm quedan en la ficha; no calibran automáticamente la foto.</p><p class="help" id="artPlacement">Posición de la regla: arrastra o gira el estampado. HPS (unión cuello-cuerpo, sin cuello) y dobladillo miden el recuadro girado; centro y costados, el centro del print.</p><p class="help" id="artRotationHint">Giro suave: el arrastre del mango y el pellizco recorren más distancia por grado (sigue siendo libre, no a 90°).</p>
+    <p class="help">Las medidas en cm quedan en la ficha; no calibran automáticamente la foto.</p><p class="help" id="artPlacement">Posición de la regla: arrastra o gira el estampado. HPS (unión cuello-cuerpo, sin cuello) y dobladillo miden el recuadro girado; centro y costados, el centro del print.</p><p class="help" id="artRotationHint">Giro suave: el arrastre y el pellizco recorren más distancia por grado (libre, no a 90°). Shift ajusta de 5 en 5°.</p>
     <div class="field"><label for="artDimensions">Ubicación medida / indicaciones</label><input id="artDimensions" maxlength="100" placeholder="Ej. centrado; 8 cm bajo la costura del cuello"></div>
     <div class="field"><label for="logoColorRefs">Referencias de tintas o hilos</label><textarea id="logoColorRefs" data-logo="colorRefs" maxlength="500" placeholder="Códigos y colores solicitados; por confirmar"></textarea></div>
     <details class="logo-prep" open><summary>Detalles para cotización y muestra</summary><p class="help">Campos opcionales · EJEMPLO. Completar con datos confirmados por el taller.</p>
@@ -3433,13 +3433,23 @@ initPhoto=function(){
 /* Acabado free rotation: any-degree tilt via handle, wheel, pinch, and numeric control. */
 const PHOTO_ROTATE_HANDLE_GAP=34;
 const PHOTO_ROTATE_HANDLE_HIT=40;
-/* Handle/pinch used to map 1° per 1° of pointer arc — too twitchy on small prints. */
+/* Handle/pinch used to map 1° per 1° of pointer arc — too twitchy on small prints.
+   Softer than sibling PR #21 (0.36 / pinch 0.55); Shift still snaps to 5°. */
 const PHOTO_ROTATE_DRAG_GAIN=0.28;
+const PHOTO_PINCH_ROTATE_GAIN=0.28;
+const PHOTO_ROTATE_STEP=5;
+function photoRotateGain(){return PHOTO_ROTATE_DRAG_GAIN}
 function photoRotateFromPointer(startRotRad,startAng,currentAng){
   return ((Number(startRotRad)||0)+(Number(currentAng)-Number(startAng))*PHOTO_ROTATE_DRAG_GAIN)*180/Math.PI;
 }
 function photoRotateFromPinch(startRotDeg,startAng,currentAng){
-  return (Number(startRotDeg)||0)+(Number(currentAng)-Number(startAng))*180/Math.PI*PHOTO_ROTATE_DRAG_GAIN;
+  return (Number(startRotDeg)||0)+(Number(currentAng)-Number(startAng))*180/Math.PI*PHOTO_PINCH_ROTATE_GAIN;
+}
+function photoRotationFromHandleDrag(drag,point,pose,snap=false){
+  const ang=Math.atan2(point.y-pose.y,point.x-pose.x);
+  let deg=photoRotateFromPointer(drag.startRot,drag.startAng,ang);
+  if(snap)deg=Math.round(deg/PHOTO_ROTATE_STEP)*PHOTO_ROTATE_STEP;
+  return deg;
 }
 function photoCanRotateArt(){
   return photoCanPlaceArt()&&ensurePhoto().side!=='orbit';
@@ -3717,7 +3727,7 @@ setupPhotoDrag=function(canvas,view){
       const width=a.width;
       if(drag.mode==='rotate'){
         const pose=photoPose(a);
-        photoApplyRotation(a,photoRotateFromPointer(drag.startRot,drag.startAng,Math.atan2(point.y-pose.y,point.x-pose.x)));
+        photoApplyRotation(a,photoRotationFromHandleDrag(drag,point,pose,!!e.shiftKey));
       }else{
         const rotation=a.rotation;
         photoPutPosition(a,point.x-drag.dx,point.y-drag.dy);
@@ -4519,6 +4529,39 @@ function poloPaintsAcabadoOverlays(){
      of the photo and read as dirty placeholders. Specs stay in controls / ficha / Despiece. */
   return false;
 }
+function poloPhotoConstructionOverlays(){return poloPaintsAcabadoOverlays()}
+function poloPaintStandingCollarMask(t,view){
+  t.fillStyle='white';
+  if(view==='front'){
+    t.beginPath();
+    t.moveTo(.402,.010);
+    t.bezierCurveTo(.430,.002,.570,.002,.598,.010);
+    t.bezierCurveTo(.638,.018,.658,.055,.652,.092);
+    t.bezierCurveTo(.670,.128,.658,.168,.620,.170);
+    t.bezierCurveTo(.586,.150,.548,.140,.518,.150);
+    t.lineTo(.500,.160);
+    t.lineTo(.482,.150);
+    t.bezierCurveTo(.452,.140,.414,.150,.380,.170);
+    t.bezierCurveTo(.342,.168,.330,.128,.348,.092);
+    t.bezierCurveTo(.342,.055,.362,.018,.402,.010);
+    t.closePath();
+    t.fill();
+    t.globalCompositeOperation='destination-out';
+    t.beginPath();
+    t.ellipse(.500,.052,.070,.036,0,0,Math.PI*2);
+    t.fill();
+    t.globalCompositeOperation='source-over';
+    return;
+  }
+  t.beginPath();
+  t.moveTo(.408,.008);
+  t.bezierCurveTo(.448,.001,.552,.001,.592,.008);
+  t.bezierCurveTo(.618,.018,.628,.038,.612,.052);
+  t.quadraticCurveTo(.500,.064,.388,.052);
+  t.bezierCurveTo(.372,.038,.382,.018,.408,.008);
+  t.closePath();
+  t.fill();
+}
 function poloAssignField(key,el,commit=false){
   const p=ensurePolo();
   if(el.type==='checkbox')p[key]=el.checked;
@@ -4680,6 +4723,14 @@ drawPoloAccents=function(ctx,r,view){
   drawPoloAletilla(ctx,view,p);
   drawPoloVents(ctx,view,p);
   ctx.restore();
+};
+const photoTrimMaskBeforePoloStd=typeof photoTrimMask==='function'?photoTrimMask:null;
+if(photoTrimMaskBeforePoloStd)photoTrimMask=function(garment,view,width,height,part){
+  if(garment!=='polo'||part!=='neck')return photoTrimMaskBeforePoloStd(garment,view,width,height,part);
+  const c=document.createElement('canvas');c.width=width;c.height=height;
+  const t=c.getContext('2d');t.scale(width,height);
+  poloPaintStandingCollarMask(t,view);
+  return c;
 };
 const visualSignatureBeforePoloStd=visualSignature;
 visualSignature=function(){
