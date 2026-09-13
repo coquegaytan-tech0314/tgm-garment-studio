@@ -117,6 +117,10 @@ function telaApplyRecord(rec,markDefault=false){
   state.fabric=safeString(tela.nombre,70,'tela');
   state.gsm=tela.pesoGm2===''?'':tela.pesoGm2;
   state.stretch=safeString([tela.composicion,tela.nota].filter(Boolean).join(' · '),120,'elasticidad');
+  const fabricEl=$('#fabric'),gsmEl=$('#gsm'),stretchEl=$('#stretch');
+  if(fabricEl&&document.activeElement!==fabricEl)fabricEl.value=state.fabric;
+  if(gsmEl&&document.activeElement!==gsmEl)gsmEl.value=state.gsm;
+  if(stretchEl&&document.activeElement!==stretchEl)stretchEl.value=state.stretch;
   if(tela.texture)state.texture=tela.texture;
   const r=typeof ensureReference==='function'?ensureReference():null;
   if(r){
@@ -128,11 +132,16 @@ function telaApplyRecord(rec,markDefault=false){
   if(markDefault)tela._defaultFor=state.garment;
   else tela._defaultFor='';
 }
+function telaIsGarmentDefaultId(id){
+  return Object.values(TGM_TELA_DEFAULTS).includes(id);
+}
 function telaShouldAutofill(order=state){
   const tela=order.tela;
   if(!TGM_TELA_DEFAULTS[order.garment])return false;
   if(!order.fabric&&(!tela||!tela.nombre))return true;
-  return !!(tela&&tela._defaultFor);
+  if(tela&&tela._defaultFor)return true;
+  if(tela&&tela.source!=='custom'&&telaIsGarmentDefaultId(tela.id)&&tela.id!==TGM_TELA_DEFAULTS[order.garment])return true;
+  return false;
 }
 function telaApplyGarmentDefault(force=false){
   const id=TGM_TELA_DEFAULTS[state.garment];

@@ -66,6 +66,12 @@ function sample(canvas,x,y){
   assert.equal(run('state.fabric'),'Chifón Estrella','sleeveless keeps the existing Chifón photobase label');
 
   run("state=blank();state.garment='polo';photoBaseDefaults();populate()");
+  assert.equal(run('state.fabric'),'PIQUÉ OLMO');
+  run("state.garment='hoodie';photoBaseDefaults();populate()");
+  assert.equal(run('state.fabric'),'MILLENIUM','hoodie replaces the polo default with MILLENIUM');
+  run("state.garment='playera';photoBaseDefaults();populate()");
+  assert.equal(run('state.fabric'),'CHIFÓN 140','playera replaces the hoodie default with CHIFÓN 140');
+  run("state=blank();state.garment='polo';photoBaseDefaults();populate()");
   run("telaApplyRecord({id:'fomer',nombre:'FOMER',composicion:'Poliéster 100%',pesoGm2:135,nota:'liso',texture:'smooth',composition:'polyester'})");
   assert.equal(run('state.fabric'),'FOMER');
   run("state.tela._defaultFor=''");
