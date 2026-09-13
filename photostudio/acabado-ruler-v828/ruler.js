@@ -130,6 +130,7 @@ function togglePlacementRuler(){
   photoRulerOn=!photoRulerOn;
   if(photoRulerOn&&photoPlacementView()&&!photoShowsPlacementReadout())toast(RULER_EMPTY_TIP);
   syncPlacementRulerUI();
+  void paintAllRulerLayers();
   schedulePhoto();
 }
 function drawPlacementLabel(ctx,text,x,y,align='left'){
