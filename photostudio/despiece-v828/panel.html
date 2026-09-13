@@ -1,0 +1,16 @@
+  <div class="despiece-cost-card" id="costPartCard">
+    <h4>Despiece · costo por parte</h4>
+    <p class="help">Misma captura que en Acabado → Despiece. Aletilla solo aplica en polo. El estampado puede desglosarse por aplicación.</p>
+    <button type="button" id="openDespiece" class="despiece-open">Ver despiece en Acabado</button>
+    <div class="despiece-cost-grid" id="costPartGrid">
+      <div class="field" data-part-field="cuello"><label for="costPart-cuello">Cuello</label><input id="costPart-cuello" data-cost-part="cuello" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+      <div class="field" data-part-field="cuerpo"><label for="costPart-cuerpo">Cuerpo</label><input id="costPart-cuerpo" data-cost-part="cuerpo" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+      <div class="field" data-part-field="mangas"><label for="costPart-mangas">Mangas</label><input id="costPart-mangas" data-cost-part="mangas" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+      <div class="field" data-part-field="punos"><label for="costPart-punos">Puños</label><input id="costPart-punos" data-cost-part="punos" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+      <div class="field" data-part-field="dobladillo"><label for="costPart-dobladillo">Dobladillo</label><input id="costPart-dobladillo" data-cost-part="dobladillo" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+      <div class="field" data-part-field="etiqueta"><label for="costPart-etiqueta">Etiqueta</label><input id="costPart-etiqueta" data-cost-part="etiqueta" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+      <div class="field" data-part-field="aletilla"><label for="costPart-aletilla">Aletilla</label><input id="costPart-aletilla" data-cost-part="aletilla" type="text" inputmode="decimal" maxlength="12" placeholder="N/A en esta prenda"></div>
+      <div class="field" data-part-field="estampado"><label for="costPart-estampado">Estampado</label><input id="costPart-estampado" data-cost-part="estampado" type="text" inputmode="decimal" maxlength="12" placeholder="Por definir"></div>
+    </div>
+    <div class="price-total despiece-inline-total"><span id="costPartSummaryLabel">Suma por partes</span><strong id="costPartSummaryAmount" aria-live="polite">Por definir</strong></div>
+  </div>

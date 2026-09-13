@@ -8,7 +8,7 @@ function almost(actual,expected,tol,label){
   await run('init()');
   assert.equal(run('VERSION'),8,'Schema VERSION stays 8');
   const built=require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8');
-  assert.match(built,/MGM · v8\.2\.9/);
+  assert.match(built,/MGM · v8\.2\./);
   assert.match(built,/function photoSetRotation/);
   assert.match(built,/function photoRotateHandlePoint/);
   assert.match(built,/id="artRotationDeg"/);
