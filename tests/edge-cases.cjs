@@ -32,7 +32,7 @@ context.FileReader=class{readAsDataURL(f){f.arrayBuffer().then(b=>{this.result='
   const own=sample(view==='front'?.875:.125),other=sample(view==='front'?.125:.875);assert(own[0]>own[2]*1.5);assert(other[2]>other[0]);
  }
  console.log('PASS sleeve colors stay on the wearer’s correct side in all six views');
- run("state=blank();state.garment='polo';photoBaseDefaults();state.bodyColor='#121212';state.reference.composition='polyester';addArt();selected().text='TEST';selected().width=180;selected().method='sublimation';selected().color='#d0a33f'");
+ run("state=blank();state.garment='polo';photoBaseDefaults();state.bodyColor='#121212';state.polo.aletilla=false;state.polo.cuffStripes=false;state.reference.composition='polyester';addArt();selected().text='TEST';selected().width=180;selected().method='sublimation';selected().color='#d0a33f'");
  const inspect=async()=>{const c=createCanvas(800,920);context.c=c;await run("renderPhoto(c,'front')");const data=c.getContext('2d').getImageData(270,280,260,100).data;let max=0;for(let i=0;i<data.length;i+=4)max=Math.max(max,data[i]);return max};
  const overDark=await inspect();run("selected().logo.sublimationBase='whitePanels'");const onPanel=await inspect();assert(onPanel>overDark+40);
  console.log('PASS proposed white-panel rendering differs from transfer over dark cloth');
