@@ -11,10 +11,11 @@
 .despiece-hits{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:560px}
 .despiece-hits button{min-height:44px;padding:8px 12px;font-size:.8125rem}
 .despiece-hits button[aria-pressed=true]{background:#fff3f5;color:#c81e3a;border-color:var(--gaytan,#FF2E4D)}
-.despiece-svg{width:min(100%,560px);height:auto;max-height:min(68vh,720px);overflow:visible;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.despiece-svg{width:min(100%,560px);min-height:380px;height:auto;max-height:min(68vh,720px);overflow:visible;touch-action:manipulation;-webkit-user-select:none;user-select:none}
 .despiece-svg .despiece-floor{fill:#1c283c14}
 .despiece-part{cursor:pointer;transform-box:fill-box;transform-origin:center;transition:transform .45s cubic-bezier(.22,.8,.28,1),filter .2s ease}
-.despiece-part path,.despiece-part polygon{stroke:#18283c55;stroke-width:1.4;filter:drop-shadow(0 10px 8px #1b284826)}
+.despiece-part{visibility:visible}
+.despiece-part path,.despiece-part polygon{stroke:#18283c88;stroke-width:1.6;filter:drop-shadow(0 8px 6px #1b284833)}
 .despiece-part .despiece-stitch{fill:none;stroke:#ffffff99;stroke-width:1.1;stroke-dasharray:3 4;filter:none}
 .despiece-part[aria-pressed=true] path,.despiece-part[aria-pressed=true] polygon{stroke:var(--gaytan,#FF2E4D);stroke-width:2.4;filter:drop-shadow(0 0 0 #fff) drop-shadow(0 0 10px #ff2e4d66) drop-shadow(0 12px 10px #1b284833)}
 .despiece-tag{pointer-events:none}

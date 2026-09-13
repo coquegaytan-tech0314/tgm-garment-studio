@@ -153,26 +153,35 @@ function despieceTagAnchor(key,garment=state.garment){
     estampado:[488,372]
   }[key]||[400,400];
 }
-function despieceSvgMarkup(){
+function svgNode(tag,attrs){
+  const ns='http://www.w3.org/2000/svg';
+  const node=typeof document.createElementNS==='function'?document.createElementNS(ns,tag):document.createElement(tag);
+  for(const [key,value] of Object.entries(attrs||{})){
+    if(key==='text')node.textContent=value;
+    else node.setAttribute(key,value);
+  }
+  return node;
+}
+function refreshDespieceSvg(){
+  const svg=$('#despieceSvg');if(!svg)return;
+  while(svg.firstChild)svg.removeChild(svg.firstChild);
+  svg.setAttribute('data-despiece-shape',state.garment);
   const garment=state.garment,shapes=despieceShapes(garment);
-  let svg='<ellipse class="despiece-floor" cx="400" cy="842" rx="186" ry="22"/>';
+  svg.append(svgNode('ellipse',{class:'despiece-floor',cx:'400',cy:'842',rx:'186',ry:'22'}));
   for(const key of COST_PART_KEYS){
     const paths=shapes[key]||[];
     if(!paths.length||!despiecePartVisible(key,garment))continue;
     const [tx,ty]=despieceTagAnchor(key,garment);
-    const fill=despieceFill(key);
-    svg+='<g class="despiece-part" id="despieceHit-'+key+'" data-part="'+key+'" tabindex="0" role="button" aria-pressed="'+(selectedDespiecePart===key)+'">';
-    for(const d of paths)svg+='<path d="'+d+'" fill="'+fill+'"/>';
-    if(key==='cuerpo'||key==='mangas'||key==='dobladillo')svg+='<path class="despiece-stitch" d="'+(paths[0]||'')+'"/>';
-    svg+='<g class="despiece-tag" transform="translate('+tx+' '+ty+')"><rect class="despiece-tag-bg" x="0" y="0" width="118" height="36" rx="8"/><text class="despiece-tag-name" x="10" y="15">'+despiecePartLabel(key,garment)+'</text><text class="despiece-tag-cost" id="despieceTag-'+key+'" x="10" y="29">'+formatPartMoney(ensureCostParts().parts[key])+'</text></g>';
-    svg+='</g>';
+    const group=svgNode('g',{'class':'despiece-part','data-part':key,tabindex:'0',role:'button','aria-pressed':String(selectedDespiecePart===key)});
+    for(const d of paths)group.append(svgNode('path',{d,fill:despieceFill(key)}));
+    if(key==='cuerpo'||key==='mangas'||key==='dobladillo')group.append(svgNode('path',{'class':'despiece-stitch',d:paths[0]||'',fill:'none'}));
+    const tag=svgNode('g',{'class':'despiece-tag',transform:'translate('+tx+' '+ty+')'});
+    tag.append(svgNode('rect',{'class':'despiece-tag-bg',x:'0',y:'0',width:'118',height:'36',rx:'8'}));
+    tag.append(svgNode('text',{'class':'despiece-tag-name',x:'10',y:'15',text:despiecePartLabel(key,garment)}));
+    tag.append(svgNode('text',{'class':'despiece-tag-cost',id:'despieceTag-'+key,x:'10',y:'29',text:formatPartMoney(ensureCostParts().parts[key])}));
+    group.append(tag);
+    svg.append(group);
   }
-  return svg;
-}
-function refreshDespieceSvg(){
-  const svg=$('#despieceSvg');if(!svg)return;
-  svg.innerHTML=despieceSvgMarkup();
-  svg.setAttribute('data-despiece-shape',state.garment);
   ensureDespieceHitButtons();
   for(const key of COST_PART_KEYS){
     const chip=findDespieceNode('#despieceHit-'+key);
@@ -194,10 +203,16 @@ function bindDespieceHits(){
 function paintDespieceSelection(){
   for(const node of despiecePartNodes()){
     const key=node.getAttribute('data-part')||node.dataset.part;
-    node.setAttribute('aria-pressed',key===selectedDespiecePart);
+    node.setAttribute('aria-pressed',String(key===selectedDespiecePart));
     const hide=!despiecePartVisible(key);
-    node.hidden=hide;
-    if(node.style)node.style.display=hide?'none':'';
+    if((node.tagName||'').toLowerCase()==='button'){
+      node.hidden=hide;
+      if(node.style)node.style.display=hide?'none':'';
+    }else{
+      node.removeAttribute('hidden');
+      node.setAttribute('visibility',hide?'hidden':'visible');
+      if(node.style)node.style.display='';
+    }
   }
 }
 function ensureDespieceHitButtons(){

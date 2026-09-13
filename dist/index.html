@@ -214,10 +214,11 @@ dialog .dialog-actions{background:#faf8f5}
 .despiece-hits{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:560px}
 .despiece-hits button{min-height:44px;padding:8px 12px;font-size:.8125rem}
 .despiece-hits button[aria-pressed=true]{background:#fff3f5;color:#c81e3a;border-color:var(--gaytan,#FF2E4D)}
-.despiece-svg{width:min(100%,560px);height:auto;max-height:min(68vh,720px);overflow:visible;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.despiece-svg{width:min(100%,560px);min-height:380px;height:auto;max-height:min(68vh,720px);overflow:visible;touch-action:manipulation;-webkit-user-select:none;user-select:none}
 .despiece-svg .despiece-floor{fill:#1c283c14}
 .despiece-part{cursor:pointer;transform-box:fill-box;transform-origin:center;transition:transform .45s cubic-bezier(.22,.8,.28,1),filter .2s ease}
-.despiece-part path,.despiece-part polygon{stroke:#18283c55;stroke-width:1.4;filter:drop-shadow(0 10px 8px #1b284826)}
+.despiece-part{visibility:visible}
+.despiece-part path,.despiece-part polygon{stroke:#18283c88;stroke-width:1.6;filter:drop-shadow(0 8px 6px #1b284833)}
 .despiece-part .despiece-stitch{fill:none;stroke:#ffffff99;stroke-width:1.1;stroke-dasharray:3 4;filter:none}
 .despiece-part[aria-pressed=true] path,.despiece-part[aria-pressed=true] polygon{stroke:var(--gaytan,#FF2E4D);stroke-width:2.4;filter:drop-shadow(0 0 0 #fff) drop-shadow(0 0 10px #ff2e4d66) drop-shadow(0 12px 10px #1b284833)}
 .despiece-tag{pointer-events:none}
@@ -3615,26 +3616,35 @@ function despieceTagAnchor(key,garment=state.garment){
     estampado:[488,372]
   }[key]||[400,400];
 }
-function despieceSvgMarkup(){
+function svgNode(tag,attrs){
+  const ns='http://www.w3.org/2000/svg';
+  const node=typeof document.createElementNS==='function'?document.createElementNS(ns,tag):document.createElement(tag);
+  for(const [key,value] of Object.entries(attrs||{})){
+    if(key==='text')node.textContent=value;
+    else node.setAttribute(key,value);
+  }
+  return node;
+}
+function refreshDespieceSvg(){
+  const svg=$('#despieceSvg');if(!svg)return;
+  while(svg.firstChild)svg.removeChild(svg.firstChild);
+  svg.setAttribute('data-despiece-shape',state.garment);
   const garment=state.garment,shapes=despieceShapes(garment);
-  let svg='<ellipse class="despiece-floor" cx="400" cy="842" rx="186" ry="22"/>';
+  svg.append(svgNode('ellipse',{class:'despiece-floor',cx:'400',cy:'842',rx:'186',ry:'22'}));
   for(const key of COST_PART_KEYS){
     const paths=shapes[key]||[];
     if(!paths.length||!despiecePartVisible(key,garment))continue;
     const [tx,ty]=despieceTagAnchor(key,garment);
-    const fill=despieceFill(key);
-    svg+='<g class="despiece-part" id="despieceHit-'+key+'" data-part="'+key+'" tabindex="0" role="button" aria-pressed="'+(selectedDespiecePart===key)+'">';
-    for(const d of paths)svg+='<path d="'+d+'" fill="'+fill+'"/>';
-    if(key==='cuerpo'||key==='mangas'||key==='dobladillo')svg+='<path class="despiece-stitch" d="'+(paths[0]||'')+'"/>';
-    svg+='<g class="despiece-tag" transform="translate('+tx+' '+ty+')"><rect class="despiece-tag-bg" x="0" y="0" width="118" height="36" rx="8"/><text class="despiece-tag-name" x="10" y="15">'+despiecePartLabel(key,garment)+'</text><text class="despiece-tag-cost" id="despieceTag-'+key+'" x="10" y="29">'+formatPartMoney(ensureCostParts().parts[key])+'</text></g>';
-    svg+='</g>';
+    const group=svgNode('g',{'class':'despiece-part','data-part':key,tabindex:'0',role:'button','aria-pressed':String(selectedDespiecePart===key)});
+    for(const d of paths)group.append(svgNode('path',{d,fill:despieceFill(key)}));
+    if(key==='cuerpo'||key==='mangas'||key==='dobladillo')group.append(svgNode('path',{'class':'despiece-stitch',d:paths[0]||'',fill:'none'}));
+    const tag=svgNode('g',{'class':'despiece-tag',transform:'translate('+tx+' '+ty+')'});
+    tag.append(svgNode('rect',{'class':'despiece-tag-bg',x:'0',y:'0',width:'118',height:'36',rx:'8'}));
+    tag.append(svgNode('text',{'class':'despiece-tag-name',x:'10',y:'15',text:despiecePartLabel(key,garment)}));
+    tag.append(svgNode('text',{'class':'despiece-tag-cost',id:'despieceTag-'+key,x:'10',y:'29',text:formatPartMoney(ensureCostParts().parts[key])}));
+    group.append(tag);
+    svg.append(group);
   }
-  return svg;
-}
-function refreshDespieceSvg(){
-  const svg=$('#despieceSvg');if(!svg)return;
-  svg.innerHTML=despieceSvgMarkup();
-  svg.setAttribute('data-despiece-shape',state.garment);
   ensureDespieceHitButtons();
   for(const key of COST_PART_KEYS){
     const chip=findDespieceNode('#despieceHit-'+key);
@@ -3656,10 +3666,16 @@ function bindDespieceHits(){
 function paintDespieceSelection(){
   for(const node of despiecePartNodes()){
     const key=node.getAttribute('data-part')||node.dataset.part;
-    node.setAttribute('aria-pressed',key===selectedDespiecePart);
+    node.setAttribute('aria-pressed',String(key===selectedDespiecePart));
     const hide=!despiecePartVisible(key);
-    node.hidden=hide;
-    if(node.style)node.style.display=hide?'none':'';
+    if((node.tagName||'').toLowerCase()==='button'){
+      node.hidden=hide;
+      if(node.style)node.style.display=hide?'none':'';
+    }else{
+      node.removeAttribute('hidden');
+      node.setAttribute('visibility',hide?'hidden':'visible');
+      if(node.style)node.style.display='';
+    }
   }
 }
 function ensureDespieceHitButtons(){
