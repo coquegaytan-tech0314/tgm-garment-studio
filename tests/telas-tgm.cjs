@@ -16,6 +16,8 @@ function sample(canvas,x,y){
   assert.match(built,/MAYKI PLUS/);
   assert.match(built,/MILLENIUM/);
   assert.match(built,/id="telaCatalog"/);
+  assert.match(built,/id="telaKnitt"/);
+  assert.match(built,/Opciones editables, no una lista cerrada/);
   assert.match(built,/id="poloSideVents"/);
 
   run("state=blank();state.garment='polo';photoBaseDefaults();populate()");
@@ -86,6 +88,24 @@ function sample(canvas,x,y){
   assert(Math.abs(olmoPx.r-fomerPx.r)+Math.abs(olmoPx.g-fomerPx.g)+Math.abs(olmoPx.b-fomerPx.b)>0,'Olmo piqué and Fomer liso differ on the body');
   assert.equal(run('poloConstructionRows().length'),5,'polo construction rows stay after tela picks');
   assert.equal(run("$('#poloExtras').hidden"),false);
+  assert.equal(run("$('#telaNombre').disabled"),false,'tela name stays editable');
+  assert.equal(run("$('#telaComposicion').disabled"),false);
+  assert.equal(run("$('#telaKnitt').disabled"),false);
+
+  run("state=blank();state.garment='polo';photoBaseDefaults();populate()");
+  run("$('#telaComposicion').value='50% algodón / 50% poliéster · pedido';$('#telaComposicion').emit('input')");
+  assert.match(run('ensureTela().composicion'),/pedido/,'editing a preset updates the pedido row');
+  assert.equal(run('ensureTela().composicion.toLowerCase().includes("lycra")'),false);
+
+  run("$('#telaNombre').value='PIQUÉ ESCUELA NUEVA'");
+  run("$('#telaComposicion').value='60% poliéster / 40% algodón'");
+  run("$('#telaKnitt').value='pique'");
+  run("$('#telaNota').value='desarrollo planta'");
+  await run("$('#telaSaveCustom').click()");
+  assert.equal(run("loadCustomTelas().some(t=>t.nombre==='PIQUÉ ESCUELA NUEVA')"),true);
+  assert.equal(run('ensureTela().source'),'custom');
+  assert.equal(run('state.texture'),'pique');
+  assert.equal(run("telaSuggestedIds('polo').join(',')"),'pique-olmo,pique-atlante,fomer','polo presets stay the three Koke options');
 
   console.log('telas-tgm: ok');
 })().catch(err=>{console.error(err);process.exit(1)});

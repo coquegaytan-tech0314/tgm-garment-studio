@@ -132,9 +132,13 @@ function telaFillSelect(){
   const value=current.id&&[...TGM_TELA_CATALOG,...custom].some(t=>t.id===current.id)?current.id:(current.nombre?'__new__':'');
   sel.value=value;
 }
+function telaKnittValue(texture){
+  if(texture==='pique'||texture==='smooth'||texture==='jersey'||texture==='fleece')return texture;
+  return state.texture==='pique'||state.texture==='smooth'||state.texture==='jersey'||state.texture==='fleece'?state.texture:'pique';
+}
 function telaSyncFields(){
   const t=ensureTela();
-  const map={telaNombre:t.nombre,telaComposicion:t.composicion,telaGsm:t.pesoGm2,telaNota:t.nota};
+  const map={telaNombre:t.nombre,telaComposicion:t.composicion,telaGsm:t.pesoGm2,telaNota:t.nota,telaKnitt:telaKnittValue(t.texture)};
   for(const [id,value] of Object.entries(map)){
     const el=$('#'+id);if(!el||document.activeElement===el)continue;
     el.value=value??'';
@@ -142,6 +146,7 @@ function telaSyncFields(){
   telaFillSelect();
 }
 function telaReadEditor(){
+  const knitt=telaKnittValue($('#telaKnitt')?.value||ensureTela().texture);
   return {
     source:ensureTela().source||'custom',
     id:ensureTela().id||('custom-'+Date.now()),
@@ -149,7 +154,7 @@ function telaReadEditor(){
     composicion:$('#telaComposicion')?.value||'',
     pesoGm2:$('#telaGsm')?.value===''?'':Number($('#telaGsm').value),
     nota:$('#telaNota')?.value||'',
-    texture:state.texture,
+    texture:knitt,
     composition:ensureReference().composition
   };
 }
@@ -177,15 +182,16 @@ initUI=function(){
     if(v==='__new__'){
       const t=ensureTela();
       t.source='custom';t.id='';t._defaultFor='';
+      if(!t.texture)t.texture=telaKnittValue('');
       telaSyncFields();return;
     }
     if(!v){telaApplyGarmentDefault(true);changed();return}
     const rec=telaCatalogById(v);
     if(rec){ensureTela()._defaultFor='';telaApplyRecord({...rec,source:TGM_TELA_CATALOG.some(t=>t.id===rec.id)?'catalog':'custom'});changed()}
   });
-  for(const id of ['telaNombre','telaComposicion','telaGsm','telaNota']){
+  for(const id of ['telaNombre','telaComposicion','telaGsm','telaNota','telaKnitt']){
     const el=$('#'+id);if(!el)continue;
-    el.addEventListener('input',()=>{
+    el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>{
       const rec=telaReadEditor();
       rec.source=rec.source||'custom';
       ensureTela()._defaultFor='';
