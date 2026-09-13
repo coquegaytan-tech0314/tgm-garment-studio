@@ -8,7 +8,7 @@ function almost(actual,expected,tol,label){
   await run('init()');
   assert.equal(run('VERSION'),8,'Schema VERSION stays 8');
   const built=require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8');
-  assert.match(built,/MGM · v8\.2\./);
+  assert.match(built,/MGM · v8\.2\.11/);
   assert.match(built,/function computeArtworkPlacement/);
   assert.match(built,/function paintRulerLayer/);
   assert.match(built,/photo-ruler-layer/);
@@ -75,6 +75,53 @@ function almost(actual,expected,tol,label){
   run('photoRulerOn=true;syncPhotoUI()');
   assert.equal(run("$('#photoRuler').getAttribute('aria-pressed')"),'true');
 
+  context.keptId=run('selected().id');
+  run("addArt();selected().kind='text';selected().text='TOP';selected().color='#111111';selected().view='front';selected().width=110");
+  run("selectedArt=null;photoRulerOn=false;state.photo.side='front';syncPhotoUI()");
+  assert.equal(run('selected()'),undefined,'selection stays empty until Koke picks');
+  await $('#photoRuler').emit('click');
+  assert.equal(run('photoRulerOn'),true);
+  assert.equal(run('selected()'),undefined,'Regla never auto-selects an estampado');
+  assert.equal(run("photoShowsPlacementGuides('front')"),false,'guides wait for a free selection');
+  assert.equal(run("photoShowsPlacementHint('front')"),true);
+  assert.equal(run("$('#photoRuler').getAttribute('aria-pressed')"),'true');
+  assert.match(run("$('#toast').textContent"),/Selecciona un estampado/);
+  assert.match(run("$('#photoStatus').textContent"),/Selecciona un estampado/);
+  assert.equal(run("$('#photoRulerReadout').textContent"),'Regla activa');
+  assert.equal(run("$('#photoRulerReadout').className.includes('tip')"),true);
+
+  run('selectedArt=keptId;syncPhotoUI()');
+  assert.equal(run('selected().id'),context.keptId,'manual selection is unchanged');
+  assert.equal(run("photoShowsPlacementGuides('front')"),true,'guides appear only after a free pick');
+  assert.match(run("$('#photoRulerReadout').textContent"),/Desde el cuello/);
+
+  run("state.photo.side='back';syncPhotoUI()");
+  assert.equal(run("photoShowsPlacementGuides('back')"),false,'front selection does not unlock Espalda guides');
+  assert.equal(run("photoShowsPlacementHint('back')"),true);
+
+  run("state=blank();state.garment='playera';photoBaseDefaults();state.photo.source='generated';state.photo.side='front';currentTab='photo';photoRulerOn=false;selectedArt=null;syncPhotoUI()");
+  await $('#photoRuler').emit('click');
+  assert.equal(run('photoRulerOn'),true);
+  assert.equal(run("$('#photoRuler').getAttribute('aria-pressed')"),'true','pressed even when guides cannot show');
+  assert.match(run("$('#toast').textContent"),/Selecciona un estampado/);
+  assert.equal(run("photoShowsPlacementGuides('front')"),false);
+  assert.equal(run("photoShowsPlacementHint('front')"),true);
+  assert.equal(run("$('#photoRulerReadout').textContent"),'Regla activa');
+  await $('#photoRuler').emit('click');
+  assert.equal(run('photoRulerOn'),false,'second click turns Regla off');
+  assert.equal(run("$('#photoRuler').getAttribute('aria-pressed')"),'false');
+
+  run("state.photo.side='both';syncPhotoUI()");
+  assert.equal(run("photoShowsPlacementHint('front')"),false,'Comparar still hides the empty-ruler tip');
+  run("state.photo.side='orbit';syncPhotoUI()");
+  assert.equal(run("photoShowsPlacementHint('front')"),false,'360 still hides the empty-ruler tip');
+  assert.equal(run("$('#photoRuler').getAttribute('aria-pressed')"),'false','orbit keeps the last pressed state');
+  assert.equal(run("$('#photoRuler').hidden"),true);
+
+  run("state=blank();state.garment='playera';photoBaseDefaults();state.bodyColor='#c4122f';state.photo.source='generated';state.photo.side='front';currentTab='photo'");
+  run("addArt();selected().kind='text';selected().text='RHINOS';selected().color='#111111';selected().view='front';selected().width=120;selected().rotation=0");
+  run('photoRulerOn=true;rememberArtworkPlacement(selected());syncPhotoUI()');
+
   const front=run("$('#photoFront')");
   const startClient=run(`(()=>{const p=photoPose(selected());return {x:p.x/800*400,y:p.y/920*460}})()`);
   const neckBeforeDrag=run('selected().placement.neckCm');
@@ -95,5 +142,5 @@ function almost(actual,expected,tol,label){
   assert(pages.length>=2,'ficha includes an aplicación page');
   assert.match(run('placementFichaText(selected())'),/Desde el cuello: .+ cm \/ .+ in/);
 
-  console.log('PASS v8.2.8 Acabado dual-unit placement rulers and ficha measures');
+  console.log('PASS v8.2.11 Acabado placement rulers toggle without auto-select');
 })().catch(error=>{console.error(error);process.exitCode=1});

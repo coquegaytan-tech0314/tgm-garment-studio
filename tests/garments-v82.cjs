@@ -20,6 +20,21 @@ function opaqueBox(canvas){
   assert.equal(run("GARMENTS.sleeveless.label"),'Top sin mangas');
   assert.equal(run("GARMENTS.zipneck.label"),'Manga larga con cierre');
   assert.equal(run("$$('[data-garment]').map(b=>b.dataset.garment).join(',')"),'playera,hoodie,polo,sleeveless,zipneck');
+  assert.equal(run("POLO_FABRIC_SKUS.map(s=>s.value).join(',')"),'Piqué Olmo,Piqué Atlante,Piqué Fomer');
+  assert.match(run("POLO_FABRIC_SKUS[0].label"),/Poliéster\/Algodón/);
+  assert.equal(run('POLO_FABRIC_SKUS[0].label.includes("lycra")'),false);
+  assert.equal(run('POLO_FABRIC_SKUS[0].label.includes("50/50")'),false,'catalog is not a hardcoded 50/50');
+  run("state.garment='polo';configureNeck()");
+  assert.match(run("$('#fabric').placeholder"),/Olmo/);
+  assert.match(run("$('#fabricSuggest').children.map(o=>o.value).join(',')"),/Piqué Olmo/);
+  run("state.fabric='Piqué Fomer';applyPoloFabricSku()");
+  assert.equal(run('state.texture'),'smooth','Fomer is liso');
+  run("state.fabric='Piqué Atlante';applyPoloFabricSku()");
+  assert.equal(run('state.texture'),'pique','Atlante keeps Olmo piqué texture');
+  run("state.stretch='';state.fabric='Piqué Olmo';applyPoloFabricSku()");
+  assert.equal(run('state.stretch'),'50% algodón / 50% poliéster','Olmo 50/50 is an editable operator note');
+  run("state.stretch='mezcla ya capturada';state.fabric='Piqué Olmo';applyPoloFabricSku()");
+  assert.equal(run('state.stretch'),'mezcla ya capturada','operator note is not overwritten');
 
   for(const [garment,neck] of [['sleeveless','round'],['zipneck','zip']]){
     context.sample=run('blank()');

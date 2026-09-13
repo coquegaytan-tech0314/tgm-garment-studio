@@ -13,6 +13,46 @@ if(typeof PHOTO_BASES==='object')Object.assign(PHOTO_BASES,{
   zipneck:{label:'Manga larga con cierre · Chifón',neck:'zip',cuff:'rib',hem:'double',texture:'jersey',crop:{front:[142,132,576,716],back:[819,132,572,717]}}
 });
 const CHIFON_FABRIC='Chifón Estrella';
+// Polo warehouse SKU codes / gsm defaults can follow; names are selectable now.
+const POLO_FABRIC_SKUS=[
+  {value:'Piqué Olmo',label:'Piqué Olmo · Poliéster/Algodón · escuelas · textura piqué',note:'50% algodón / 50% poliéster'},
+  {value:'Piqué Atlante',label:'Piqué Atlante · 100% poliéster · misma textura que Olmo · más ligero'},
+  {value:'Piqué Fomer',label:'Piqué Fomer · 100% poliéster · liso, sin textura piqué'}
+];
+function fabricSkuOptions(){
+  if(state.garment==='polo')return POLO_FABRIC_SKUS;
+  if(state.garment==='sleeveless'||state.garment==='zipneck')return [{value:CHIFON_FABRIC,label:CHIFON_FABRIC+' · Chifón'}];
+  return [];
+}
+let fabricSuggestList=null;
+function syncFabricSkuList(){
+  const fabric=$('#fabric');
+  if(!fabric)return;
+  if(!fabricSuggestList){
+    fabricSuggestList=document.createElement('datalist');
+    fabricSuggestList.setAttribute('id','fabricSuggest');
+    fabric.setAttribute('list','fabricSuggest');
+    (fabric.parent||document.body).append(fabricSuggestList);
+  }
+  const list=fabricSuggestList;
+  list.replaceChildren();
+  for(const sku of fabricSkuOptions()){
+    const option=document.createElement('option');
+    option.value=sku.value;
+    option.label=sku.label;
+    option.textContent=sku.label;
+    list.append(option);
+  }
+  fabric.placeholder=state.garment==='polo'?'Piqué Olmo, Atlante o Fomer':state.garment==='sleeveless'||state.garment==='zipneck'?'Chifón / Chifón Estrella':'Ej. jersey de algodón';
+}
+function applyPoloFabricSku(){
+  if(state.garment!=='polo')return;
+  const name=String(state.fabric||'');
+  if(/Fomer/i.test(name))state.texture='smooth';
+  else if(/Olmo|Atlante/i.test(name))state.texture='pique';
+  const sku=POLO_FABRIC_SKUS.find(item=>item.value===name);
+  if(sku?.note&&!String(state.stretch||'').trim())state.stretch=sku.note;
+}
 function photoAssetKey(garment=state.garment){return garment==='sleeveless'&&(state.photoCut||'hombre')==='mujer'?'sleevelessMujer':garment}
 function photoBaseInfo(garment=state.garment){return PHOTO_BASES[photoAssetKey(garment)]||PHOTO_BASES[garment]}
 const blankBeforeChifon=blank;
@@ -151,8 +191,7 @@ configureNeck=function(){
     cutField.hidden=state.garment!=='sleeveless';
     $$('[data-photo-cut]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.photoCut===(state.photoCut||'hombre')));
   }
-  const fabric=$('#fabric');
-  if(fabric)fabric.placeholder=state.garment==='sleeveless'||state.garment==='zipneck'?'Chifón / Chifón Estrella':'Ej. jersey de algodón';
+  syncFabricSkuList();
 };
 
 const clientSpecLinesBeforeV82=clientSpecLines;
@@ -437,8 +476,23 @@ garmentGeometry=function(order){
   return mesh;
 };
 
+function bindPoloFabricSku(){
+  const fabric=$('#fabric');
+  if(!fabric||fabric.dataset.skuBound)return;
+  fabric.dataset.skuBound='1';
+  fabric.addEventListener('change',()=>{
+    const beforeTexture=state.texture,beforeStretch=state.stretch;
+    applyPoloFabricSku();
+    if(state.texture===beforeTexture&&state.stretch===beforeStretch)return;
+    const texture=$('#texture');
+    if(texture)texture.value=state.texture;
+    const stretch=$('#stretch');
+    if(stretch)stretch.value=state.stretch;
+    changed();
+  });
+}
 const populateBeforeV82=populate;
-populate=function(){populateBeforeV82();configureNeck()};
+populate=function(){populateBeforeV82();configureNeck();bindPoloFabricSku()};
 const syncPhotoUIBeforeChifon=typeof syncPhotoUI==='function'?syncPhotoUI:null;
 if(syncPhotoUIBeforeChifon)syncPhotoUI=function(){
   syncPhotoUIBeforeChifon();

@@ -1,7 +1,10 @@
-.photo-tools #photoRuler[aria-pressed=true]{box-shadow:0 0 0 2px #fff,0 0 0 3px var(--navy,#012169);background:#fff8f4}
+.photo-tools #photoRuler[aria-pressed=true]{box-shadow:0 0 0 2px #fff,0 0 0 3px var(--navy,#012169);background:#fff4ee;color:#012169;font-weight:700}
+.photo-tools #photoRuler[aria-pressed=false]{box-shadow:none;font-weight:600}
 .photo-figure{position:relative}
 .photo-ruler-layer{position:absolute;left:0;top:0;width:100%;height:auto;aspect-ratio:800/920;pointer-events:none;touch-action:none;z-index:4}
+.photo-stage.ruling-hint .photo-ruler-layer{opacity:.9}
 .photo-ruler-readout{position:absolute;z-index:5;min-width:188px;max-width:min(240px,70vw);padding:8px 10px;border-radius:10px;background:#fffffff4;color:#012169;border:1.5px solid #012169;box-shadow:0 8px 22px #01216926;font:700 12px/1.35 Inter,Arial,sans-serif;white-space:pre-line;pointer-events:none;touch-action:none}
+.photo-ruler-readout.tip{opacity:.92;font-weight:600;border-style:dashed;background:#fffffff0}
 .photo-stage[data-background=dark] .photo-ruler-readout{background:#1b2230f2;color:#eef2ff;border-color:#ead7ba}
 .photo-stage[data-view=both] .photo-ruler-readout,.photo-stage[data-view=orbit] .photo-ruler-readout{display:none}
 #artPlacement{margin-top:2px}
