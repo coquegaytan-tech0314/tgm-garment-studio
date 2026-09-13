@@ -52,7 +52,7 @@ function isDark(c){return (c.r+c.g+c.b)/3<80}
   assert.match(rows[3].join(' '),/caja y X/);
   assert.match(rows[4].join(' '),/Abertura lateral/);
   assert.match(rows[4].join(' '),/8\.0 cm/);
-  assert.match(rows[4].join(' '),/color de detalle \/ cinta #B63D42/i);
+  assert.match(rows[4].join(' '),new RegExp('color de detalle / cinta '+run('poloResolvedVentTape()'),'i'));
   assert.equal(run('ensurePolo().sideVents'),true);
   assert.match(JSON.stringify(run('clientSpecLines()')),/Cuello \(TGM\)/);
 
