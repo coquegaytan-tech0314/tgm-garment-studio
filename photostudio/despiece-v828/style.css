@@ -1,0 +1,71 @@
+/* Despiece / costo por parte — exploded garment costing (MGM v8.2.10). */
+.photo-despiece{display:none;flex-direction:column;min-height:570px;padding:58px 16px 18px;gap:12px}
+.photo-stage[data-view=despiece] .photo-pair,.photo-stage[data-view=despiece] .photo-orbit{display:none}
+.photo-stage[data-view=despiece] .photo-despiece{display:flex}
+.photo-stage[data-view=despiece] .photo-origin{bottom:auto;top:18px;right:20px;left:auto;text-align:right;max-width:46%}
+.despiece-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;z-index:3}
+.despiece-toolbar button{min-height:44px;min-width:104px;padding:8px 14px;font-size:.875rem}
+.despiece-toolbar button[aria-pressed=true]{background:#fff3f5;color:#c81e3a;border-color:var(--gaytan,#FF2E4D)}
+.despiece-hint{margin:0;font-size:.8125rem;color:#5d6678}
+.despiece-board{position:relative;flex:1;min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.despiece-hits{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:560px}
+.despiece-hits button{min-height:44px;padding:8px 12px;font-size:.8125rem}
+.despiece-hits button[aria-pressed=true]{background:#fff3f5;color:#c81e3a;border-color:var(--gaytan,#FF2E4D)}
+.despiece-svg{width:min(100%,560px);height:auto;max-height:min(68vh,720px);overflow:visible;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.despiece-svg .despiece-floor{fill:#1c283c14}
+.despiece-part{cursor:pointer;transform-box:fill-box;transform-origin:center;transition:transform .45s cubic-bezier(.22,.8,.28,1),filter .2s ease}
+.despiece-part path,.despiece-part polygon{stroke:#18283c55;stroke-width:1.4;filter:drop-shadow(0 10px 8px #1b284826)}
+.despiece-part .despiece-stitch{fill:none;stroke:#ffffff99;stroke-width:1.1;stroke-dasharray:3 4;filter:none}
+.despiece-part[aria-pressed=true] path,.despiece-part[aria-pressed=true] polygon{stroke:var(--gaytan,#FF2E4D);stroke-width:2.4;filter:drop-shadow(0 0 0 #fff) drop-shadow(0 0 10px #ff2e4d66) drop-shadow(0 12px 10px #1b284833)}
+.despiece-tag{pointer-events:none}
+.despiece-tag-bg{fill:#fffefb;stroke:#d5dbe6;stroke-width:1}
+.despiece-part[aria-pressed=true] .despiece-tag-bg{stroke:var(--gaytan,#FF2E4D);fill:#fff4f6}
+.despiece-tag-name{fill:#2a3346;font:700 13px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+.despiece-tag-cost{fill:#c81e3a;font:600 12px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+.photo-stage[data-exploded=true] .despiece-part[data-part=cuello]{transform:translate(0,-70px)}
+.photo-stage[data-exploded=true] .despiece-part[data-part=cuerpo]{transform:translate(0,6px)}
+.photo-stage[data-exploded=true] .despiece-part[data-part=mangas]{transform:translate(0,-8px)}
+.photo-stage[data-exploded=true] .despiece-part[data-part=punos]{transform:translate(0,18px)}
+.photo-stage[data-exploded=true] .despiece-part[data-part=dobladillo]{transform:translate(0,78px)}
+.photo-stage[data-exploded=true] .despiece-part[data-part=etiqueta]{transform:translate(78px,-86px)}
+.photo-stage[data-exploded=true] .despiece-part[data-part=aletilla]{transform:translate(0,-22px)}
+.photo-stage[data-exploded=true] .despiece-part[data-part=estampado]{transform:translate(92px,28px)}
+.photo-stage[data-exploded=true][data-despiece-shape=hoodie] .despiece-part[data-part=cuello]{transform:translate(0,-84px)}
+.photo-stage[data-exploded=true][data-despiece-shape=sleeveless] .despiece-part[data-part=punos]{transform:translate(0,-12px)}
+.despiece-dock{display:grid;gap:8px;padding:14px 16px;background:#ffffffef;border:1px solid #d7dde8;border-radius:14px;box-shadow:0 10px 28px #18283c14}
+.despiece-dock-head{display:flex;flex-direction:column;gap:2px}
+.despiece-kicker{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:#7a8496}
+.despiece-dock strong{font-size:1.15rem}
+.despiece-dock input{min-height:46px;font-size:16px}
+.despiece-total{display:grid;gap:4px;padding:12px 14px;background:#fff3f5;border-radius:10px;color:#3a2430}
+.despiece-total strong{font-size:1.35rem;color:#c81e3a}
+.despiece-arts{display:grid;gap:8px;padding:10px 0 2px}
+.despiece-arts .field{margin:0}
+.despiece-cost-card{margin:18px 0;padding-top:8px}
+.despiece-cost-card h4{margin:0 0 8px;font-size:1rem}
+.despiece-open{margin:0 0 12px;min-height:44px;width:100%}
+.despiece-cost-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.despiece-cost-grid input{min-height:44px;font-size:16px}
+.despiece-inline-total{margin-top:12px}
+.despiece-ficha-rows{display:grid;gap:6px;font-size:.875rem}
+.despiece-ficha-rows div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed #d7dde8;padding:6px 0}
+.photo-tools #photoDespieceView,
+#photoDespieceView[aria-pressed=true]{box-shadow:none}
+.photo-pane .segmented #photoDespieceView[aria-pressed=true],
+#photoDespieceView[aria-pressed=true]{background:#fff3f5;color:#c81e3a;border-color:var(--gaytan,#FF2E4D)}
+#photoDespieceView{min-height:40px}
+@media(min-width:1100px){
+  .photo-despiece{display:none;flex-direction:row;align-items:stretch;padding:52px 18px 20px}
+  .photo-stage[data-view=despiece] .photo-despiece{display:flex}
+  .despiece-board{flex:1.4}
+  .despiece-dock{width:min(340px,34%);align-self:center}
+  .despiece-toolbar{position:absolute;top:52px;left:16px;right:16px}
+}
+@media(max-width:800px){
+  .photo-despiece{min-height:520px;padding-top:48px}
+  .despiece-cost-grid{grid-template-columns:1fr}
+  .despiece-svg{max-height:min(58vh,520px)}
+  .despiece-hint{font-size:.75rem}
+  .photo-stage[data-view=despiece] .photo-origin{position:static;max-width:none;text-align:center;padding:0 8px}
+}
+@media(prefers-reduced-motion:reduce){.despiece-part{transition:none}}

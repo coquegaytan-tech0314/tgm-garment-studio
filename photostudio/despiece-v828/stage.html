@@ -1,0 +1,21 @@
+    <div class="photo-despiece" id="photoDespiece" hidden>
+      <div class="despiece-toolbar">
+        <button type="button" id="despieceExplode" aria-pressed="true">Separar</button>
+        <p class="despiece-hint">Toca una parte para capturar su costo en MXN</p>
+      </div>
+      <div class="despiece-board" id="despieceBoard">
+        <svg id="despieceSvg" class="despiece-svg" viewBox="0 0 800 920" role="img" aria-label="Despiece de la prenda. Cada parte es seleccionable."></svg>
+        <div class="despiece-hits" id="despieceHits" aria-label="Partes de la prenda"></div>
+      </div>
+      <aside class="despiece-dock" id="despieceDock" aria-live="polite">
+        <div class="despiece-dock-head">
+          <span class="despiece-kicker">Costo por parte</span>
+          <strong id="despiecePartName">Cuerpo</strong>
+        </div>
+        <div class="field"><label for="despiecePartCost">Costo de esta parte</label><input id="despiecePartCost" type="text" inputmode="decimal" autocomplete="off" maxlength="12" placeholder="Por definir" aria-describedby="despiecePartHint despiecePartError"></div>
+        <p class="help" id="despiecePartHint">Hasta dos decimales, sin separadores de miles. Misma moneda del precio.</p>
+        <p class="help price-error" id="despiecePartError" role="status"></p>
+        <div id="despieceArtCosts" class="despiece-arts" hidden></div>
+        <div class="despiece-total"><span id="despieceTotalLabel">Total por partes</span><strong id="despieceTotalAmount">Por definir</strong><small id="despieceTotalHint">Suma de las partes visibles de esta prenda.</small></div>
+      </aside>
+    </div>
