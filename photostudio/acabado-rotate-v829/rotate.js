@@ -1,6 +1,16 @@
 /* Acabado free rotation: any-degree tilt via handle, wheel, pinch, and numeric control. */
 const PHOTO_ROTATE_HANDLE_GAP=34;
 const PHOTO_ROTATE_HANDLE_HIT=40;
+const PHOTO_ROTATE_GAIN=.36;
+const PHOTO_PINCH_ROTATE_GAIN=.55;
+const PHOTO_ROTATE_STEP=5;
+function photoRotateGain(){return PHOTO_ROTATE_GAIN}
+function photoRotationFromHandleDrag(drag,point,pose,snap=false){
+  const ang=Math.atan2(point.y-pose.y,point.x-pose.x);
+  let deg=(drag.startRot+(ang-drag.startAng)*PHOTO_ROTATE_GAIN)*180/Math.PI;
+  if(snap)deg=Math.round(deg/PHOTO_ROTATE_STEP)*PHOTO_ROTATE_STEP;
+  return deg;
+}
 function photoCanRotateArt(){
   return photoCanPlaceArt()&&ensurePhoto().side!=='orbit';
 }
@@ -264,7 +274,7 @@ setupPhotoDrag=function(canvas,view){
       if(a){
         const pts=[...pointers.values()];
         const ang=Math.atan2(pts[1].y-pts[0].y,pts[1].x-pts[0].x);
-        photoApplyRotation(a,pinch.startRot+(ang-pinch.startAng)*180/Math.PI);
+        photoApplyRotation(a,pinch.startRot+(ang-pinch.startAng)*180/Math.PI*PHOTO_PINCH_ROTATE_GAIN);
         syncArt();changed();
         liveMove();
       }
@@ -277,7 +287,7 @@ setupPhotoDrag=function(canvas,view){
       const width=a.width;
       if(drag.mode==='rotate'){
         const pose=photoPose(a);
-        photoApplyRotation(a,(Math.atan2(point.y-pose.y,point.x-pose.x)-drag.startAng+drag.startRot)*180/Math.PI);
+        photoApplyRotation(a,photoRotationFromHandleDrag(drag,point,pose,!!e.shiftKey));
       }else{
         const rotation=a.rotation;
         photoPutPosition(a,point.x-drag.dx,point.y-drag.dy);
@@ -351,7 +361,7 @@ syncPhotoUI=function(){
   const p=ensurePhoto();
   if(p.source==='generated'&&p.side!=='orbit'&&!photoIssues().length&&state.artworks.some(photoArtworkVisible)){
     if(!(typeof photoShowsPlacementHint==='function'&&photoShowsPlacementHint())){
-      $('#photoStatus').textContent='Arrastra o gira el estampado · Frente y Espalda';
+      $('#photoStatus').textContent='Arrastra o gira el estampado (recorrido amplio) · Frente y Espalda';
     }
   }
 };

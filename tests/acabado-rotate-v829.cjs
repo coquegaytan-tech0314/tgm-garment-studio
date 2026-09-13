@@ -11,6 +11,9 @@ function almost(actual,expected,tol,label){
   assert.match(built,/MGM · v8\.2\./);
   assert.match(built,/function photoSetRotation/);
   assert.match(built,/function photoRotateHandlePoint/);
+  assert.match(built,/function photoRotationFromHandleDrag/);
+  assert(run('photoRotateGain()')<0.5,'handle tilt gain is damped');
+  assert(run('photoRotateGain()')>0.2,'handle tilt still has usable gain');
   assert.match(built,/id="artRotationDeg"/);
   assert.match(built,/Giro: /);
   assert.equal(built.includes('VERSION=9'),false,'schema stays VERSION 8');
@@ -91,6 +94,7 @@ function almost(actual,expected,tol,label){
   await front.emit('pointermove',{pointerId:71,clientX:swingClient.x,clientY:swingClient.y});
   await front.emit('pointerup',{pointerId:71,clientX:swingClient.x,clientY:swingClient.y});
   assert(Math.abs(run('selected().rotation'))>20,'Handle drag writes a free (non-90-step-only) rotation');
+  assert(Math.abs(run('selected().rotation'))<70,'Handle drag is less twitchy than 1:1 degrees');
   almost(run('selected().x'),poseBefore.x,0.75,'Rotate handle keeps artwork.x');
   almost(run('selected().y'),poseBefore.y,0.75,'Rotate handle keeps artwork.y');
   assert.equal(run('selected().width'),poseBefore.width);

@@ -22,6 +22,9 @@ function isDark(c){return (c.r+c.g+c.b)/3<80}
   assert.match(built,/Aletilla/);
   assert.match(built,/function poloConstructionRows/);
   assert.match(built,/function drawPoloAletilla/);
+  assert.match(built,/function poloPhotoConstructionOverlays/);
+  assert.match(built,/function poloPaintStandingCollarMask/);
+  assert.equal(run('poloPhotoConstructionOverlays()'),false,'photoreal Acabado hides crude construction overlays');
 
   run("state=blank();state.garment='polo';photoBaseDefaults();populate()");
   const fresh=run('ensurePolo()');
@@ -99,24 +102,43 @@ function isDark(c){return (c.r+c.g+c.b)/3<80}
   const poloFront=createCanvas(800,920);context.poloFront=poloFront;
   await run("renderPhoto(poloFront,'front',{background:true})");
   const r=run("photoRect('polo','front')");
-  const tip=sample(poloFront,r.x+r.w*.644,r.y+r.h*.162);
-  assert(isLight(tip),'collar tip stripe reads light / white');
   const collar=sample(poloFront,r.x+r.w*.38,r.y+r.h*.08);
-  assert(isReddish(collar),'collar leaf uses TGM red');
+  assert(isReddish(collar),'standing collar uses TGM red via photobase tint');
   const hole=sample(poloFront,r.x+r.w*.50,r.y+r.h*.04);
   assert(!isReddish(hole)||hole.r<140,'neck opening is not flooded with collar fill');
   const inner=sample(poloFront,r.x+r.w*.480,r.y+r.h*.20);
-  assert(isReddish(inner),'aletilla inner facing is red');
+  assert(!isReddish(inner)||inner.r<140,'no crude aletilla overlay on photoreal Acabado');
   const flap=sample(poloFront,r.x+r.w*.518,r.y+r.h*.20);
-  assert(isDark(flap),'aletilla outer flap follows black body');
-  const button=sample(poloFront,r.x+r.w*.482,r.y+r.h*.218);
-  assert(isLight(button),'aletilla buttons are white');
-  const cuffA=sample(poloFront,r.x+r.w*.015,r.y+r.h*.38);
-  const cuffB=sample(poloFront,r.x+r.w*.06,r.y+r.h*.44);
-  assert(cuffA.a>20&&cuffB.a>20,'cuffs are painted');
-  assert(Math.abs(cuffA.r-cuffB.r)+Math.abs(cuffA.g-cuffB.g)+Math.abs(cuffA.b-cuffB.b)>25,'cuff stripe rhythm changes color across the band');
+  assert(isDark(flap),'placket follows the photobase / body');
+  const cuffOn=sample(poloFront,r.x+r.w*.015,r.y+r.h*.38);
+  const cuffOff=sample(poloFront,r.x+r.w*.06,r.y+r.h*.44);
+  assert(isDark(cuffOn),'cuff follows the photobase body, not a stripe overlay');
+  assert(isLight(cuffOff)&&!isReddish(cuffOff),'outside the sleeve is clean studio, not leftover cuff dashes');
   const vent=sample(poloFront,r.x+r.w*.21,r.y+r.h*.97);
-  assert(isReddish(vent)||vent.r>vent.g,'side vent tape reads contrast / red');
+  assert(!isReddish(vent),'hem has no crude vent-tape triangle');
+  const poloContrastBack=createCanvas(800,920);context.poloContrastBack=poloContrastBack;
+  await run("renderPhoto(poloContrastBack,'back',{background:true})");
+  const rcb=run("photoRect('polo','back')");
+  const backBand=sample(poloContrastBack,rcb.x+rcb.w*.50,rcb.y+rcb.h*.03);
+  const backYoke=sample(poloContrastBack,rcb.x+rcb.w*.50,rcb.y+rcb.h*.14);
+  assert(isReddish(backBand),'contrast cuello tints the standing back collar');
+  assert(!isReddish(backYoke),'contrast cuello does not flood a red yoke on the back');
+
+  run("state.bodyColor='#f4f3ef';state.contrast.neck=false;photoTintCache.clear();photoPrepared.clear()");
+  const poloWhite=createCanvas(800,920);context.poloWhite=poloWhite;
+  await run("renderPhoto(poloWhite,'front',{background:true})");
+  const rw=run("photoRect('polo','front')");
+  const whiteCollar=sample(poloWhite,rw.x+rw.w*.38,rw.y+rw.h*.08);
+  assert(!isReddish(whiteCollar),'white polo has no crude red collar overlay');
+  const whiteHem=sample(poloWhite,rw.x+rw.w*.21,rw.y+rw.h*.97);
+  assert(!isReddish(whiteHem),'white polo hem stays clean');
+  const whiteCuff=sample(poloWhite,rw.x+rw.w*.06,rw.y+rw.h*.44);
+  assert(!isReddish(whiteCuff)||whiteCuff.r<150,'white polo cuff has no stray red dashes');
+  const poloBack=createCanvas(800,920);context.poloBack=poloBack;
+  await run("renderPhoto(poloBack,'back',{background:true})");
+  const rb=run("photoRect('polo','back')");
+  const backTrap=sample(poloBack,rb.x+rb.w*.50,rb.y+rb.h*.08);
+  assert(!isReddish(backTrap),'back has no red trapezoid behind the neckline');
 
   const playera=createCanvas(800,920);context.playera=playera;
   run("state=blank();state.garment='playera';photoBaseDefaults();state.bodyColor='#242529'");
@@ -137,5 +159,5 @@ function isDark(c){return (c.r+c.g+c.b)/3<80}
   assert.equal(run("$('#poloExtras').hidden"),true,'hoodie hides polo / aletilla controls');
   assert.equal(run('poloConstructionRows().length'),0);
 
-  console.log('PASS v8.2.8 TGM polo construction standards, aletilla and ficha measures');
+  console.log('PASS v8.2.14 TGM polo construction: photoreal Acabado, ficha measures');
 })().catch(error=>{console.error(error);process.exitCode=1});
