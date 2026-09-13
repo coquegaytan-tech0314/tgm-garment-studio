@@ -23,7 +23,7 @@ function enterAcabadoPlaceMode(){
   const canvas=a?.view==='back'?$('#photoBack'):$('#photoFront');
   canvas?.focus();
   schedulePhoto();
-  toast('Arrastra el estampado sobre la prenda.');
+  toast('Arrastra para mover · tirador, rueda o pellizco para girar.');
 }
 const syncPhotoUIBeforePlace=syncPhotoUI;
 syncPhotoUI=function(){
@@ -35,7 +35,7 @@ syncPhotoUI=function(){
   }
   if(p.source==='generated'&&p.side!=='orbit'&&!photoIssues().length){
     $('#photoStatus').textContent=state.artworks.some(photoArtworkVisible)
-      ?'Arrastra un estampado para moverlo · Frente y Espalda'
+      ?'Arrastra o gira el estampado · Frente y Espalda'
       :'Colores y diseños editables · frente y espalda';
   }
   $('#photoStage')?.classList.toggle('placing',photoCanPlaceArt());

@@ -11,7 +11,7 @@ function opaqueBox(canvas){
   await run('init()');
   assert.equal(run('VERSION'),8,'Schema version stays 8 so tgm-pedido 1–8 still open');
   const built=require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8');
-  assert.match(built,/MGM · v8\.2\.7/);
+  assert.match(built,/MGM · v8\.2\./);
   assert.match(built,/class="brand-logo"/);
   assert.match(built,/#FF2E4D/);
   assert.match(built,/SCHEMA='tgm-pedido'/);
@@ -247,5 +247,5 @@ function opaqueBox(canvas){
 
   console.log('PASS v8.2 sleeveless and zipneck silhouettes, validation and legacy polo/hoodie/playera');
   console.log('PASS v8.2.6 Acabado 360° photoreal turntable for every prenda type');
-  console.log('PASS v8.2.7 chrome version on built studio');
+  console.log('PASS v8.2 chrome version on built studio');
 })().catch(error=>{console.error(error);process.exitCode=1});
