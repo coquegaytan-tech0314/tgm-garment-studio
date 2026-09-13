@@ -16,6 +16,7 @@ function sample(canvas,x,y){
   assert.match(built,/MAYKI PLUS/);
   assert.match(built,/function telaMergeSeed/);
   assert.match(built,/MILLENIUM/);
+  assert.equal(built.includes('Millennium')||built.includes('Millenium'),false,'catalog spelling is MILLENIUM');
   assert.match(built,/id="telaCatalog"/);
   assert.match(built,/id="telaKnitt"/);
   assert.match(built,/id="telaHelp"/);
@@ -51,8 +52,15 @@ function sample(canvas,x,y){
 
   run("state=blank();state.garment='hoodie';photoBaseDefaults();populate()");
   assert.equal(run('state.fabric'),'MILLENIUM');
+  assert.equal(run('ensureTela().nombre'),'MILLENIUM');
   assert.equal(run('state.gsm'),70);
-  assert.match(run('ensureTela().composicion'),/Nylon 100%/);
+  assert.equal(run('ensureTela().composicion'),'Nylon 100%');
+  assert.equal(run("telaSuggestedIds('hoodie').join(',')"),'millenium,rib-millenium');
+  assert.match(run("telaHelpText('hoodie')"),/MILLENIUM \(Nylon 100%, 70 g\/m²\)/);
+  assert.match(run("telaHelpText('hoodie')"),/RIB MILLENIUM \(Poliéster\/Algodón\/Elastano, 415 g\/m²\)/);
+  assert.equal(run("$('#poloExtras').hidden"),true,'hoodie has no polo construction extras');
+  assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='rib-millenium').composicion"),'Poliéster/Algodón/Elastano');
+  assert.equal(run("TGM_TELA_CATALOG.find(t=>t.id==='rib-millenium').pesoGm2"),415);
 
   run("state=blank();state.garment='sleeveless';photoBaseDefaults();populate()");
   assert.equal(run('state.fabric'),'Chifón Estrella','sleeveless keeps the existing Chifón photobase label');

@@ -97,6 +97,7 @@ function telaHelpText(garment=state.garment){
   const role='TGM es la fábrica. MGM solo acaba prendas (~1200–1500/semana). '+seed+'Wording de catálogo; no se inventan % ni SKUs. ';
   if(garment==='polo')return role+'Presets: PIQUÉ OLMO (Poliéster/Algodón), PIQUÉ ATLANTE, FOMER. Editables + otra / desarrollo nuevo.';
   if(garment==='playera')return role+'Playera: CHIFÓN 140 (default), FOMER o MAYKI (ops MAYKI PLUS / Maiky Plus). Editables + desarrollo nuevo.';
+  if(garment==='hoodie')return role+'Hoodie: MILLENIUM (Nylon 100%, 70 g/m²) default. También RIB MILLENIUM (Poliéster/Algodón/Elastano, 415 g/m²). Editables + desarrollo nuevo.';
   return role+'Elige una tela o guarda un desarrollo nuevo.';
 }
 function telaOptionLabel(t){
@@ -278,4 +279,5 @@ if(syncPhotoBeforeTelaCue)syncPhotoUI=function(){
   syncPhotoBeforeTelaCue();
   const name=$('#photoBaseName'),cue=telaResolveCue();
   if(name&&state.garment==='polo'&&cue.label)name.textContent='Polo · '+cue.label;
+  if(name&&state.garment==='hoodie'&&state.fabric)name.textContent='Hoodie · '+state.fabric;
 };
