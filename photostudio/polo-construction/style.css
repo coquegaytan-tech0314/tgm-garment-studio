@@ -1,0 +1,6 @@
+#poloExtras .polo-std{margin-top:14px;padding-top:12px;border-top:1px solid var(--line,#dae0e7)}
+#poloExtras .polo-std h4{margin:12px 0 8px;font-size:.92rem}
+#poloExtras .polo-stripe-colors .field{flex:1}
+#poloFichaSpecs{margin:12px 0 16px;padding:12px 14px;border:1px solid var(--line,#dae0e7);border-radius:10px;background:#fff8f6}
+#poloFichaSpecs h4{margin:0 0 8px;font-size:.92rem}
+#poloFichaText{white-space:pre-line;margin:0;color:#253148}

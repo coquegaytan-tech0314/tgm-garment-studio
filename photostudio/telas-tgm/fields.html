@@ -1,0 +1,22 @@
+  <div class="tela-tgm">
+    <h4>Catálogo TGM · tela</h4>
+    <p id="telaHelp" class="help">TGM es la fábrica. MGM solo acaba prendas (~1200–1500/semana). Opciones editables + desarrollo nuevo. Inventario completo lo confirma Producción; no se inventan SKUs.</p>
+    <div class="field"><label for="telaCatalog">Tela del pedido</label><select id="telaCatalog"></select></div>
+    <div class="row">
+      <div class="field"><label for="telaNombre">Nombre</label><input id="telaNombre" maxlength="70" placeholder="Nombre de catálogo o desarrollo"></div>
+      <div class="field"><label for="telaGsm">Gramaje (g/m²)</label><input id="telaGsm" type="number" min="0" max="2000" step="1" placeholder="Solo si lo captura planta"></div>
+    </div>
+    <div class="field"><label for="telaComposicion">Composición (texto de catálogo)</label><input id="telaComposicion" maxlength="120" placeholder="Ej. Poliéster/Algodón — sin % inventado"></div>
+    <div class="row">
+      <div class="field"><label for="telaKnitt">Knitt / textura</label>
+        <select id="telaKnitt">
+          <option value="pique">Piqué</option>
+          <option value="smooth">Liso</option>
+          <option value="jersey">Jersey</option>
+          <option value="fleece">Felpa</option>
+        </select>
+      </div>
+      <div class="field"><label for="telaNota">Uso / nota</label><input id="telaNota" maxlength="160" placeholder="schools, warehouse, desarrollo…"></div>
+    </div>
+    <button type="button" id="telaSaveCustom">Guardar como desarrollo nuevo</button>
+  </div>
