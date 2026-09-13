@@ -46,6 +46,7 @@ function isDark(c){return (c.r+c.g+c.b)/3<80}
   assert.match(rows[0].join(' '),/4\.5 mm/);
   assert.match(rows[1].join(' '),/2\.5 cm/);
   assert.match(rows[1].join(' '),/0\.4 cm/);
+  assert.match(rows[1].join(' '),/0\.75 cm/);
   assert.match(rows[3].join(' '),/caja y X/);
   assert.match(JSON.stringify(run('clientSpecLines()')),/Cuello \(TGM\)/);
 

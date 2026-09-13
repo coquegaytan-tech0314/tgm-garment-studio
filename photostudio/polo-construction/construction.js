@@ -75,7 +75,7 @@ validateOrder=async function(raw){
   out.polo=validatePoloConstruction(raw?.polo,out.polo);
   return out;
 };
-function poloFormatCm(n){return(Math.round(Number(n)*10)/10).toFixed(1)+' cm'}
+function poloFormatCm(n){const x=Math.round(Number(n)*100)/100;return(Number.isInteger(x*10)?x.toFixed(1):String(x))+' cm'}
 function poloFormatMm(n){return(Math.round(Number(n)*10)/10).toFixed(1)+' mm'}
 function poloFormatMmAndCm(mm){return poloFormatMm(mm)+' ('+poloFormatCm(Number(mm)/10)+')'}
 function poloResolvedCollarColor(p=ensurePolo()){return validHex(p.collarColor)?p.collarColor:(state.contrast.neck?state.contrastColor:state.bodyColor)}
