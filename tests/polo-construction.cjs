@@ -34,6 +34,8 @@ function isDark(c){return (c.r+c.g+c.b)/3<80}
   assert.equal(fresh.aletilla,true);
   assert.equal(fresh.aletillaButtons,3);
   assert.equal(fresh.cuffStripes,true);
+  assert.equal(fresh.sideVents,true);
+  almost(fresh.ventHeightCm,8,.01,'side vent default 8 cm');
   assert.equal(run("$('#poloExtras').hidden"),false,'polo extras visible on polo');
   assert.equal(run("$('#poloFichaSpecs').hidden"),false);
   assert.match(run("$('#poloFichaText').textContent"),/9\.0 cm/);
@@ -41,13 +43,16 @@ function isDark(c){return (c.r+c.g+c.b)/3<80}
   assert.match(run("$('#poloFichaText').textContent"),/Aletilla/);
 
   const rows=run('poloConstructionRows()');
-  assert.equal(rows.length,4);
+  assert.equal(rows.length,5);
   assert.match(rows[0].join(' '),/9\.0 cm/);
   assert.match(rows[0].join(' '),/4\.5 mm/);
   assert.match(rows[1].join(' '),/2\.5 cm/);
   assert.match(rows[1].join(' '),/0\.4 cm/);
   assert.match(rows[1].join(' '),/0\.75 cm/);
   assert.match(rows[3].join(' '),/caja y X/);
+  assert.match(rows[4].join(' '),/Abertura lateral/);
+  assert.match(rows[4].join(' '),/8\.0 cm/);
+  assert.equal(run('ensurePolo().sideVents'),true);
   assert.match(JSON.stringify(run('clientSpecLines()')),/Cuello \(TGM\)/);
 
   run("state=blank();state.garment='playera';photoBaseDefaults();populate()");
@@ -102,6 +107,8 @@ function isDark(c){return (c.r+c.g+c.b)/3<80}
   const cuffB=sample(poloFront,r.x+r.w*.06,r.y+r.h*.44);
   assert(cuffA.a>20&&cuffB.a>20,'cuffs are painted');
   assert(Math.abs(cuffA.r-cuffB.r)+Math.abs(cuffA.g-cuffB.g)+Math.abs(cuffA.b-cuffB.b)>25,'cuff stripe rhythm changes color across the band');
+  const vent=sample(poloFront,r.x+r.w*.20,r.y+r.h*.84);
+  assert(isReddish(vent)||vent.r>vent.g,'side vent tape reads contrast / red');
 
   const playera=createCanvas(800,920);context.playera=playera;
   run("state=blank();state.garment='playera';photoBaseDefaults();state.bodyColor='#242529'");

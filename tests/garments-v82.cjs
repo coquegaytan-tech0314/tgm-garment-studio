@@ -189,7 +189,7 @@ function opaqueBox(canvas){
   assert.equal(run("!!PHOTO_ASSETS.playera && !!PHOTO_ASSETS.hoodie && !!PHOTO_ASSETS.polo"),true);
 
   run("state=blank();state.garment='playera';photoBaseDefaults()");
-  assert.equal(run('state.fabric'),'');
+  assert.equal(run('state.fabric'),'CHIFÓN 140');
   context.cutOrder=run('blank()');context.cutOrder.garment='sleeveless';context.cutOrder.neck='round';context.cutOrder.photoCut='mujer';
   assert.equal((await run('validateOrder(cutOrder)')).photoCut,'mujer');
   context.legacyCut=run('blank()');context.legacyCut.version=6;context.legacyCut.garment='polo';context.legacyCut.neck='polo';

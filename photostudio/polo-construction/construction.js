@@ -1,8 +1,8 @@
 /* TGM / MGM polo construction standards. Optional pedido fields; schema VERSION stays 8. */
 const TGM_POLO_NEGRO='#242529',TGM_POLO_BLANCO='#f4f3ef',TGM_POLO_ROJO='#b63d42';
-const TGM_POLO_STANDARDS={collarWidthCm:9,collarStripeMm:4.5,collarStripeInsetMm:4.5,cuffWidthCm:2.5,cuffStripeMm:4,cuffSeamMinCm:.5,cuffSeamMaxCm:1,cuffSeamCm:.75,aletillaButtons:3};
-const POLO_NUMBER_FIELDS={collarWidthCm:[4,16,false],collarStripeMm:[2,12,false],collarStripeInsetMm:[2,12,false],cuffWidthCm:[1,6,false],cuffStripeMm:[2,12,false],cuffSeamCm:[.3,2,false],aletillaButtons:[2,5,true]};
-const POLO_HEX_FIELDS=['color','collarColor','collarStripeColor','cuffStripeA','cuffStripeB','cuffStripeC','aletillaOuter','aletillaInner','aletillaButtonColor'];
+const TGM_POLO_STANDARDS={collarWidthCm:9,collarStripeMm:4.5,collarStripeInsetMm:4.5,cuffWidthCm:2.5,cuffStripeMm:4,cuffSeamMinCm:.5,cuffSeamMaxCm:1,cuffSeamCm:.75,aletillaButtons:3,ventHeightCm:8};
+const POLO_NUMBER_FIELDS={collarWidthCm:[4,16,false],collarStripeMm:[2,12,false],collarStripeInsetMm:[2,12,false],cuffWidthCm:[1,6,false],cuffStripeMm:[2,12,false],cuffSeamCm:[.3,2,false],aletillaButtons:[2,5,true],ventHeightCm:[3,18,false]};
+const POLO_HEX_FIELDS=['color','collarColor','collarStripeColor','cuffStripeA','cuffStripeB','cuffStripeC','aletillaOuter','aletillaInner','aletillaButtonColor','ventTapeColor'];
 const POLO_PHOTO_SCALE={lengthCm:72,chestCm:52,spanV:.91};
 function poloStdDefaults(){
   return {
@@ -24,7 +24,11 @@ function poloStdDefaults(){
     aletillaOuter:TGM_POLO_NEGRO,
     aletillaInner:TGM_POLO_ROJO,
     aletillaButtons:TGM_POLO_STANDARDS.aletillaButtons,
-    aletillaButtonColor:TGM_POLO_BLANCO
+    aletillaButtonColor:TGM_POLO_BLANCO,
+    sideVents:true,
+    ventHeightCm:TGM_POLO_STANDARDS.ventHeightCm,
+    ventTapeFollowsContrast:true,
+    ventTapeColor:TGM_POLO_ROJO
   };
 }
 function mergePoloDefaults(raw){
@@ -63,6 +67,8 @@ function validatePoloConstruction(raw,base){
   out.aletilla=boolean(src.aletilla??d.aletilla,'aletilla');
   out.aletillaOuterFollowsBody=boolean(src.aletillaOuterFollowsBody??d.aletillaOuterFollowsBody,'aletilla exterior');
   out.aletillaInnerFollowsCollar=boolean(src.aletillaInnerFollowsCollar??d.aletillaInnerFollowsCollar,'aletilla interior');
+  out.sideVents=boolean(src.sideVents??d.sideVents,'abertura lateral');
+  out.ventTapeFollowsContrast=boolean(src.ventTapeFollowsContrast??d.ventTapeFollowsContrast,'cinta de abertura');
   for(const key of POLO_HEX_FIELDS){
     if(key==='color')continue;
     out[key]=poloOptionalHex(src[key],d[key],key);
@@ -82,9 +88,10 @@ function poloResolvedCollarColor(p=ensurePolo()){return validHex(p.collarColor)?
 function poloResolvedStripeColor(p=ensurePolo()){return validHex(p.collarStripeColor)?p.collarStripeColor:TGM_POLO_BLANCO}
 function poloResolvedAletillaOuter(p=ensurePolo()){return p.aletillaOuterFollowsBody?state.bodyColor:(validHex(p.aletillaOuter)?p.aletillaOuter:state.bodyColor)}
 function poloResolvedAletillaInner(p=ensurePolo()){return p.aletillaInnerFollowsCollar?poloResolvedCollarColor(p):(validHex(p.aletillaInner)?p.aletillaInner:TGM_POLO_ROJO)}
+function poloResolvedVentTape(p=ensurePolo()){return p.ventTapeFollowsContrast?(validHex(state.contrastColor)?state.contrastColor:TGM_POLO_ROJO):(validHex(p.ventTapeColor)?p.ventTapeColor:TGM_POLO_ROJO)}
 function poloStripeColors(p=ensurePolo()){return[p.cuffStripeA,p.cuffStripeB,p.cuffStripeC].map(c=>validHex(c)?c:TGM_POLO_NEGRO)}
 function poloVisualState(p=ensurePolo()){
-  return [p.collarWidthCm,p.collarStripeMm,p.collarStripeInsetMm,poloResolvedCollarColor(p),poloResolvedStripeColor(p),p.cuffWidthCm,p.cuffStripeMm,p.cuffSeamCm,p.cuffStripes,poloStripeColors(p),p.aletilla,poloResolvedAletillaOuter(p),poloResolvedAletillaInner(p),p.aletillaButtons,p.aletillaButtonColor];
+  return [p.collarWidthCm,p.collarStripeMm,p.collarStripeInsetMm,poloResolvedCollarColor(p),poloResolvedStripeColor(p),p.cuffWidthCm,p.cuffStripeMm,p.cuffSeamCm,p.cuffStripes,poloStripeColors(p),p.aletilla,poloResolvedAletillaOuter(p),poloResolvedAletillaInner(p),p.aletillaButtons,p.aletillaButtonColor,p.sideVents,p.ventHeightCm,poloResolvedVentTape(p)];
 }
 function poloConstructionRows(){
   if(state.garment!=='polo')return [];
@@ -93,7 +100,8 @@ function poloConstructionRows(){
     ['Cuello (TGM)',poloFormatCm(p.collarWidthCm)+' · raya de punta '+poloFormatMmAndCm(p.collarStripeMm)+' · a '+poloFormatMmAndCm(p.collarStripeInsetMm)+' del canto · '+poloResolvedCollarColor(p).toUpperCase()],
     ['Puño (después de coser)',poloFormatCm(p.cuffWidthCm)+' · rayas '+poloFormatMmAndCm(p.cuffStripeMm)+' · costura '+poloFormatCm(p.cuffSeamCm)+' (rango 0.5–1.0 cm)'],
     ['Rayas del puño',p.cuffStripes?poloStripeColors(p).map(c=>c.toUpperCase()).join(' · '):'Sin rayas de color'],
-    ['Aletilla',p.aletilla?('caja en CF · exterior '+poloResolvedAletillaOuter(p).toUpperCase()+' · interior '+poloResolvedAletillaInner(p).toUpperCase()+' · '+p.aletillaButtons+' botones '+p.aletillaButtonColor.toUpperCase()+' · ojal vertical · refuerzo caja y X'):'Sin aletilla simulada']
+    ['Aletilla',p.aletilla?('caja en CF · exterior '+poloResolvedAletillaOuter(p).toUpperCase()+' · interior '+poloResolvedAletillaInner(p).toUpperCase()+' · '+p.aletillaButtons+' botones '+p.aletillaButtonColor.toUpperCase()+' · ojal vertical · refuerzo caja y X'):'Sin aletilla simulada'],
+    ['Abertura lateral',p.sideVents?('hendidura en ambos ruedos · alto '+poloFormatCm(p.ventHeightCm)+' · cinta '+poloResolvedVentTape(p).toUpperCase()+' · pespunte doble · refuerzo en la coronilla'):'Sin abertura lateral']
   ];
 }
 function poloFichaSummary(){return poloConstructionRows().map(([label,text])=>label+': '+text).join('\n')}
@@ -215,6 +223,24 @@ function drawPoloAletilla(ctx,view,p){
   ctx.beginPath();ctx.moveTo(boxLeft,boxTop);ctx.lineTo(boxRight,boxBot);ctx.moveTo(boxRight,boxTop);ctx.lineTo(boxLeft,boxBot);ctx.stroke();
   ctx.restore();
 }
+function drawPoloVents(ctx,view,p){
+  if(!p.sideVents)return;
+  const h=Math.max(.04,poloUFromCm(p.ventHeightCm)),tape=poloResolvedVentTape(p),hem=.908;
+  const sides=[[.198,1],[.802,-1]];
+  for(const [u,sign] of sides){
+    const topU=u+sign*.004,open=u+sign*.016;
+    poloFillPath(ctx,[[topU,hem-h],[open,hem-.006],[u+sign*.006,hem],[u-sign*.003,hem-h+.01]],tape,.9);
+    ctx.save();
+    ctx.strokeStyle='#161616';ctx.lineWidth=.0026;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(u-sign*.002,hem-h);ctx.lineTo(u-sign*.006,hem);ctx.stroke();
+    ctx.lineWidth=.0036;
+    ctx.beginPath();ctx.moveTo(u-sign*.012,hem-h);ctx.lineTo(u+sign*.016,hem-h);ctx.stroke();
+    ctx.strokeStyle=shade('#111111',0,.38);ctx.lineWidth=.0013;
+    ctx.beginPath();ctx.moveTo(u-sign*.045,hem-.012);ctx.lineTo(u+sign*.028,hem-.012);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(u-sign*.045,hem-.019);ctx.lineTo(u+sign*.028,hem-.019);ctx.stroke();
+    ctx.restore();
+  }
+}
 const drawPoloAccentsBeforeStd=drawPoloAccents;
 drawPoloAccents=function(ctx,r,view){
   if(state.garment!=='polo')return;
@@ -224,6 +250,7 @@ drawPoloAccents=function(ctx,r,view){
   drawPoloCollar(ctx,view,p);
   drawPoloCuffs(ctx,view,p);
   drawPoloAletilla(ctx,view,p);
+  drawPoloVents(ctx,view,p);
   ctx.restore();
 };
 const visualSignatureBeforePoloStd=visualSignature;
@@ -251,9 +278,10 @@ syncPolo=function(){
   if(extras)extras.hidden=state.garment!=='polo';
   const ficha=$('#poloFichaSpecs'),text=$('#poloFichaText');
   if(ficha){ficha.hidden=state.garment!=='polo';if(text&&state.garment==='polo')text.textContent=poloFichaSummary()}
-  const outer=$('#poloAletillaOuter'),inner=$('#poloAletillaInner');
+  const outer=$('#poloAletillaOuter'),inner=$('#poloAletillaInner'),tape=$('#poloVentTape');
   if(outer)outer.disabled=!!p.aletillaOuterFollowsBody;
   if(inner)inner.disabled=!!p.aletillaInnerFollowsCollar;
+  if(tape)tape.disabled=!!p.ventTapeFollowsContrast;
   for(const el of $$('[data-polo]')){
     if(document.activeElement===el)continue;
     const key=el.dataset.polo,value=p[key];

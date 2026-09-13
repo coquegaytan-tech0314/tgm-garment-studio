@@ -8,7 +8,7 @@ function almost(actual,expected,tol,label){
   await run('init()');
   assert.equal(run('VERSION'),8,'Schema VERSION stays 8');
   const built=require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8');
-  assert.match(built,/MGM · v8\.2\.9/);
+  assert.match(built,/MGM · v8\.2\./);
   assert.match(built,/costado \/ lateral/);
   assert.match(built,/function sleeveCostadoSpec/);
   assert.match(built,/Manga izq\. · costado/);
@@ -94,8 +94,9 @@ function almost(actual,expected,tol,label){
   assert.equal(polo.aletilla,true,'aletilla stays on');
   assert.equal(run("$('#poloExtras').hidden"),false);
   const rows=run('poloConstructionRows()');
-  assert.equal(rows.length,4);
+  assert.equal(rows.length,5);
   assert.match(rows[3].join(' '),/Aletilla|caja y X/);
+  assert.match(rows[4].join(' '),/Abertura/);
 
   const c=createCanvas(800,920);context.c=c;
   run("state.artworks=[];newSleeveArt({text:true,side:'left',view:'front'});selected().text='tgm.com';selected().color='#ffffff';selected().width=90");

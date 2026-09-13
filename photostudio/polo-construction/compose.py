@@ -23,6 +23,6 @@ def extend(html, root):
     once("report.row('Costuras, avíos y etiquetas',r.construction);",
          "report.row('Costuras, avíos y etiquetas',r.construction);for(const row of poloConstructionRows())report.row(row[0],row[1]);")
     once("!['Tallas','Cuidados','Empaque',...PRICE_LABELS].includes(label)",
-         "!['Tallas','Cuidados','Empaque','Cuello (TGM)','Puño (después de coser)','Rayas del puño','Aletilla',...PRICE_LABELS].includes(label)")
+         "!['Tallas','Cuidados','Empaque','Cuello (TGM)','Puño (después de coser)','Rayas del puño','Aletilla','Abertura lateral',...PRICE_LABELS].includes(label)")
     once('init().catch(e=>toast', (source / 'construction.js').read_text() + '\ninit().catch(e=>toast')
     return html
