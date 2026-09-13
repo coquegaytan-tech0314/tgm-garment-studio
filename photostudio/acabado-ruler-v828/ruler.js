@@ -208,7 +208,7 @@ function syncPlacementArtField(){
   const field=$('#artPlacement');
   if(!field)return;
   const a=selected();
-  field.textContent=a?('Posición (regla): '+placementSpecText(a)+'. Referencia talla M; confirmar en muestra.'):'Posición de la regla: arrastra el estampado en Acabado para medir en cm y pulgadas.';
+  field.textContent=a?('Posición (regla): '+placementSpecText(a)+'. Referencia talla M; confirmar en muestra.'):'Posición de la regla: arrastra o gira el estampado en Acabado. Cuello/dobladillo = recuadro girado; centro = centro del estampado.';
 }
 function syncPlacementRulerUI(){
   const btn=$('#photoRuler');

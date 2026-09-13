@@ -1,0 +1,9 @@
+.photo-figure canvas.editable.over-rotate{cursor:crosshair}
+.photo-figure canvas.rotating,.photo-figure canvas.editable.rotating{cursor:crosshair}
+.art-rotation-controls{display:flex;align-items:center;gap:8px}
+.art-rotation-controls #artRotationDeg{width:4.4rem;flex:0 0 4.4rem}
+.art-rotation-unit{color:#4c5466;font-weight:700;min-width:0.8rem}
+.art-rotation-controls #artRotation{flex:1}
+@media(max-width:800px){
+  .art-rotation-controls #artRotationDeg{min-height:42px;width:5rem;flex-basis:5rem;font-size:16px}
+}
