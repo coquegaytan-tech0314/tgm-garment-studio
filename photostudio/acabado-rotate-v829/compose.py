@@ -20,7 +20,7 @@ def extend(html, root):
          '<input id="artRotation" type="range" min="-180" max="180" step="1">'
          '</div></div>')
     once('<p class="help" id="artPlacement">Posición de la regla: arrastra el estampado en Acabado para medir en cm y pulgadas.</p>',
-         '<p class="help" id="artPlacement">Posición de la regla: arrastra o gira el estampado. Cuello y dobladillo miden el recuadro girado; centro y costados, el centro del print.</p>')
+         '<p class="help" id="artPlacement">Posición de la regla: arrastra o gira el estampado. HPS (unión cuello-cuerpo, sin cuello) y dobladillo miden el recuadro girado; centro y costados, el centro del print.</p>')
     html = html.replace('arrastra el estampado o usa las flechas para moverlo.',
                         'arrastra o gira el estampado; flechas mueven, [ ] gira.')
     once('init().catch(e=>toast', (source / 'rotate.js').read_text() + '\ninit().catch(e=>toast')

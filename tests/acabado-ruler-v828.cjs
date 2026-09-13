@@ -8,13 +8,17 @@ function almost(actual,expected,tol,label){
   await run('init()');
   assert.equal(run('VERSION'),8,'Schema VERSION stays 8');
   const built=require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8');
-  assert.match(built,/MGM · v8\.2\./);
+  assert.match(built,/MGM · v8\.2\.13/);
   assert.match(built,/function computeArtworkPlacement/);
   assert.match(built,/function paintRulerLayer/);
+  assert.match(built,/function drawPlacementHpsMarks/);
   assert.match(built,/photo-ruler-layer/);
   assert.match(built,/Posición \(regla\)/);
   assert.match(built,/id="photoRuler"/);
   assert.match(built,/id="photoRulerReadout"/);
+  assert.match(built,/HPS · sin cuello/);
+  assert.match(built,/unión cuello-cuerpo/);
+  assert.equal(built.includes('VERSION=9'),false,'schema stays VERSION 8');
 
   almost(run('inchesFromCm(2.54)'),1,1e-9,'2.54 cm is 1 inch');
   almost(run('cmFromInches(1)'),2.54,1e-9,'1 inch is 2.54 cm');
@@ -30,10 +34,22 @@ function almost(actual,expected,tol,label){
   assert(first.hemCm>0,'Chest print sits above the hem');
   assert(first.widthCm>0&&first.heightCm>0);
   assert.match(run(`formatDual(${first.neckCm})`),/cm \/ .+ in/);
-  assert.match(run('placementFichaText(selected())'),/Desde el cuello/);
+  const playeraGuide=run("PLACEMENT_GUIDES.playera");
+  const poloGuide=run("PLACEMENT_GUIDES.polo");
+  assert(playeraGuide.neckV>playeraGuide.collarTipV,'playera HPS sits below the collar rib tip');
+  assert(poloGuide.neckV>poloGuide.collarTipV,'polo HPS sits below the standing collar tip');
+  assert(poloGuide.neckV<0.15,'polo HPS is above the red collar leaf tips');
+  assert(playeraGuide.neckV<0.10,'playera HPS is the shoulder/neck junction, not the front neck drop');
+  const playeraFrame=run("placementFrame('front')");
+  assert(playeraFrame.hps>playeraFrame.collarTip,'frame HPS is below the collar tip');
+  assert.equal(playeraFrame.neck,playeraFrame.hps,'legacy frame.neck is the HPS origin');
+
+  assert.match(run('placementFichaText(selected())'),/Desde HPS/);
+  assert.match(run('placementFichaText(selected())'),/sin cuello/);
+  assert.match(run('placementFichaText(selected())'),/punta del cuello no cuenta/);
   assert.match(run('placementFichaText(selected())'),/ in/);
-  assert.match(run('placementSpecText(selected())'),/cuello .+ cm \/ .+ in/);
-  assert.match(JSON.stringify(run('clientSpecLines()')),/cuello .+ cm \/ .+ in/);
+  assert.match(run('placementSpecText(selected())'),/HPS \(sin cuello\) .+ cm \/ .+ in/);
+  assert.match(JSON.stringify(run('clientSpecLines()')),/HPS \(sin cuello\) .+ cm \/ .+ in/);
 
   const beforeY=run('selected().y'),beforeNeck=run('selected().placement.neckCm');
   run('selected().y=selected().y+36;rememberArtworkPlacement(selected())');
@@ -99,7 +115,7 @@ function almost(actual,expected,tol,label){
   run('selectedArt=keptId;syncPhotoUI()');
   assert.equal(run('selected().id'),context.keptId,'manual selection is unchanged');
   assert.equal(run("photoShowsPlacementGuides('front')"),true,'guides appear only after a free pick');
-  assert.match(run("$('#photoRulerReadout').textContent"),/Desde el cuello/);
+  assert.match(run("$('#photoRulerReadout').textContent"),/Desde HPS/);
 
   run("state.photo.side='back';syncPhotoUI()");
   assert.equal(run("photoShowsPlacementGuides('back')"),false,'front selection does not unlock Espalda guides');
@@ -135,7 +151,7 @@ function almost(actual,expected,tol,label){
   const neckBeforeDrag=run('selected().placement.neckCm');
   await front.emit('pointerdown',{pointerId:41,clientX:startClient.x,clientY:startClient.y});
   await front.emit('pointermove',{pointerId:41,clientX:startClient.x+20,clientY:startClient.y+40});
-  assert.match(run("$('#photoRulerReadout').textContent"),/Desde el cuello/);
+  assert.match(run("$('#photoRulerReadout').textContent"),/Desde HPS/);
   await front.emit('pointerup',{pointerId:41,clientX:startClient.x+20,clientY:startClient.y+40});
   assert(Math.abs(run('selected().placement.neckCm')-neckBeforeDrag)>0.05,'Drag refreshes persisted placement');
   assert.match(run("$('#artPlacement').textContent"),/cm \/ .+ in/);
@@ -148,7 +164,13 @@ function almost(actual,expected,tol,label){
   run("state=blank();state.garment='playera';photoBaseDefaults();state.client='CUMBRES - RHINOS';state.number='RHINOS-REGLA';addArt();selected().kind='text';selected().text='RHINOS';selected().color='#111111';selected().width=140;rememberArtworkPlacement(selected())");
   const pages=await run('referenceCanvases()');
   assert(pages.length>=2,'ficha includes an aplicación page');
-  assert.match(run('placementFichaText(selected())'),/Desde el cuello: .+ cm \/ .+ in/);
+  assert.match(run('placementFichaText(selected())'),/Desde HPS \(unión cuello-cuerpo, sin cuello\): .+ cm \/ .+ in/);
 
-  console.log('PASS v8.2.11 Acabado placement rulers toggle without auto-select');
+  run("state=blank();state.garment='polo';photoBaseDefaults();state.photo.source='generated';state.photo.side='front'");
+  const poloFrame=run("placementFrame('front')");
+  assert(poloFrame.hps-poloFrame.collarTip>8,'polo body origin is below the standing collar tip');
+  assert.match(run('HPS_CANVAS_LABEL'),/HPS/);
+  assert.match(run('HPS_ORIGIN_NOTE'),/cuello no cuenta/);
+
+  console.log('PASS v8.2.13 Acabado rulers origin at HPS, collar excluded');
 })().catch(error=>{console.error(error);process.exitCode=1});
