@@ -154,9 +154,9 @@ function drawRoundNeckMeasureGuides(ctx,frame,view){
   ctx.lineWidth=1.15;
   drawRoundNeckTicks(ctx,extra.chestLeft,extra.chestY,extra.chestRight,extra.chestY);
   drawRoundNeckTicks(ctx,extra.shoulderLeft,extra.shoulderY,extra.shoulderRight,extra.shoulderY);
-  drawPlacementLabel(ctx,'A · Ancho de tórax '+formatDual(extra.chestCm??m.chestCm),(extra.chestLeft+extra.chestRight)/2,extra.chestY-11,'center');
-  drawPlacementLabel(ctx,'B · Ancho de espalda '+formatDual(extra.shoulderCm??m.shoulderCm),(extra.shoulderLeft+extra.shoulderRight)/2,extra.shoulderY-11,'center');
-  drawPlacementLabel(ctx,'C · Largo desde HPS',frame.left+12,(frame.neck+frame.hem)/2+16,'left');
+  drawPlacementLabel(ctx,'A · Ancho de tórax '+formatDual(extra.chestCm??m.chestCm),(extra.chestLeft+extra.chestRight)/2,extra.chestY+14,'center');
+  drawPlacementLabel(ctx,'B · Ancho de espalda '+formatDual(extra.shoulderCm??m.shoulderCm),extra.shoulderRight+8,extra.shoulderY,'left');
+  drawPlacementLabel(ctx,'C · Largo desde HPS',frame.left+12,(frame.neck+frame.hem)/2+18,'left');
   ctx.strokeStyle='#E8B923';
   ctx.lineWidth=1.6;
   ctx.setLineDash([3,3]);
