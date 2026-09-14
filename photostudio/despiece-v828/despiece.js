@@ -164,6 +164,10 @@ function exitDespieceMode(){
   despieceMode=false;
   syncPhotoUI();
 }
+function toggleDespieceMode(){
+  if(despieceMode)exitDespieceMode();
+  else enterDespieceMode();
+}
 function toggleDespieceExplode(on= !despieceExploded){
   despieceExploded=!!on;
   const stage=$('#photoStage'),btn=$('#despieceExplode');
@@ -494,7 +498,7 @@ function initDespiece(){
   despieceReady=true;
   ensureCostParts();
   $$('[data-photo-view]').forEach(b=>b.addEventListener('click',()=>{despieceMode=false},true));
-  $('#photoDespieceView').addEventListener('click',()=>enterDespieceMode());
+  $('#photoDespieceView').addEventListener('click',()=>toggleDespieceMode());
   $('#despieceExplode')?.addEventListener('click',()=>toggleDespieceExplode());
   $('#openDespiece')?.addEventListener('click',()=>{enterDespieceMode();const costs=$('#internalCosts');if(costs)costs.open=true});
   $('#despiecePartCost')?.addEventListener('input',e=>{

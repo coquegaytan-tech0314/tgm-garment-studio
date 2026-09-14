@@ -9,10 +9,11 @@ function enterAcabadoPlaceMode(){
     schedulePhoto();
     return;
   }
-  if(p.side==='orbit')p.side=selected()?.view==='back'?'back':'front';
+  if(p.side==='orbit'||p.side==='both')p.side=selected()?.view==='back'?'back':'front';
+  tab('art');
+  if(!state.artworks.length)addArt();
   if(!state.artworks.length){
-    tab('art');
-    toast('Agrega un logo en Logos y arrástralo sobre el acabado.');
+    toast('No se pudo crear el diseño. Revisa el panel de Logos.');
     schedulePhoto();
     return;
   }
@@ -31,7 +32,7 @@ syncPhotoUI=function(){
   const p=ensurePhoto(),editBtn=$('#photoEdit');
   if(editBtn){
     editBtn.disabled=p.source==='final';
-    editBtn.setAttribute('aria-pressed',photoCanPlaceArt()?'true':'false');
+    editBtn.removeAttribute('aria-pressed');
   }
   if(p.source==='generated'&&p.side!=='orbit'&&!photoIssues().length){
     $('#photoStatus').textContent=state.artworks.some(photoArtworkVisible)

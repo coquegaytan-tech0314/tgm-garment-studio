@@ -203,13 +203,13 @@ initUI=function(){
 // Prevent an operator typing into a temporary blank order during async recovery.
 const initBeforeAudit=init;
 init=async function(){
-  const controls=['#newOrder','#openOrders','#downloadJson','#saveOrder'];
-  for(const id of controls)$(id).disabled=true;
+  const controls=['#newOrder','#openOrders','#downloadJson','#saveOrder','#cloudUpload','#cloudOpen','#projectButton'];
+  for(const id of controls){const el=$(id);if(el)el.disabled=true}
   for(const el of $$('.tab-panel'))el.inert=true;
   for(const el of $$('[data-bind]'))el.disabled=true;
   try{await initBeforeAudit()}
   finally{
-    for(const id of controls)$(id).disabled=false;
+    for(const id of controls){const el=$(id);if(el)el.disabled=false}
     for(const el of $$('.tab-panel'))el.inert=false;
     for(const el of $$('[data-bind]'))el.disabled=false;
     $('#bootStatus').hidden=true;

@@ -97,7 +97,7 @@ function almost(actual,expected,tol,label){
   assert.equal(run("state.pro.workspace"),'photo');
   assert.equal(run("state.photo.side==='orbit'"),false,'Colocar logo leaves 360° and stays on a flat side');
   assert.equal(run('!!selected()'),true);
-  assert.equal(run("$('#photoEdit').getAttribute('aria-pressed')"),'true');
+  assert.equal(run("$('#photoEdit').getAttribute('aria-pressed')"),null,'Colocar logo is an action, not a toggle');
 
   run("state.photo.side='both';syncPhotoUI()");
   assert.equal(run("$('#photoStage').dataset.view"),'both');
