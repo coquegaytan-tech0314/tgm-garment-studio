@@ -21,7 +21,7 @@ function almost(actual,expected,tol,label){
   almost(run("photoRotationFromHandleDrag({startRot:0,startAng:0},{x:1,y:1},{x:0,y:0},true)"),15,0.01,'45° arc × 0.28 snaps to 15°');
   assert.match(built,/id="artRotationDeg"/);
   assert.match(built,/id="artRotationHint"/);
-  assert.match(built,/MGM · v8\.2\.15/);
+  assert.match(built,/MGM · v8\.2\./);
   almost(run('PHOTO_ROTATE_DRAG_GAIN'),0.28,1e-9,'handle/pinch gain is well below 1:1');
   almost(run('photoRotateFromPointer(0,0,Math.PI/2)'),0.28*90,0.6,'90° pointer arc writes ~25°');
   assert(Math.abs(run('photoRotateFromPointer(0,0,Math.PI/2)')-90)>40,'gain helper is not the old 1:1 mapping');

@@ -14,7 +14,7 @@ def extend(html, root):
     once("localStorage.getItem(KEY+'.orders')||", "localStorage.getItem(KEY+'.orders')||localStorage.getItem('tgm-estudio-v4.orders')||")
     once('<button role="tab" id="tab-art"', '<button role="tab" id="tab-sleeves" data-tab="sleeves" aria-controls="panel-sleeves" aria-selected="false" tabindex="-1">Mangas</button><button role="tab" id="tab-art"')
     once('<div id="panel-art"', (source/'panel.html').read_text()+'<div id="panel-art"')
-    once('<div class="logo-add">', '<div class="sleeve-shortcut"><p>¿Logo o detalles en las mangas?</p><button id="artSleeves">Ir a Mangas</button></div><div class="logo-add">')
+    once('<div class="logo-add">', '<div class="sleeve-shortcut"><p id="sleevesShortcut">¿Logo o detalles en las mangas?</p><button id="artSleeves">Ir a Mangas</button></div><div class="logo-add">')
     once('<div class="field"><label for="logoName">', '<p id="sleeveLogoLocation" class="sleeve-location" hidden></p><div class="field"><label for="logoName">')
     once('<div class="photo-tools">', '<div class="photo-tools"><button id="photoSleeves">Editar mangas</button>')
     once('p.exposure,p.relief,p.thread]);if(photoTintCache', 'p.exposure,p.relief,p.thread,sleeveVisualState()]);if(photoTintCache')
