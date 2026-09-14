@@ -10,6 +10,7 @@ const {assert,run,$,elements}=require('./harness.cjs');
   assert.match(built,/function syncSleevesChrome/);
   assert.match(built,/'#cloudUpload','#cloudOpen','#projectButton'/);
   assert.match(built,/if\(!state\.artworks\.length\)addArt\(\)/);
+  assert.match(built,/photoStage.*scrollIntoView/);
   assert.match(built,/PHOTO_ROTATE_DRAG_GAIN=0\.28/);
   assert.equal(run('roundNeckPaintsAcabadoOverlays()'),false);
   assert.equal(run('poloPaintsAcabadoOverlays()'),false);

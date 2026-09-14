@@ -23,6 +23,7 @@ function enterAcabadoPlaceMode(){
   updateArtList();syncArt();
   const canvas=a?.view==='back'?$('#photoBack'):$('#photoFront');
   canvas?.focus();
+  $('#photoStage')?.scrollIntoView({block:'start'});
   schedulePhoto();
   toast('Arrastra para mover · tirador, rueda o pellizco para girar.');
 }
