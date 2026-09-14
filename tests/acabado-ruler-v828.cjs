@@ -8,7 +8,7 @@ function almost(actual,expected,tol,label){
   await run('init()');
   assert.equal(run('VERSION'),8,'Schema VERSION stays 8');
   const built=require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8');
-  assert.match(built,/MGM · v8\.2\.14/);
+  assert.match(built,/MGM · v8\.2\.15/);
   assert.match(built,/function computeArtworkPlacement/);
   assert.match(built,/function paintRulerLayer/);
   assert.match(built,/function drawPlacementHpsMarks/);
@@ -198,5 +198,5 @@ function almost(actual,expected,tol,label){
   assert.equal(run("placementGuideKey()"),'sleevelessMujer');
   assert.equal(run('placementGuideHasOwn("sleevelessMujer")'),true,'sisada mujer has its own guide');
 
-  console.log('PASS v8.2.14 Acabado rulers HPS on every garment, collar excluded');
+  console.log('PASS v8.2.15 Acabado rulers HPS on every garment, collar excluded');
 })().catch(error=>{console.error(error);process.exitCode=1});

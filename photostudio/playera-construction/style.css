@@ -1,0 +1,16 @@
+/* Playera cuello redondo measurement standards (MGM v8.2.15). */
+.round-neck-std{margin-top:16px;padding-top:14px;border-top:1px solid var(--line,#dae0e7)}
+.round-neck-std h4{margin:0 0 8px;font-size:.95rem}
+.round-neck-legend{display:grid;grid-template-columns:minmax(120px,160px) 1fr;gap:12px 16px;align-items:center;margin:10px 0 12px}
+.round-neck-legend svg{width:100%;height:auto;max-width:168px}
+.round-neck-legend ol{margin:0;padding-left:1.15em;color:#253148;font-size:.82rem;line-height:1.45}
+.round-neck-legend li{margin:0 0 .35em}
+.round-neck-ref{margin:8px 0 0;padding:10px 12px;border:1px dashed #01216955;border-radius:10px;background:#f7f9fd;color:#253148;font-size:.82rem;line-height:1.45}
+#roundNeckFichaSpecs{margin:12px 0 16px;padding:12px 14px;border:1px solid var(--line,#dae0e7);border-radius:10px;background:#f7f9fd}
+#roundNeckFichaSpecs h4{margin:0 0 8px;font-size:.92rem}
+#roundNeckFichaText{white-space:pre-line;margin:0;color:#253148}
+.measure-table th[title]{cursor:help}
+@media(max-width:640px){
+  .round-neck-legend{grid-template-columns:1fr}
+  .round-neck-legend svg{max-width:140px;justify-self:center}
+}
