@@ -25,7 +25,7 @@ function isLight(c){return (c.r+c.g+c.b)/3>180}
   assert.match(built,/function poloPaintsAcabadoOverlays/);
   assert.match(built,/function poloPhotoConstructionOverlays/);
   assert.match(built,/function poloPaintStandingCollarMask/);
-  assert.match(built,/MGM · v8\.2\.15/);
+  assert.match(built,/MGM · v8\.2\./);
   assert.equal(run('poloPaintsAcabadoOverlays()'),false,'photoreal Acabado does not paint crude construction fills');
   assert.equal(run('poloPhotoConstructionOverlays()'),false,'#21 overlay gate stays off');
 

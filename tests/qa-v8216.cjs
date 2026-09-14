@@ -1,4 +1,4 @@
-const {assert,run,$}=require('./harness.cjs');
+const {assert,run,$,elements}=require('./harness.cjs');
 
 (async()=>{
   await run('init()');
@@ -58,12 +58,18 @@ const {assert,run,$}=require('./harness.cjs');
   assert.equal(run('isDespieceMode()'),false);
 
   run("state=blank();populate()");
-  const measure=await run(`(()=>{const el=$$('[data-measure]')[0];const key=el.dataset.measure,size=el.dataset.size;ensureReference().measurements[key][size]='';el.value='abc';for(const fn of el.events.input||[])fn({currentTarget:el,target:el});return ensureReference().measurements[key][size]})()`);
-  assert.equal(measure,'','Invalid talla input is not coerced to 0');
-  const empty=await run(`(()=>{const el=$$('[data-measure]')[0];const key=el.dataset.measure,size=el.dataset.size;el.value='';for(const fn of el.events.input||[])fn({currentTarget:el,target:el});return ensureReference().measurements[key][size]})()`);
-  assert.equal(empty,'');
-  const valid=await run(`(()=>{const el=$$('[data-measure]')[0];const key=el.dataset.measure,size=el.dataset.size;el.value='52.4';for(const fn of el.events.input||[])fn({currentTarget:el,target:el});return ensureReference().measurements[key][size]})()`);
-  assert.equal(valid,52.4);
+  const measureEl=elements.find(el=>el.dataset&&el.dataset.measure);
+  assert(measureEl,'Tallas table has measurement inputs');
+  const measureKey=measureEl.dataset.measure,measureSize=measureEl.dataset.size;
+  measureEl.value='abc';
+  await measureEl.emit('input');
+  assert.equal(run(`ensureReference().measurements[${JSON.stringify(measureKey)}][${JSON.stringify(measureSize)}]`),'','Invalid talla input is not coerced to 0');
+  measureEl.value='';
+  await measureEl.emit('input');
+  assert.equal(run(`ensureReference().measurements[${JSON.stringify(measureKey)}][${JSON.stringify(measureSize)}]`),'');
+  measureEl.value='52.4';
+  await measureEl.emit('input');
+  assert.equal(run(`ensureReference().measurements[${JSON.stringify(measureKey)}][${JSON.stringify(measureSize)}]`),52.4);
 
   const hps=run("state=blank();state.garment='playera';photoBaseDefaults();placementFrame('front').neck");
   const collar=run("placementFrame('front').collarTip");
