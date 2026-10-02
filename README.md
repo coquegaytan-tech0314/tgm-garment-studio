@@ -22,11 +22,15 @@ Edit the files in `photostudio/` and regenerate `dist/index.html`; keep both sou
 
 The repository provides version history and code collaboration. Public GitHub Pages and Firebase Hosting are already in use; shared pedidos use **Subir a la nube** / **Abrir desde la nube** against Firebase Storage. No open-source license has been added.
 
+## Construction defaults — MGM v8.2.18
+
+Polo **Juegos y líneas** start off: a plain collar, no jacquard. **Jacquard estándar (ejemplo)** in the preset list adds Koke's sample (línea 9 mm, marino 6 mm, blanco 6 mm, rojo as the rest of the collar). Lines stay 1–3, and colors and widths stay editable. Pedidos that never stored jacquard open with it off. Collar size, cuff, hoodie rib, pretina and Acabado proportion stay as in v8.2.17.
+
 ## Construction defaults — MGM v8.2.17
 
 Koke's 2026-10-02 plant notes are the new defaults; every value stays editable per pedido (schema version 8, optional fields; older pedidos receive the defaults on import).
 
-- **Polo cuello:** 40 cm long × 9 cm high. **Juegos y líneas** (jacquard) start at the collar edge: editable presets, default marino 6 mm · blanco 6 mm · rest red (the rest of the 9 cm collar). The 9 mm jacquard line stays as its own editable preset; every width can change. 1–3 lines. A clean to-scale technical view of the collar and cuff appears in Prenda and in the ficha; nothing is painted on the Acabado photo.
+- **Polo cuello:** 40 cm long × 9 cm high. **Juegos y líneas** (jacquard) are optional and start at the collar edge when added. The sample preset is marino 6 mm · blanco 6 mm · rest red, with a 9 mm line value. 1–3 lines; every width can change. A clean to-scale technical view of the collar and cuff appears in Prenda and in the ficha; nothing is painted on the Acabado photo.
 - **Polo puño:** cut 35 × 3.5 cm, finished 2.5 cm after the seam, 4 mm stripes, 4 mm detail lines. Seams stay 0.5–1.0 cm (0.75 average).
 - **Hoodie / sudadera:** rib (cardigan) cuffs 5.5 cm to the seam and a 5.5 cm **pretina**. These show in Regla, Tallas, ficha and Despiece (the hoodie hem part is called Pretina).
 - **Proportion:** the polo and playera Acabado models are compressed slightly in height (0.90) to match standard flat proportions (M 52 × 72 / 52 × 70 cm). Logo scale and placement stay relative to the garment.

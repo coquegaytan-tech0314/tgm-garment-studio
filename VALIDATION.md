@@ -1,8 +1,12 @@
 # Validation — TGM v7, 2026-09-09
 
+## MGM v8.2.18 jacquard example — 2026-10-02
+
+Polo juegos y líneas are off by default. `tests/construction-v8217.cjs` expects a plain collar on new and legacy pedidos that never stored jacquard, and checks that **Jacquard estándar (ejemplo)** adds línea 9 mm, marino 6 mm, blanco 6 mm and rojo as the rest. A saved `marino-blanco-rojo` preset still opens. Header is MGM · v8.2.18. Schema stays 8.
+
 ## MGM v8.2.17 construction defaults — 2026-10-02
 
-`tests/construction-v8217.cjs` covers the polo cuello 40 × 9 cm, juegos y líneas (default marino 6 mm and blanco 6 mm, rojo as the rest of the collar, 9 mm kept as the editable line preset, widths editable and persisted), puño cut 35 × 3.5 cm → 2.5 cm, 4 mm stripes/detail lines, hoodie puño/pretina 5.5 cm (Tallas, ficha, Despiece, client specs), legacy-import defaults, range rejection, slight polo/playera height compression (hoodie and chifón unchanged), Regla not auto-selecting an estampado, and the hoodie Acabado render staying pixel-identical when measurements change. Existing v8.2.16 QA suites still pass.
+`tests/construction-v8217.cjs` covers the polo cuello 40 × 9 cm, juegos y líneas (optional example: marino 6 mm and blanco 6 mm, rojo as the rest of the collar, 9 mm line, widths editable and persisted), puño cut 35 × 3.5 cm → 2.5 cm, 4 mm stripes/detail lines, hoodie puño/pretina 5.5 cm (Tallas, ficha, Despiece, client specs), legacy-import defaults, range rejection, slight polo/playera height compression (hoodie and chifón unchanged), Regla not auto-selecting an estampado, and the hoodie Acabado render staying pixel-identical when measurements change. Existing v8.2.16 QA suites still pass.
 
 ## Price and internal cost update
 
