@@ -22,6 +22,15 @@ Edit the files in `photostudio/` and regenerate `dist/index.html`; keep both sou
 
 The repository provides version history and code collaboration. Public GitHub Pages and Firebase Hosting are already in use; shared pedidos use **Subir a la nube** / **Abrir desde la nube** against Firebase Storage. No open-source license has been added.
 
+## Construction defaults — MGM v8.2.17
+
+Koke's 2026-10-02 plant notes are the new defaults; every value stays editable per pedido (schema version 8, optional fields; older pedidos receive the defaults on import).
+
+- **Polo cuello:** 40 cm long × 9 cm high. **Juegos y líneas** (jacquard) start at the collar edge: editable presets, default marino 6 mm · blanco 6 mm · rest red (the rest of the 9 cm collar). The 9 mm jacquard line stays as its own editable preset; every width can change. 1–3 lines. A clean to-scale technical view of the collar and cuff appears in Prenda and in the ficha; nothing is painted on the Acabado photo.
+- **Polo puño:** cut 35 × 3.5 cm, finished 2.5 cm after the seam, 4 mm stripes, 4 mm detail lines. Seams stay 0.5–1.0 cm (0.75 average).
+- **Hoodie / sudadera:** rib (cardigan) cuffs 5.5 cm to the seam and a 5.5 cm **pretina**. These show in Regla, Tallas, ficha and Despiece (the hoodie hem part is called Pretina).
+- **Proportion:** the polo and playera Acabado models are compressed slightly in height (0.90) to match standard flat proportions (M 52 × 72 / 52 × 70 cm). Logo scale and placement stay relative to the garment.
+
 ## Selling price and internal costs — v7
 
 Open **Tallas y precio** and enter **Precio por prenda terminada**. Price is optional; blank means unknown, while 0 is an explicit zero price. Select MXN or USD and enter the agreed scope/conditions. The order amount uses the S–XXL quantity total. Values are saved as integer cents; the app never chooses a factory price or adds taxes, fees, discounts or exchange conversions. Each entered unit amount accepts 0–999999.99 with up to two decimals; comma or point may be used as the decimal separator, without thousands separators.

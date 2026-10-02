@@ -1,5 +1,9 @@
 # Validation — TGM v7, 2026-09-09
 
+## MGM v8.2.17 construction defaults — 2026-10-02
+
+`tests/construction-v8217.cjs` covers the polo cuello 40 × 9 cm, juegos y líneas (default marino 6 mm and blanco 6 mm, rojo as the rest of the collar, 9 mm kept as the editable line preset, widths editable and persisted), puño cut 35 × 3.5 cm → 2.5 cm, 4 mm stripes/detail lines, hoodie puño/pretina 5.5 cm (Tallas, ficha, Despiece, client specs), legacy-import defaults, range rejection, slight polo/playera height compression (hoodie and chifón unchanged), Regla not auto-selecting an estampado, and the hoodie Acabado render staying pixel-identical when measurements change. Existing v8.2.16 QA suites still pass.
+
 ## Price and internal cost update
 
 The 24 existing regression groups and five pricing/cost groups pass against the assembled app, plus the existing cloud-helper suite. Tests execute real app event handlers, storage functions and native Canvas 2D, using synthetic values only. No real customer data or network uploads are used.

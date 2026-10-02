@@ -277,6 +277,7 @@ function syncPlacementReadout(canvas){
     const rect=host.getBoundingClientRect(),stageRect=stage.getBoundingClientRect(),box=placementBox(a);
     const left=rect.left-stageRect.left+(box.right/W)*rect.width+10;
     const top=rect.top-stageRect.top+(box.top/H)*rect.height;
+    readout.style.right='auto';
     readout.style.left=Math.max(8,Math.min(left,stageRect.width-228))+'px';
     readout.style.top=Math.max(8,Math.min(top,stageRect.height-96))+'px';
     return;
@@ -285,8 +286,10 @@ function syncPlacementReadout(canvas){
     readout.hidden=false;
     readout.classList.add('tip');
     readout.textContent=RULER_ACTIVE_CHIP;
-    readout.style.left='12px';
-    readout.style.top='12px';
+    /* Top-right so the chip does not cover the "MGM · ACABADO" stage title. */
+    readout.style.left='auto';
+    readout.style.right='16px';
+    readout.style.top='16px';
     return;
   }
   readout.hidden=true;

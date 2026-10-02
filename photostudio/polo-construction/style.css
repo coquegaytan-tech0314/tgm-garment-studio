@@ -4,3 +4,7 @@
 #poloFichaSpecs{margin:12px 0 16px;padding:12px 14px;border:1px solid var(--line,#dae0e7);border-radius:10px;background:#fff8f6}
 #poloFichaSpecs h4{margin:0 0 8px;font-size:.92rem}
 #poloFichaText{white-space:pre-line;margin:0;color:#253148}
+.polo-tech{margin:12px 0 4px;padding:10px;border:1px solid var(--line,#dae0e7);border-radius:10px;background:#f7f9fd}
+.polo-tech figcaption{margin-top:6px;font-size:.78rem;color:#4d5a73}
+.polo-tech-host svg{display:block;width:100%;height:auto;max-height:260px}
+#poloFichaDiagram{margin-top:10px}
