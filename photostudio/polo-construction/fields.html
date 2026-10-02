@@ -7,9 +7,10 @@
     </div>
     <div class="field"><label for="poloCollarColor">Color del cuello (fondo / resto)</label><input id="poloCollarColor" data-polo="collarColor" type="color" value="#b63d42"></div>
     <h4>Juegos y líneas del cuello</h4>
-    <label class="checkline"><input id="poloCollarLines" data-polo="collarLines" type="checkbox" checked>Líneas jacquard en el cuello</label>
+    <label class="checkline"><input id="poloCollarLines" data-polo="collarLines" type="checkbox">Líneas jacquard en el cuello</label>
     <div class="field"><label for="poloCollarLinePreset">Juego de líneas</label><select id="poloCollarLinePreset" data-polo="collarLinePreset">
-      <option value="marino-blanco-rojo">Marino 6 mm · Blanco 6 mm · resto Rojo</option>
+      <option value="ninguno">Sin juego</option>
+      <option value="jacquard-estandar">Jacquard estándar (ejemplo)</option>
       <option value="blanco-marino">Blanco · resto Marino</option>
       <option value="blanco-rojo-blanco">Blanco · Rojo · Blanco · resto Marino</option>
       <option value="negro-blanco">Negro · Blanco · resto Negro</option>
@@ -31,7 +32,7 @@
       <div class="field"><label for="poloCollarLineC">Línea 3</label><input id="poloCollarLineC" data-polo="collarLineC" type="color" value="#b63d42"></div>
       <div class="field"><label for="poloCollarLineCMm">Ancho línea 3 (mm)</label><input id="poloCollarLineCMm" data-polo="collarLineCMm" type="number" min="1" max="30" step="0.5" value="9"></div>
     </div>
-    <p class="help">Línea jacquard 9 mm es el preset editable. El juego por defecto es marino 6 mm y blanco 6 mm desde el canto; el rojo es el resto del cuello de 9 cm. Cada ancho se puede cambiar.</p>
+    <p class="help">El cuello arranca liso, sin jacquard. «Jacquard estándar (ejemplo)» agrega línea 9 mm, marino 6 mm, blanco 6 mm y rojo en el resto. Líneas (1–3), colores y anchos siguen editables.</p>
     <div class="row">
       <div class="field"><label for="poloCollarStripeMm">Raya de punta (mm)</label><input id="poloCollarStripeMm" data-polo="collarStripeMm" type="number" min="2" max="12" step="0.5" value="4.5"></div>
       <div class="field"><label for="poloCollarStripeInset">Distancia al canto (mm)</label><input id="poloCollarStripeInset" data-polo="collarStripeInsetMm" type="number" min="2" max="12" step="0.5" value="4.5"></div>

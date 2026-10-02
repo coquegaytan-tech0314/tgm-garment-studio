@@ -1,20 +1,27 @@
 /* TGM / MGM polo construction standards. Optional pedido fields; schema VERSION stays 8.
-   v8.2.17 (Koke 2026-10-02): cuello 40 × 9 cm. Juegos y líneas: línea jacquard 9 mm (preset editable);
-   bandas por defecto marino 6 mm y blanco 6 mm, rojo = resto del cuello. Puño corte 35 × 3.5 cm → 2.5 cm, rayas / líneas de detalle 4 mm. */
+   v8.2.17 (Koke 2026-10-02): cuello 40 × 9 cm. Puño corte 35 × 3.5 cm → 2.5 cm, rayas / líneas de detalle 4 mm.
+   v8.2.18: juegos y líneas off by default (plain collar). "Jacquard estándar (ejemplo)" adds línea 9 mm, marino 6 mm, blanco 6 mm, rojo resto. */
 const TGM_POLO_NEGRO='#242529',TGM_POLO_BLANCO='#f4f3ef',TGM_POLO_ROJO='#b63d42',TGM_POLO_MARINO='#1f2a44';
 const TGM_POLO_STANDARDS={collarWidthCm:9,collarLengthCm:40,collarLineMm:9,collarLineAMm:6,collarLineBMm:6,collarLineCMm:9,collarLineCount:2,cuffCutLengthCm:35,cuffCutHeightCm:3.5,detailLineMm:4,collarStripeMm:4.5,collarStripeInsetMm:4.5,cuffWidthCm:2.5,cuffStripeMm:4,cuffSeamMinCm:.5,cuffSeamMaxCm:1,cuffSeamCm:.75,aletillaButtons:3,ventHeightCm:8};
 const POLO_NUMBER_FIELDS={collarWidthCm:[4,16,false],collarLengthCm:[30,60,false],collarLineMm:[2,30,false],collarLineAMm:[1,30,false],collarLineBMm:[1,30,false],collarLineCMm:[1,30,false],collarLineCount:[1,3,true],cuffCutLengthCm:[20,50,false],cuffCutHeightCm:[2,8,false],detailLineMm:[1,12,false],collarStripeMm:[2,12,false],collarStripeInsetMm:[2,12,false],cuffWidthCm:[1,6,false],cuffStripeMm:[2,12,false],cuffSeamCm:[.3,2,false],aletillaButtons:[2,5,true],ventHeightCm:[3,18,false]};
 const POLO_HEX_FIELDS=['color','collarColor','collarStripeColor','collarLineA','collarLineB','collarLineC','cuffStripeA','cuffStripeB','cuffStripeC','aletillaOuter','aletillaInner','aletillaButtonColor','ventTapeColor'];
 const POLO_PHOTO_SCALE={lengthCm:72,chestCm:52,spanV:.91};
-/* Juegos y líneas del cuello (jacquard). Líneas desde el canto; el color del cuello es el resto / fondo. */
+/* Juegos y líneas del cuello (jacquard). Off until a preset or the checkbox adds them.
+   The standard sample is optional: línea 9 mm, marino 6 mm, blanco 6 mm, rojo = resto. */
 const POLO_COLLAR_LINE_PRESETS={
-  'marino-blanco-rojo':{label:'Marino 6 mm · Blanco 6 mm · resto Rojo',count:2,lines:[TGM_POLO_MARINO,TGM_POLO_BLANCO,TGM_POLO_ROJO],widths:[6,6,9],collar:TGM_POLO_ROJO},
+  'ninguno':{label:'Sin juego'},
+  'jacquard-estandar':{label:'Jacquard estándar (ejemplo)',count:2,lines:[TGM_POLO_MARINO,TGM_POLO_BLANCO,TGM_POLO_ROJO],widths:[6,6,9],lineMm:9,collar:TGM_POLO_ROJO},
   'blanco-marino':{label:'Blanco · resto Marino',count:1,lines:[TGM_POLO_BLANCO,TGM_POLO_ROJO,TGM_POLO_MARINO],collar:TGM_POLO_MARINO},
   'blanco-rojo-blanco':{label:'Blanco · Rojo · Blanco · resto Marino',count:3,lines:[TGM_POLO_BLANCO,TGM_POLO_ROJO,TGM_POLO_BLANCO],collar:TGM_POLO_MARINO},
   'negro-blanco':{label:'Negro · Blanco · resto Negro',count:2,lines:[TGM_POLO_NEGRO,TGM_POLO_BLANCO,TGM_POLO_ROJO],collar:TGM_POLO_NEGRO},
   'personalizado':{label:'Personalizado'}
 };
 const POLO_COLLAR_LINE_PRESET_KEYS=Object.keys(POLO_COLLAR_LINE_PRESETS);
+const POLO_COLLAR_PRESET_ALIASES={'marino-blanco-rojo':'jacquard-estandar'};
+function poloCollarPresetKey(value,fallback){
+  const raw=value==null||value===''?fallback:value;
+  return POLO_COLLAR_PRESET_ALIASES[raw]||raw;
+}
 function poloStdDefaults(){
   return {
     collarWidthCm:TGM_POLO_STANDARDS.collarWidthCm,
@@ -23,8 +30,8 @@ function poloStdDefaults(){
     collarColor:TGM_POLO_ROJO,
     collarStripeColor:TGM_POLO_BLANCO,
     collarLengthCm:TGM_POLO_STANDARDS.collarLengthCm,
-    collarLines:true,
-    collarLinePreset:'marino-blanco-rojo',
+    collarLines:false,
+    collarLinePreset:'ninguno',
     collarLineCount:TGM_POLO_STANDARDS.collarLineCount,
     collarLineMm:TGM_POLO_STANDARDS.collarLineMm,
     collarLineAMm:TGM_POLO_STANDARDS.collarLineAMm,
@@ -89,8 +96,8 @@ function validatePoloConstruction(raw,base){
     if(integer&&!Number.isInteger(out[key]))throw Error(key+': usa un número entero.');
   }
   out.cuffStripes=boolean(src.cuffStripes??d.cuffStripes,'rayas de puño');
-  out.collarLines=boolean(src.collarLines??d.collarLines,'juegos y líneas del cuello');
-  out.collarLinePreset=oneOf(src.collarLinePreset??d.collarLinePreset,POLO_COLLAR_LINE_PRESET_KEYS,'juego de líneas del cuello');
+  out.collarLines=boolean(src.collarLines??false,'juegos y líneas del cuello');
+  out.collarLinePreset=oneOf(poloCollarPresetKey(src.collarLinePreset,d.collarLinePreset),POLO_COLLAR_LINE_PRESET_KEYS,'juego de líneas del cuello');
   out.aletilla=boolean(src.aletilla??d.aletilla,'aletilla');
   out.aletillaOuterFollowsBody=boolean(src.aletillaOuterFollowsBody??d.aletillaOuterFollowsBody,'aletilla exterior');
   out.aletillaInnerFollowsCollar=boolean(src.aletillaInnerFollowsCollar??d.aletillaInnerFollowsCollar,'aletilla interior');
@@ -152,10 +159,14 @@ function poloCollarLinesText(p=ensurePolo()){
 }
 function applyPoloCollarPreset(p=ensurePolo()){
   const preset=POLO_COLLAR_LINE_PRESETS[p.collarLinePreset];
-  if(!preset||!preset.lines)return p;
+  if(!preset||!preset.lines){
+    if(p.collarLinePreset==='ninguno')p.collarLines=false;
+    return p;
+  }
   p.collarLines=true;
   p.collarLineCount=preset.count;
   [p.collarLineA,p.collarLineB,p.collarLineC]=preset.lines;
+  if(preset.lineMm!=null)p.collarLineMm=preset.lineMm;
   const line=Number(p.collarLineMm);
   const fallback=Number.isFinite(line)?line:TGM_POLO_STANDARDS.collarLineMm;
   const widths=preset.widths||[fallback,fallback,fallback];
@@ -460,7 +471,8 @@ syncPolo=function(){
   if(ventH)ventH.disabled=!p.sideVents;
   if(ventFollow)ventFollow.disabled=!p.sideVents;
   if(tape)tape.disabled=!p.sideVents||!!p.ventTapeFollowsContrast;
-  for(const id of ['#poloCollarLinePreset','#poloCollarLineCount','#poloCollarLineMm','#poloCollarLineA','#poloCollarLineB','#poloCollarLineC','#poloCollarLineAMm','#poloCollarLineBMm','#poloCollarLineCMm']){const el=$(id);if(el)el.disabled=!p.collarLines}
+  for(const id of ['#poloCollarLineCount','#poloCollarLineMm','#poloCollarLineA','#poloCollarLineB','#poloCollarLineC','#poloCollarLineAMm','#poloCollarLineBMm','#poloCollarLineCMm']){const el=$(id);if(el)el.disabled=!p.collarLines}
+  const presetEl=$('#poloCollarLinePreset');if(presetEl)presetEl.disabled=false;
   for(const [id,index] of [['#poloCollarLineB',2],['#poloCollarLineC',3],['#poloCollarLineBMm',2],['#poloCollarLineCMm',3]]){const el=$(id);if(el&&p.collarLines)el.disabled=index>p.collarLineCount}
   for(const el of $$('[data-polo]')){
     if(document.activeElement===el)continue;
@@ -476,7 +488,7 @@ initUI=function(){
   for(const el of $$('[data-polo]')){
     if(el.dataset.poloStdBound)continue;
     el.dataset.poloStdBound='1';
-    el.addEventListener(el.type==='checkbox'?'change':'input',()=>{poloAssignField(el.dataset.polo,el,false);changed()});
-    if(el.type!=='checkbox')el.addEventListener('change',()=>{poloAssignField(el.dataset.polo,el,true);changed()});
+    el.addEventListener(el.type==='checkbox'?'change':'input',()=>{poloAssignField(el.dataset.polo,el,false);syncPolo();changed()});
+    if(el.type!=='checkbox')el.addEventListener('change',()=>{poloAssignField(el.dataset.polo,el,true);syncPolo();changed()});
   }
 };

@@ -8,7 +8,9 @@ function almost(actual,expected,tol,label){
   await run('init()');
   assert.equal(run('VERSION'),8,'Schema VERSION stays 8');
   const built=require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8');
-  assert.match(built,/MGM · v8\.2\.17/);
+  assert.match(built,/MGM · v8\.2\.18/);
+  assert.match(built,/Jacquard estándar \(ejemplo\)/);
+  assert.equal(/id="poloCollarLines"[^>]*checked/.test(built),false,'jacquard checkbox is unchecked in the form');
   assert.equal(built.includes('VERSION=9'),false,'schema stays VERSION 8');
   assert.match(built,/id="poloCollarLength"/);
   assert.match(built,/id="poloCollarLinePreset"/);
@@ -24,13 +26,10 @@ function almost(actual,expected,tol,label){
   const p=run('ensurePolo()');
   almost(p.collarWidthCm,9,.01,'collar 9 cm alto');
   almost(p.collarLengthCm,40,.01,'collar 40 cm largo');
-  assert.equal(p.collarLines,true,'juegos y líneas on by default');
-  almost(p.collarLineMm,9,.01,'línea jacquard preset stays 9 mm');
-  almost(p.collarLineAMm,6,.01,'marino band 6 mm');
-  almost(p.collarLineBMm,6,.01,'blanco band 6 mm');
-  assert.equal(p.collarColor,'#b63d42','rojo is the rest of the collar');
-  assert.equal(p.collarLineCount,2);
-  assert.equal(p.collarLinePreset,'marino-blanco-rojo');
+  assert.equal(p.collarLines,false,'juegos y líneas off by default');
+  assert.equal(p.collarLinePreset,'ninguno');
+  assert.equal(run("$('#poloCollarLines').checked"),false);
+  assert.equal(run("$('#poloCollarLinePreset').disabled"),false,'preset list stays available on a plain collar');
   almost(p.cuffCutLengthCm,35,.01,'puño corte 35 cm');
   almost(p.cuffCutHeightCm,3.5,.01,'puño corte 3.5 cm');
   almost(p.cuffWidthCm,2.5,.01,'puño 2.5 cm después de costura');
@@ -39,7 +38,23 @@ function almost(actual,expected,tol,label){
   almost(p.cuffSeamCm,.75,.01,'costura 0.5–1 cm promedio');
   const rows=run('poloConstructionRows()').map(r=>r.join(': ')).join('\n');
   assert.match(rows,/Cuello \(TGM\): 9\.0 cm alto × 40\.0 cm largo/);
-  assert.match(rows,/Juegos y líneas del cuello: jacquard desde el canto · línea 9\.0 mm · línea 1 #1F2A44 6\.0 mm · línea 2 #F4F3EF 6\.0 mm · resto #B63D42/);
+  assert.match(rows,/Juegos y líneas del cuello: Sin juegos ni líneas/);
+  run("state.polo.collarLinePreset='jacquard-estandar';applyPoloCollarPreset(state.polo);populate()");
+  assert.equal(run('state.polo.collarLines'),true,'example preset adds jacquard');
+  almost(run('state.polo.collarLineMm'),9,.01,'example línea 9 mm');
+  almost(run('state.polo.collarLineAMm'),6,.01,'example marino 6 mm');
+  almost(run('state.polo.collarLineBMm'),6,.01,'example blanco 6 mm');
+  assert.equal(run('state.polo.collarLineA').toLowerCase(),'#1f2a44');
+  assert.equal(run('state.polo.collarLineB').toLowerCase(),'#f4f3ef');
+  assert.equal(run('state.polo.collarColor'),'#b63d42','example rojo is the rest of the collar');
+  assert.equal(run('state.polo.collarLineCount'),2);
+  const example=run('poloConstructionRows()').map(r=>r.join(': ')).join('\n');
+  assert.match(example,/Juegos y líneas del cuello: jacquard desde el canto · línea 9\.0 mm · línea 1 #1F2A44 6\.0 mm · línea 2 #F4F3EF 6\.0 mm · resto #B63D42 · Jacquard estándar \(ejemplo\)/);
+  run("state.polo.collarLineCount=3;state.polo.collarLineCMm=5;state.polo.collarLinePreset='personalizado'");
+  assert.equal(run('poloCollarLineWidths().length'),3,'1–3 lines stay editable');
+  run("state.polo.collarLinePreset='ninguno';applyPoloCollarPreset(state.polo)");
+  assert.equal(run('state.polo.collarLines'),false,'Sin juego returns to a plain collar');
+  run("state.polo.collarLinePreset='jacquard-estandar';applyPoloCollarPreset(state.polo)");
   assert.match(rows,/Puño · corte: 35\.0 cm largo × 3\.5 cm alto · 2\.5 cm después de costura/);
   assert.match(rows,/Líneas de detalle: 4\.0 mm/);
   assert.match(run("$('#poloFichaText').textContent"),/40\.0 cm largo/);
@@ -65,12 +80,16 @@ function almost(actual,expected,tol,label){
   // Legacy polo (v8.2.16 and earlier) gets the new defaults.
   context.legacy=run('blank()');
   run("legacy.garment='polo';legacy.neck='polo';legacy.polo={piping:false,placket:false,color:'#b89442',collarWidthCm:9,cuffWidthCm:2.5};delete legacy.hoodieStd");
-  const migrated=await run('validateOrder(legacy)');
+  const migrated=context.migrated=await run('validateOrder(legacy)');
   almost(migrated.polo.collarLengthCm,40,.01);
-  almost(migrated.polo.collarLineMm,9,.01,'legacy pedido gets the 9 mm line preset');
-  almost(migrated.polo.collarLineAMm,6,.01,'legacy pedido gets marino 6 mm');
-  almost(migrated.polo.collarLineBMm,6,.01,'legacy pedido gets blanco 6 mm');
+  assert.equal(migrated.polo.collarLines,false,'pedido that never set jacquard loads plain');
+  assert.equal(migrated.polo.collarLinePreset,'ninguno');
   almost(migrated.polo.cuffCutLengthCm,35,.01);
+  context.savedOn=run('clone(migrated)');
+  run("savedOn.polo.collarLines=true;savedOn.polo.collarLinePreset='marino-blanco-rojo'");
+  const kept=await run('validateOrder(savedOn)');
+  assert.equal(kept.polo.collarLines,true,'an explicit jacquard flag stays on');
+  assert.equal(kept.polo.collarLinePreset,'jacquard-estandar','v8.2.17 preset key still opens');
   almost(migrated.hoodieStd.cuffRibCm,5.5,.01,'legacy pedido gets hoodie defaults');
 
   // Hoodie / sudadera rib cuffs + pretina.
@@ -135,5 +154,5 @@ function almost(actual,expected,tol,label){
   let diff=0;for(let i=0;i<a.length;i+=4)if(a[i]!==b[i]||a[i+1]!==b[i+1]||a[i+2]!==b[i+2])diff++;
   assert.equal(diff,0,'hoodie measures never paint the Acabado render');
 
-  console.log('PASS v8.2.17 polo cuello 40×9 + juegos y líneas, puño 35×3.5→2.5, hoodie puño/pretina 5.5, proporción estándar');
+  console.log('PASS v8.2.18 plain polo collar; Jacquard estándar (ejemplo) optional; v8.2.17 cuff, hoodie and proportion unchanged');
 })().catch(error=>{console.error(error);process.exitCode=1});
