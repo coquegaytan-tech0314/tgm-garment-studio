@@ -56,7 +56,7 @@ function isLight(c){return (c.r+c.g+c.b)/3>180}
   assert.match(run("$('#poloFichaText').textContent"),/Aletilla/);
 
   const rows=run('poloConstructionRows()');
-  assert.equal(rows.length,5);
+  assert.equal(rows.length,8,'v8.2.17 adds juegos y líneas, puño corte and líneas de detalle rows');
   assert.match(rows[0].join(' '),/9\.0 cm/);
   assert.match(rows[0].join(' '),/4\.5 mm/);
   assert.match(rows[1].join(' '),/2\.5 cm/);

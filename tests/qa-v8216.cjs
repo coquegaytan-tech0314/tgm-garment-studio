@@ -4,7 +4,7 @@ const {assert,run,$,elements}=require('./harness.cjs');
   await run('init()');
   assert.equal(run('VERSION'),8,'Schema VERSION stays 8');
   const built=require('fs').readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8');
-  assert.match(built,/MGM · v8\.2\.16/);
+  assert.match(built,/MGM · v8\.2\.\d+/);
   assert.equal(built.includes('VERSION=9'),false,'schema stays VERSION 8');
   assert.match(built,/function toggleDespieceMode/);
   assert.match(built,/function syncSleevesChrome/);

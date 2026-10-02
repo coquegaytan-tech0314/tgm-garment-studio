@@ -2,25 +2,61 @@
     <h4>Confección TGM · polo</h4>
     <p class="help">Medidas de Tejidos Gaytán. Se pueden ajustar por cliente; arrancan del estándar de planta.</p>
     <div class="row">
-      <div class="field"><label for="poloCollarWidth">Ancho de cuello (cm)</label><input id="poloCollarWidth" data-polo="collarWidthCm" type="number" min="4" max="16" step="0.1" value="9"></div>
-      <div class="field"><label for="poloCollarColor">Color del cuello</label><input id="poloCollarColor" data-polo="collarColor" type="color" value="#b63d42"></div>
+      <div class="field"><label for="poloCollarWidth">Alto de cuello (cm)</label><input id="poloCollarWidth" data-polo="collarWidthCm" type="number" min="4" max="16" step="0.1" value="9"></div>
+      <div class="field"><label for="poloCollarLength">Largo de cuello (cm)</label><input id="poloCollarLength" data-polo="collarLengthCm" type="number" min="30" max="60" step="0.5" value="40"></div>
     </div>
+    <div class="field"><label for="poloCollarColor">Color del cuello (fondo / resto)</label><input id="poloCollarColor" data-polo="collarColor" type="color" value="#b63d42"></div>
+    <h4>Juegos y líneas del cuello</h4>
+    <label class="checkline"><input id="poloCollarLines" data-polo="collarLines" type="checkbox" checked>Líneas jacquard en el cuello</label>
+    <div class="field"><label for="poloCollarLinePreset">Juego de líneas</label><select id="poloCollarLinePreset" data-polo="collarLinePreset">
+      <option value="marino-blanco-rojo">Marino 6 mm · Blanco 6 mm · resto Rojo</option>
+      <option value="blanco-marino">Blanco · resto Marino</option>
+      <option value="blanco-rojo-blanco">Blanco · Rojo · Blanco · resto Marino</option>
+      <option value="negro-blanco">Negro · Blanco · resto Negro</option>
+      <option value="personalizado">Personalizado</option>
+    </select></div>
+    <div class="row">
+      <div class="field"><label for="poloCollarLineCount">Líneas</label><input id="poloCollarLineCount" data-polo="collarLineCount" type="number" min="1" max="3" step="1" value="2"></div>
+      <div class="field"><label for="poloCollarLineMm">Línea jacquard (mm)</label><input id="poloCollarLineMm" data-polo="collarLineMm" type="number" min="2" max="30" step="0.5" value="9"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label for="poloCollarLineA">Línea 1</label><input id="poloCollarLineA" data-polo="collarLineA" type="color" value="#1f2a44"></div>
+      <div class="field"><label for="poloCollarLineAMm">Ancho línea 1 (mm)</label><input id="poloCollarLineAMm" data-polo="collarLineAMm" type="number" min="1" max="30" step="0.5" value="6"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label for="poloCollarLineB">Línea 2</label><input id="poloCollarLineB" data-polo="collarLineB" type="color" value="#f4f3ef"></div>
+      <div class="field"><label for="poloCollarLineBMm">Ancho línea 2 (mm)</label><input id="poloCollarLineBMm" data-polo="collarLineBMm" type="number" min="1" max="30" step="0.5" value="6"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label for="poloCollarLineC">Línea 3</label><input id="poloCollarLineC" data-polo="collarLineC" type="color" value="#b63d42"></div>
+      <div class="field"><label for="poloCollarLineCMm">Ancho línea 3 (mm)</label><input id="poloCollarLineCMm" data-polo="collarLineCMm" type="number" min="1" max="30" step="0.5" value="9"></div>
+    </div>
+    <p class="help">Línea jacquard 9 mm es el preset editable. El juego por defecto es marino 6 mm y blanco 6 mm desde el canto; el rojo es el resto del cuello de 9 cm. Cada ancho se puede cambiar.</p>
     <div class="row">
       <div class="field"><label for="poloCollarStripeMm">Raya de punta (mm)</label><input id="poloCollarStripeMm" data-polo="collarStripeMm" type="number" min="2" max="12" step="0.5" value="4.5"></div>
       <div class="field"><label for="poloCollarStripeInset">Distancia al canto (mm)</label><input id="poloCollarStripeInset" data-polo="collarStripeInsetMm" type="number" min="2" max="12" step="0.5" value="4.5"></div>
     </div>
     <div class="field"><label for="poloCollarStripeColor">Color de la raya de punta</label><input id="poloCollarStripeColor" data-polo="collarStripeColor" type="color" value="#f4f3ef"></div>
+    <h4>Puño</h4>
+    <div class="row">
+      <div class="field"><label for="poloCuffCutLength">Puño · largo de corte (cm)</label><input id="poloCuffCutLength" data-polo="cuffCutLengthCm" type="number" min="20" max="50" step="0.5" value="35"></div>
+      <div class="field"><label for="poloCuffCutHeight">Puño · alto de corte (cm)</label><input id="poloCuffCutHeight" data-polo="cuffCutHeightCm" type="number" min="2" max="8" step="0.1" value="3.5"></div>
+    </div>
     <div class="row">
       <div class="field"><label for="poloCuffWidth">Puño terminado (cm)</label><input id="poloCuffWidth" data-polo="cuffWidthCm" type="number" min="1" max="6" step="0.1" value="2.5"></div>
       <div class="field"><label for="poloCuffSeam">Costura del puño (cm)</label><input id="poloCuffSeam" data-polo="cuffSeamCm" type="number" min="0.3" max="2" step="0.05" value="0.75"></div>
     </div>
-    <div class="field"><label for="poloCuffStripeMm">Ancho de raya del puño (mm)</label><input id="poloCuffStripeMm" data-polo="cuffStripeMm" type="number" min="2" max="12" step="0.5" value="4"></div>
+    <div class="row">
+      <div class="field"><label for="poloCuffStripeMm">Ancho de raya del puño (mm)</label><input id="poloCuffStripeMm" data-polo="cuffStripeMm" type="number" min="2" max="12" step="0.5" value="4"></div>
+      <div class="field"><label for="poloDetailLineMm">Líneas de detalle (mm)</label><input id="poloDetailLineMm" data-polo="detailLineMm" type="number" min="1" max="12" step="0.5" value="4"></div>
+    </div>
     <label class="checkline"><input id="poloCuffStripes" data-polo="cuffStripes" type="checkbox" checked>Rayas de color en el puño</label>
     <div class="row polo-stripe-colors">
       <div class="field"><label for="poloCuffStripeA">Raya 1</label><input id="poloCuffStripeA" data-polo="cuffStripeA" type="color" value="#242529"></div>
       <div class="field"><label for="poloCuffStripeB">Raya 2</label><input id="poloCuffStripeB" data-polo="cuffStripeB" type="color" value="#f4f3ef"></div>
       <div class="field"><label for="poloCuffStripeC">Raya 3</label><input id="poloCuffStripeC" data-polo="cuffStripeC" type="color" value="#b63d42"></div>
     </div>
+    <figure class="polo-tech"><div id="poloTechDiagram" class="polo-tech-host"></div><figcaption>Vista técnica a escala (mm): cuello y puño con sus líneas. No se dibuja sobre la foto de Acabado.</figcaption></figure>
     <h4>Aletilla</h4>
     <label class="checkline"><input id="poloAletilla" data-polo="aletilla" type="checkbox" checked>Simular aletilla de caja</label>
     <label class="checkline"><input id="poloAletillaOuterFollowsBody" data-polo="aletillaOuterFollowsBody" type="checkbox" checked>Exterior igual al cuerpo</label>

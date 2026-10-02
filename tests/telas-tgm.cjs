@@ -140,7 +140,7 @@ function sample(canvas,x,y){
   const olmoPx=sample(olmoCanvas,r.x+r.w*.42,r.y+r.h*.42);
   const fomerPx=sample(fomerCanvas,r.x+r.w*.42,r.y+r.h*.42);
   assert(Math.abs(olmoPx.r-fomerPx.r)+Math.abs(olmoPx.g-fomerPx.g)+Math.abs(olmoPx.b-fomerPx.b)>0,'Olmo piqué and Fomer liso differ on the body');
-  assert.equal(run('poloConstructionRows().length'),5,'polo construction rows stay after tela picks');
+  assert.equal(run('poloConstructionRows().length'),8,'polo construction rows stay after tela picks');
   assert.equal(run("$('#poloExtras').hidden"),false);
   assert.equal(run("$('#telaNombre').disabled"),false,'tela name stays editable');
   assert.equal(run("$('#telaComposicion').disabled"),false);

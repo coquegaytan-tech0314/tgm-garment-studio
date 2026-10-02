@@ -94,7 +94,7 @@ function almost(actual,expected,tol,label){
   assert.equal(polo.aletilla,true,'aletilla stays on');
   assert.equal(run("$('#poloExtras').hidden"),false);
   const rows=run('poloConstructionRows()');
-  assert.equal(rows.length,5);
+  assert.equal(rows.length,8,'v8.2.17 polo rows: cuello, puño, rayas, aletilla, abertura + juegos y líneas, puño corte, líneas de detalle');
   assert.match(rows[3].join(' '),/Aletilla|caja y X/);
   assert.match(rows[4].join(' '),/Abertura/);
 
