@@ -22,6 +22,10 @@ Edit the files in `photostudio/` and regenerate `dist/index.html`; keep both sou
 
 The repository provides version history and code collaboration. Public GitHub Pages and Firebase Hosting are already in use; shared pedidos use **Subir a la nube** / **Abrir desde la nube** against Firebase Storage. No open-source license has been added.
 
+## Regla HPS — MGM v8.2.19
+
+The Regla HPS marks sit on the top of the shoulder, where the collar or hood joins it, on the polo, playera cuello redondo (manga corta and manga larga) and hoodie, front and back. Largo runs straight from that height to the hem and is labeled in cm and inches. Ancho crosses the chest under the arms and Cintura crosses the waist. The Regla still does not select an estampado. Plain collar, the 0.90 polo/playera proportion, hoodie puño/pretina 5.5 cm and the clean Acabado photo stay as in v8.2.18.
+
 ## Construction defaults — MGM v8.2.18
 
 Polo **Juegos y líneas** start off: a plain collar, no jacquard. **Jacquard estándar (ejemplo)** in the preset list adds Koke's sample (línea 9 mm, marino 6 mm, blanco 6 mm, rojo as the rest of the collar). Lines stay 1–3, and colors and widths stay editable. Pedidos that never stored jacquard open with it off. Collar size, cuff, hoodie rib, pretina and Acabado proportion stay as in v8.2.17.

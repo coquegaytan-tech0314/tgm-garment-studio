@@ -1,5 +1,9 @@
 # Validation — TGM v7, 2026-09-09
 
+## MGM v8.2.19 HPS point — 2026-10-03
+
+`tests/hps-v8219.cjs` checks that polo, playera, manga larga (zipneck) and hoodie place HPS on the shoulder join, higher than the old body-box line and still below the collar or hood tip, on frente and espalda. Largo is labeled from that height to the hem. Ancho and Cintura are on the Regla, not painted into the Acabado photo. Header is MGM · v8.2.19. Schema stays 8.
+
 ## MGM v8.2.18 jacquard example — 2026-10-02
 
 Polo juegos y líneas are off by default. `tests/construction-v8217.cjs` expects a plain collar on new and legacy pedidos that never stored jacquard, and checks that **Jacquard estándar (ejemplo)** adds línea 9 mm, marino 6 mm, blanco 6 mm and rojo as the rest. A saved `marino-blanco-rojo` preset still opens. Header is MGM · v8.2.18. Schema stays 8.

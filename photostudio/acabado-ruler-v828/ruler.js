@@ -5,14 +5,15 @@ const HPS_ORIGIN_NOTE='HPS · unión cuello-cuerpo (el cuello no cuenta)';
 const HPS_CANVAS_LABEL='HPS · sin cuello';
 const RULER_GARMENT_KEYS=['playera','polo','hoodie','zipneck','sleeveless','sleevelessMujer'];
 const PLACEMENT_GUIDES={
-  /* neckV = HPS (collar–body seam at the shoulders). collarTipV is the standing/rib tip, excluded.
-     Polo HPS locked at v8.2.13 (.102). Every other prenda has its own guide — no playera fallback for hoodie / manga larga. */
-  playera:{chestCm:52,lengthCm:70,neckV:.055,collarTipV:.012,hemV:.955,leftU:.205,rightU:.795,hpsLeftU:.36,hpsRightU:.64},
-  polo:{chestCm:52,lengthCm:72,neckV:.102,collarTipV:.018,hemV:.955,leftU:.20,rightU:.81,hpsLeftU:.36,hpsRightU:.64},
-  hoodie:{chestCm:56,lengthCm:70,neckV:.188,collarTipV:.018,hemV:.905,leftU:.22,rightU:.78,hpsLeftU:.30,hpsRightU:.70},
+  /* neckV = HPS: top of the shoulder where the collar or hood joins it, not the collar tip and not the body-box line.
+     v8.2.19 calibrates each base photo, front and back. views.* overrides neckV / hps when the two photos differ.
+     collarTipV stays the excluded tip and must remain above HPS. */
+  playera:{chestCm:52,lengthCm:70,neckV:.022,collarTipV:.012,hemV:.955,leftU:.205,rightU:.795,hpsLeftU:.340,hpsRightU:.664,cinturaV:.64,views:{front:{neckV:.022,hpsLeftU:.340,hpsRightU:.664},back:{neckV:.026,hpsLeftU:.334,hpsRightU:.660}}},
+  polo:{chestCm:52,lengthCm:72,neckV:.057,collarTipV:.018,hemV:.955,leftU:.20,rightU:.81,hpsLeftU:.346,hpsRightU:.652,anchoV:.42,cinturaV:.66,views:{front:{neckV:.057,hpsLeftU:.346,hpsRightU:.652},back:{neckV:.058,hpsLeftU:.346,hpsRightU:.650}}},
+  hoodie:{chestCm:56,lengthCm:70,neckV:.141,collarTipV:.018,hemV:.905,leftU:.22,rightU:.78,hpsLeftU:.246,hpsRightU:.754,anchoV:.36,cinturaV:.64,views:{front:{neckV:.141,hpsLeftU:.246,hpsRightU:.754},back:{neckV:.134,hpsLeftU:.256,hpsRightU:.742}}},
   sleeveless:{chestCm:46,lengthCm:66,neckV:.028,collarTipV:.010,hemV:.94,leftU:.30,rightU:.70,hpsLeftU:.27,hpsRightU:.73},
   sleevelessMujer:{chestCm:42,lengthCm:60,neckV:.030,collarTipV:.011,hemV:.94,leftU:.32,rightU:.68,hpsLeftU:.24,hpsRightU:.76},
-  zipneck:{chestCm:52,lengthCm:74,neckV:.052,collarTipV:.014,hemV:.955,leftU:.20,rightU:.80,hpsLeftU:.34,hpsRightU:.66}
+  zipneck:{chestCm:52,lengthCm:74,neckV:.022,collarTipV:.014,hemV:.955,leftU:.20,rightU:.80,hpsLeftU:.346,hpsRightU:.652,cinturaV:.66,views:{front:{neckV:.022,hpsLeftU:.346,hpsRightU:.652},back:{neckV:.025,hpsLeftU:.346,hpsRightU:.652}}}
 };
 function placementGuideHasOwn(key){return !!PLACEMENT_GUIDES[key]}
 let photoRulerOn=true,photoDragLive=false,photoRulerPaint=0,photoLiveTimer=0;
@@ -27,8 +28,14 @@ function placementGuide(garment=state.garment){
   const key=placementGuideKey(garment);
   return PLACEMENT_GUIDES[key]||PLACEMENT_GUIDES[garment]||PLACEMENT_GUIDES.playera;
 }
+function placementGuideForView(garment=state.garment, view='front'){
+  const g=placementGuide(garment);
+  const side=view==='back'?'back':'front';
+  const over=g.views&&g.views[side];
+  return over?{...g,...over}:g;
+}
 function placementFrame(view){
-  const r=photoRect(state.garment,view||'front'),g=placementGuide();
+  const r=photoRect(state.garment,view||'front'),g=placementGuideForView(state.garment, view);
   const left=r.x+r.w*g.leftU,right=r.x+r.w*g.rightU;
   const hps=r.y+r.h*g.neckV,collarTip=r.y+r.h*(g.collarTipV??Math.max(0,g.neckV-.04)),hem=r.y+r.h*g.hemV;
   const hpsLeft=r.x+r.w*(g.hpsLeftU??.36),hpsRight=r.x+r.w*(g.hpsRightU??.64);
@@ -206,8 +213,30 @@ function drawPlacementBaseline(ctx,view){
   drawPlacementLabel(ctx,'Centro',frame.center+10,(frame.neck+frame.hem)/2,'left');
   drawPlacementLabel(ctx,'Izq.',frame.left-8,(frame.neck+frame.hem)/2,'right');
   drawPlacementLabel(ctx,'Der.',frame.right+8,(frame.neck+frame.hem)/2,'left');
-  drawPlacementLabel(ctx,formatDual(frame.chestCm),(frame.left+frame.right)/2,frame.neck+16,'center');
-  drawPlacementLabel(ctx,formatDual(frame.lengthCm)+' cuerpo',frame.left+12,(frame.neck+frame.hem)/2,'left');
+  drawPlacementLabel(ctx,'Largo '+formatDual(frame.lengthCm),frame.left+12,(frame.neck+frame.hem)/2,'left');
+  const spec=placementGuideForView(state.garment, view);
+  const roundNeck=typeof roundNeckMeasureFamily==='function'&&roundNeckMeasureFamily();
+  if(!roundNeck){
+    const r=photoRect(state.garment, view||'front'),yOf=v=>r.y+r.h*v;
+    ctx.save();
+    ctx.strokeStyle='#012169';
+    ctx.lineWidth=1.45;
+    if(spec.anchoV!=null){
+      const y=yOf(spec.anchoV);
+      ctx.setLineDash([6,4]);
+      drawPlacementGuideLine(ctx,frame.left,y,frame.right,y);
+      ctx.setLineDash([]);
+      drawPlacementLabel(ctx,'Ancho '+formatDual(frame.chestCm),(frame.left+frame.right)/2,y-14,'center');
+    }
+    if(spec.cinturaV!=null){
+      const y=yOf(spec.cinturaV);
+      ctx.setLineDash([6,4]);
+      drawPlacementGuideLine(ctx,frame.left,y,frame.right,y);
+      ctx.setLineDash([]);
+      drawPlacementLabel(ctx,'Cintura',(frame.left+frame.right)/2,y-14,'center');
+    }
+    ctx.restore();
+  }
   return frame;
 }
 function drawPlacementHpsMarks(ctx,frame){

@@ -10,8 +10,8 @@ const ROUND_NECK_SIZE_M={
   sleevelessMujer:{chestCm:42,lengthCm:60,shoulderCm:36,sleeveCm:null}
 };
 const ROUND_NECK_GUIDE_EXTRAS={
-  playera:{armholeV:.36,chestV:.393,chestLeftU:.205,chestRightU:.795,shoulderV:.082,shoulderLeftU:.248,shoulderRightU:.752,sleeveEndLeftU:.045,sleeveEndRightU:.955,sleeveEndV:.30,shoulderCm:46,sleeveCm:20},
-  zipneck:{armholeV:.20,chestV:.233,chestLeftU:.20,chestRightU:.80,shoulderV:.078,shoulderLeftU:.236,shoulderRightU:.764,sleeveEndLeftU:.03,sleeveEndRightU:.97,sleeveEndV:.90,shoulderCm:46,sleeveCm:62},
+  playera:{armholeV:.36,chestV:.393,chestLeftU:.205,chestRightU:.795,shoulderV:.082,shoulderLeftU:.248,shoulderRightU:.752,sleeveEndLeftU:.045,sleeveEndRightU:.955,sleeveEndV:.30,shoulderCm:46,sleeveCm:20,cinturaV:.64},
+  zipneck:{armholeV:.20,chestV:.233,chestLeftU:.20,chestRightU:.80,shoulderV:.078,shoulderLeftU:.236,shoulderRightU:.764,sleeveEndLeftU:.03,sleeveEndRightU:.97,sleeveEndV:.90,shoulderCm:46,sleeveCm:62,cinturaV:.66},
   sleeveless:{armholeV:.28,chestV:.313,chestLeftU:.30,chestRightU:.70,shoulderV:.055,shoulderLeftU:.30,shoulderRightU:.70,shoulderCm:38},
   sleevelessMujer:{armholeV:.27,chestV:.303,chestLeftU:.32,chestRightU:.68,shoulderV:.056,shoulderLeftU:.32,shoulderRightU:.68,shoulderCm:36}
 };
@@ -156,7 +156,14 @@ function drawRoundNeckMeasureGuides(ctx,frame,view){
   drawRoundNeckTicks(ctx,extra.shoulderLeft,extra.shoulderY,extra.shoulderRight,extra.shoulderY);
   drawPlacementLabel(ctx,'A · Ancho de tórax '+formatDual(extra.chestCm??m.chestCm),(extra.chestLeft+extra.chestRight)/2,extra.chestY+14,'center');
   drawPlacementLabel(ctx,'B · Ancho de espalda '+formatDual(extra.shoulderCm??m.shoulderCm),extra.shoulderRight+8,extra.shoulderY,'left');
-  drawPlacementLabel(ctx,'C · Largo desde HPS',frame.left+12,(frame.neck+frame.hem)/2+18,'left');
+  const waistV=placementGuide().cinturaV;
+  if(waistV!=null){
+    const r=photoRect(state.garment,view||'front'),waistY=r.y+r.h*waistV;
+    ctx.setLineDash([6,4]);
+    drawRoundNeckDimLine(ctx,frame.left,waistY,frame.right,waistY);
+    ctx.setLineDash([]);
+    drawPlacementLabel(ctx,'Cintura',(frame.left+frame.right)/2,waistY-13,'center');
+  }
   ctx.strokeStyle='#E8B923';
   ctx.lineWidth=1.6;
   ctx.setLineDash([3,3]);
