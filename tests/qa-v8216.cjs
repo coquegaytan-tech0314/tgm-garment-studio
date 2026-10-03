@@ -77,7 +77,9 @@ const {assert,run,$,elements}=require('./harness.cjs');
   assert(hps>collar,'HPS origin stays below the collar tip');
   const poloHps=run("state.garment='polo';photoBaseDefaults();placementFrame('front').neck");
   const poloRect=run("photoRect('polo','front')");
-  assert(Math.abs(poloHps-(poloRect.y+poloRect.h*.102))<0.6,'Polo HPS stays locked at neckV .102');
+  const poloNeck=run("placementGuideForView('polo','front').neckV");
+  assert(poloNeck<0.102,'Polo HPS sits above the old body-box line');
+  assert(Math.abs(poloHps-(poloRect.y+poloRect.h*poloNeck))<0.6,'Polo HPS follows the calibrated shoulder join');
 
   console.log('PASS v8.2.16 UI/UX QA: Colocar logo, Despiece toggle, mangas from 360, tallas');
 })().catch(error=>{console.error(error);process.exitCode=1});

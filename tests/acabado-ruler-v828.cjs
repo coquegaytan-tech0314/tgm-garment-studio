@@ -169,7 +169,9 @@ function almost(actual,expected,tol,label){
   run("state=blank();state.garment='polo';photoBaseDefaults();state.photo.source='generated';state.photo.side='front'");
   const poloFrame=run("placementFrame('front')");
   assert(poloFrame.hps-poloFrame.collarTip>8,'polo body origin is below the standing collar tip');
-  almost(run('PLACEMENT_GUIDES.polo.neckV'),0.102,1e-9,'polo HPS stays at the v8.2.13 lock');
+  almost(run('PLACEMENT_GUIDES.polo.neckV'),0.057,1e-9,'polo HPS is the shoulder join, above the old .102 body-box line');
+  assert(run('PLACEMENT_GUIDES.polo.hpsLeftU')<0.36,'polo left HPS moved outward');
+  assert(run('PLACEMENT_GUIDES.polo.hpsRightU')>0.64,'polo right HPS moved outward');
   assert.match(run('HPS_CANVAS_LABEL'),/HPS/);
   assert.match(run('HPS_ORIGIN_NOTE'),/cuello no cuenta/);
 
